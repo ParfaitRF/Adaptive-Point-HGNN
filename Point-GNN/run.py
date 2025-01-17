@@ -1,5 +1,4 @@
 """This file implement an inference pipeline for Point-GNN on KITTI dataset"""
-
 import os
 import time
 import argparse
@@ -12,6 +11,11 @@ import open3d
 import cv2
 from tqdm import tqdm
 
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+for device in physical_devices:
+    tf.config.experimental.set_memory_growth(device, True)
+
+
 from dataset.kitti_dataset import KittiDataset, Points
 from models.graph_gen import get_graph_generate_fn
 from models.models import get_model
@@ -23,7 +27,7 @@ from util.config_util import load_config, load_train_config
 from util.summary_util import write_summary_scale
 
 parser = argparse.ArgumentParser(description='Point-GNN inference on KITTI')
-parser.add_argument('checkpoint_path', type=str,
+parser.add_argument('--checkpoint_path', type=str,default="./checkpoints/car_auto_T0_train/",
                    help='Path to checkpoint')
 parser.add_argument('-l', '--level', type=int, default=0,
                    help='Visualization level, 0 to disable,'+
@@ -37,7 +41,7 @@ parser.add_argument('--no-box-merge', dest='use_box_merge',
 parser.add_argument('--no-box-score', dest='use_box_score',
                     action='store_false', default='True',
                    help='Disable box score.')
-parser.add_argument('--dataset_root_dir', type=str, default='../dataset/kitti/',
+parser.add_argument('--dataset_root_dir', type=str, default='./dataset/kitti/',
                    help='Path to KITTI dataset. Default="../dataset/kitti/"')
 parser.add_argument('--dataset_split_file', type=str,
                     default='',

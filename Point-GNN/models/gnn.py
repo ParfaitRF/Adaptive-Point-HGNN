@@ -2,11 +2,14 @@
 
 from functools import partial
 
-import tensorflow._api.v2.compat.v1 as tf
-tf.disable_v2_behavior()
+import tensorflow as tf
 import numpy as np
 #import tensorflow.contrib.slim as slim
 import tf_slim as slim
+
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+for device in physical_devices:
+    tf.config.experimental.set_memory_growth(device, True)
 
 def instance_normalization(features):
     with tf.variable_scope(None, default_name='IN'):
