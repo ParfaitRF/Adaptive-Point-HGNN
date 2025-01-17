@@ -1,0 +1,21 @@
+
+# numerical / symbolic computation
+numpy
+# visualization
+matplotlib
+open3d
+opencv-python
+# geometric
+shapely
+# auxiliary
+tqdm
+# machine learning
+scikit-learn    # check    
+tensorflow
+tensorboard
+torch
+torch_geometric # for conda pyg
+tf_slim         # (import tf_slim as slim) instead of (import tensorflow.contrib.slim as slim)
+# for gpu support on nvidia devices
+cudatoolkit=11.2 
+cudnn=8.1
