@@ -505,10 +505,9 @@ class KittiDataset(object):
         calib['Tr_velo_to_cam'] = calib['Tr_velo_to_cam'].reshape(3,4)
         R0_rect = np.eye(4)
         R0_rect[:3, :3] = calib['R0_rect']
-        calib['velo_to_rect'] = np.vstack([calib['Tr_velo_to_cam'],[0,0,0,1]])
-        calib['cam_to_image'] = np.hstack([calib['P2'][:, 0:3], [[0],[0],[0]]])
-        calib['rect_to_cam'] = np.hstack([
-            calib['R0_rect'],
+        calib['velo_to_rect']   = np.vstack([calib['Tr_velo_to_cam'],[0,0,0,1]])
+        calib['cam_to_image']   = np.hstack([calib['P2'][:, 0:3], [[0],[0],[0]]])
+        calib['rect_to_cam']    = np.hstack([calib['R0_rect'],
             np.matmul(
                 np.linalg.inv(calib['P2'][:, 0:3]), calib['P2'][:, [3]])])
         calib['rect_to_cam'] = np.vstack([calib['rect_to_cam'],
@@ -1007,6 +1006,7 @@ class KittiDataset(object):
         cam_xyz += np.transpose(
             calib['velo_to_cam'])[[3], :3].astype(np.float32)
         return Points(xyz = cam_xyz, attr = points.attr)
+    
 
     def velo_to_cam(self, points_xyz, calib):
         """Convert points in velodyne coordinates to camera coordinates.
