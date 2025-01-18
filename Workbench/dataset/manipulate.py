@@ -10,7 +10,7 @@ from globals import R                           # rotation matrix
 
 Points = namedtuple('Points',['xyz','attr'])    # stores set of 3D points
 
-def downsample_by_avg(points,voxel_size):
+def downsample_by_average(points,voxel_size):
   """ Downsamples point set using voxels of given size using average point corrd. in voxel
 
   @param points[Points]:    3D point tuple to be downsampled
@@ -93,6 +93,55 @@ def downsample_by_random(points,voxel_size,add_rnd3d=False):
   return Points(xyz=np.asarray(downsampled_xyz),attr=np.asarray(downsampled_attr))   
 
 
+def downsample_by_voxel(points,voxel_size,method="AVERAGE"):
+  """ Downsample point set using voxel grid
+
+  @param points[Points]:    3D point tuple to be downsampled
+  @param voxel_size[float]: desired voxel size
+  @param method[str]:       downsampling method ["AVERAGE","RANDOM"]
+
+  @return [Points]:           downsampled Points object
+  """
+
+  # create voxel grid
+  xmax,ymax,zmax  = np.amax(points, axis=0)         # max cloud values along all axes
+  xmin,ymin,zmin  = np.amin(points, axis=0)         # min cloud values along all axes
+  dim_x = int((xmax - xmin) / voxel_size + 1)
+  dim_y = int((ymax - ymin) / voxel_size + 1)
+  dim_z = int((zmax - zmin) / voxel_size + 1)
+  voxel_account = {}
+  xyz_idx = np.int32(                               # 3D point -> voxel indices
+    (points.xyz - np.array([xmin,ymin,zmin])) / voxel_size
+  )
+
+  for pidx, (x_idx, y_idx, z_idx) in enumerate(xyz_idx):
+    # TODO: checkk bug impact
+    key = x_idx + y_idx*dim_x + z_idx*dim_x*dim_y
+    if key in voxel_account:
+      voxel_account[key] = [pidx]
+    else:
+      voxel_account[key].append(pidx)
+
+    # compute downsampled representation
+    downsampled_xyz_list = []
+    if points.attr is not None:
+      downsampled_attr_list = []
+    if method == "AVERAGE":
+      for idx,pidx_list in voxel_account.iteritems():
+        if len(pidx_list):
+          downsampled_xyz_list.append(np.mean(points.xyz[pidx_list,:],axis=0, keepdims=True))
+        if points.attr is not None:
+          downsampled_attr_list.append(np.mean(points.attr[pidx_list],axis=0))
+          if points.attr is not None:
+            downsampled_attr_list = np.mean(points.attr[pidx_list,:],axis=0,keepdims=True)
+
+
+    if points.attr is not None:
+      attributes = np.vstack(downsampled_attr_list)
+
+    return Points(xyz=np.vstack(downsampled_xyz_list),attr=attributes)
+  
+
 def box3d_to_viewpoint(label,expend_factor=(1.0,1.0,1.0)):
   """ Convert bounding box corrdinates to viewpoint(camera) corrdinates
 
@@ -156,96 +205,12 @@ def box3d_to_normals(label,expend_factor=(1.0,1.0,1.0)):
           np.concatenate([ux,uy,uz]))
 
 
-def sel_xyz_in_box3d(label,xyz,expend_factor=(1.0,1.0,1.0)):
-  """ Select points in a 3D bounding box
 
-  @param label[dict]:           dictionary containing "x3d", "y3d", "z3d", "yaw", "height", "width", "length".
-  @parma xyz[ndarray]:          TO BE DOCUMENTED
-  @param expend_factor[tuple]:  3D scale factor
-
-  @return:                      a boolean mask indicating points in bounding box 
-  """
-
-  normals,lower,upper = box3d_to_normals(label,expend_factor)   # get box normals
-  projected = np.matmul(xyz, np.transpose(normals))             # project points onto normals
-
-  return np.logical_and(
-    projected[:,0] > lower[0],       # x-axis filter
-    projected[:,0] < upper[0],
-    projected[:,1] > lower[1],       # y-axis filter
-    projected[:,1] < upper[1],
-    projected[:,2] > lower[2],       # z-axis filter
-    projected[:,2] < upper[2]
-  )
-
-
-def sel_xyz_in_box2d(label,xyz,expend_factor=(1.0,1.0,1.0)):
-  """ Select points in a 2D bounding box
   
-  @param label[dict]:           dictionary containing "x3d", "y3d", "z3d", "yaw", "height", "width", "length".
-  @parma xyz[ndarray]:          TO BE DOCUMENTED
-  @param expend_factor[tuple]:  3D scale factor
-
-  @return:                      a boolean mask indicating points in bounding box 
-  """
-
-  normals,lower,upper = box3d_to_normals(label,expend_factor)   # get box normals
-  normals, lower, upper = normals[1:], lower[1:], upper[1:]     # remove width normal
-  projected = np.matmul(xyz, np.transpose(normals))             # project points onto normals
-
-  return np.logical_and(
-    projected[:,0] > lower[0],       # y-axis filter
-    projected[:,0] < upper[0],
-    projected[:,1] > lower[1],       # z-axis filter
-    projected[:,1] < upper[1]
-  )
 
 
-def downsample_by_voxel(self,points,voxel_size,method="AVERAGE"):
-  """ Downsample point set using voxel grid
-
-  @param points[Points]:    3D point tuple to be downsampled
-  @param voxel_size[float]: desired voxel size
-  @param method[str]:       downsampling method ["AVERAGE","RANDOM"]
-
-  @return [Points]:           downsampled Points object
-  """
-
-  # create voxel grid
-  xmax,ymax,zmax  = np.amax(points, axis=0)         # max cloud values along all axes
-  xmin,ymin,zmin  = np.amin(points, axis=0)         # min cloud values along all axes
-  dim_x = int((xmax - xmin) / voxel_size + 1)
-  dim_y = int((ymax - ymin) / voxel_size + 1)
-  dim_z = int((zmax - zmin) / voxel_size + 1)
-  voxel_account = {}
-  xyz_idx = np.int32(                               # 3D point -> voxel indices
-    (points.xyz - np.array([xmin,ymin,zmin])) / voxel_size
-  )
-
-  for pidx, (x_idx, y_idx, z_idx) in enumerate(xyz_idx):
-    # TODO: checkk bug impact
-    key = x_idx + y_idx*dim_x + z_idx*dim_x*dim_y
-    if key in voxel_account:
-      voxel_account[key] = [pidx]
-    else:
-      voxel_account[key].append(pidx)
-
-    # compute downsampled representation
-    downsampled_xyz_list = []
-    if points.attr is not None:
-      downsampled_attr_list = []
-    if method == "AVERAGE":
-      for idx,pidx_list in voxel_account.iteritems():
-        if len(pidx_list):
-          downsampled_xyz_list.append(np.mean(points.xyz[pidx_list,:],axis=0, keepdims=True))
-        if points.attr is not None:
-          downsampled_attr_list.append(np.mean(points.attr[pidx_list],axis=0))
-          if points.attr is not None:
-            downsampled_attr_list = np.mean(points.attr[pidx_list,:],axis=0,keepdims=True)
 
 
-    if points.attr is not None:
-      attributes = 
 
-    return Points(xyz=np.vstack(downsampled_xyz_list),attr=attributes)
+
 
