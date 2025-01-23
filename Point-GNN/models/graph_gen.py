@@ -6,11 +6,6 @@ import random
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import open3d
-import tensorflow as tf
-
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-for device in physical_devices:
-    tf.config.experimental.set_memory_growth(device, True)
 
 def multi_layer_downsampling(points_xyz, base_voxel_size, levels=[1],
     add_rnd3d=False,):

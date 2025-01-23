@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 from shapely.geometry import Polygon
-from globals import R
+from Workbench.models.globals import R
 
 SCORES_THRESHOLD  = 0.25
 NMS_THRESHOLD     = 0.45

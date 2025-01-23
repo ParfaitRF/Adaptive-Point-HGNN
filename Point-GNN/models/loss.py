@@ -37,6 +37,7 @@ def focal_loss_softmax(labels, logits, gamma=2):
     https://github.com/fudannlp16/focal-loss/blob/master/focal_loss.py
     Computer focal loss for multi classification
     Args:
+    
       labels: A int32 tensor of shape [batch_size].
       logits: A float32 tensor of shape [batch_size,num_classes].
       gamma: A scalar for focal loss gamma hyper-parameter.
@@ -58,7 +59,8 @@ def test_focal_loss():
     focal_sigmoid = focal_loss_sigmoid(labels, logits)
     focal_softmax = focal_loss_softmax(labels, logits)
     with tf.Session() as sess:
-        print(sess.run(focal_sigmoid))
-        print(sess.run(focal_softmax))
+      print(sess.run(focal_sigmoid))
+      print(sess.run(focal_softmax))
+      
 if __name__ == '__main__':
     test_focal_loss()
