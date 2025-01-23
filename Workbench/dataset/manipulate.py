@@ -6,38 +6,38 @@ import random # nomen est domen
 import open3d # for 3D data handling
 import cv2    # for image processing and ml
 from collections import namedtuple,defaultdict  # nomen es domen
-from globals import R                           # rotation matrix
+from Workbench.models.globals import R                           # rotation matrix
 
 Points = namedtuple('Points',['xyz','attr'])    # stores set of 3D points
 
 def downsample_by_average(points,voxel_size):
-  """ Downsamples point set using voxels of given size using average point corrd. in voxel
+  """ Downsamples point set using voxels of given size using average point corrd.
 
-  @param points[Points]:    3D point tuple to be downsampled
-  @param voxel_size[float]: desired voxel size
+  @param points[Points]:      3D point tuple to be downsampled
+  @param voxel_size[float]:   desired voxel size
 
   @return [Points]:           downsampled Points object 
   """
 
   # create voxel grid
-  xmax,ymax,zmax  = np.amax(points, axis=0)         # max cloud values along all axes
-  xmin,ymin,zmin  = np.amin(points, axis=0)         # min cloud values along all axes
-  o               = np.zeros(3,dtype=np.float32)    # origin
-  xyz_offset      = np.array([xmin,ymin,zmin])      # cloud offset from origin
-  xyz_idx         = np.asarray(points.xyz - xyz_offset,dtype=np.float32) // voxel_size # point voxel indezes
+  xmax,ymax,zmax    = np.amax(points, axis=0)         # max cloud values along all axes
+  xmin,ymin,zmin    = np.amin(points, axis=0)         # min cloud values along all axes
+  o                 = np.zeros(3,dtype=np.float32)    # origin
+  xyz_offset        = np.array([xmin,ymin,zmin])      # cloud offset from origin
+  xyz_idx           = np.asarray(points.xyz - xyz_offset,dtype=np.float32) // voxel_size # point voxel indezes
   dim_x,dim_y,dim_z = np.amax(xyz_idx,axis=0) + 1   # gird dimensions
-  voxel_keys      = np.asarray(xyz_idx[:,0] + xyz_idx[:,1]*dim_x + xyz_idx[:,2]*dim_x*dim_y,dtype=np.int32) # voxel keys
-  voxel_order     = np.argsort(voxel_keys)           # sort points by voxel key
-  vocel_keys      = voxel_keys[voxel_order]                     # sorted voxel keys
-  points_xyz      = points.xyz[voxel_order]                     # sorted point coordinates
-  unique_keys,lens = np.unique(voxel_keys,return_counts=True)   # unique voxel keys and their counts
-  indices         = np.hstack([[0],lens[:-1]]).cumsum()         # commulative voxel population
-  downsampled_xyz = np.add.reduceat(                # get voxel average points
+  voxel_keys        = np.asarray(xyz_idx[:,0] + xyz_idx[:,1]*dim_x + xyz_idx[:,2]*dim_x*dim_y,dtype=np.int32) # voxel keys
+  voxel_order       = np.argsort(voxel_keys)           # sort points by voxel key
+  vocel_keys        = voxel_keys[voxel_order]          # sorted voxel keys
+  points_xyz        = points.xyz[voxel_order]          # sorted point coordinates
+  unique_keys,lens  = np.unique(voxel_keys,return_counts=True)    # unique voxel keys and their counts
+  indices           = np.hstack([[0],lens[:-1]]).cumsum()         # commulative voxel population
+  downsampled_xyz   = np.add.reduceat(                  # get voxel average points
     points_xyz,indices,axis=0
   ) / lens[:,np.newaxis]                    
            
   downsampled_attr  = None
-  if points.attr is not None:                                  # if attributes are present                 
+  if points.attr is not None:                           # if attributes are present                 
     attr = points.attr[voxel_order]
     downsampled_attr = np.add.reduceat(
       attr, indices,axis=0
@@ -64,8 +64,8 @@ def downsample_by_random(points,voxel_size,add_rnd3d=False):
 
   # conditionally scales cloud to fit desired voxel size
   xyz_idx         = np.asarray(
-      points.xyz - xyz_offset,
-      dtype=np.float32) // voxel_size
+    points.xyz - xyz_offset,
+    dtype=np.float32) // voxel_size
 
   if add_rnd3d:                                     # scale cloud to fit voxel size    
     xyz_idx  += voxel_size*np.random((1,3)) // voxel_size

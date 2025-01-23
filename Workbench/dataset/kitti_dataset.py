@@ -1,5 +1,5 @@
-from manipulate import *
-from globals import IMG_HEIGHT,IMG_WIDTH
+from .manipulate import *
+from Workbench.models.globals import IMG_HEIGHT,IMG_WIDTH
 
 class KittiDataset(object):
   """ A class for interacting with the KITTI dataset. """
@@ -21,12 +21,22 @@ class KittiDataset(object):
     @param num_classes[int]:     number of classes in dataset
     """
 
-    self.image_dir      = image_dir
-    self.point_dir      = point_dir
-    self.calib_dir      = calib_dir
-    self.label_dir      = label_dir
-    self.index_filename = index_filename
     self.istraining     = is_training
+
+    if is_training:
+      self.image_dir = image_dir+"\\training\\image_2"
+      self.point_dir = point_dir+"\\training\\velodyne"
+      self.calib_dir = calib_dir+"\\training\\calib"
+      self.label_dir = label_dir+"\\training\\label_2"
+    else:
+      self.image_dir = image_dir+"\\testing\\image_2"
+      self.point_dir = point_dir+"\\testing\\velodyne"
+      self.calib_dir = calib_dir+"\\testing\\calib"
+      self.label_dir = label_dir+"\\testing\\label_2"
+
+
+    self.index_filename = index_filename
+    
     self.is_raw         = is_raw
     self.num_classes    = num_classes
     self.difficulty     = difficulty
@@ -40,8 +50,8 @@ class KittiDataset(object):
 
     self.num_files      = len(self.file_list)
     
-    self.veify_file_list(
-      self.img_dir, self.point_dir, self.calib_dir, self.label_dir, self.file_list,is_training,is_raw
+    self.verify_file_list(
+      self.image_dir, self.point_dir, self.calib_dir, self.label_dir, self.file_list,is_training,is_raw
     )
     
 
@@ -63,7 +73,7 @@ class KittiDataset(object):
 
   def get_statistics(self):
     from matplotlib import pyplot as plt
-    from models import nms
+    from ..models import nms
     """ Get stats of objects inside the dataset """
     x_dict          = defaultdict(list)
     y_dict          = defaultdict(list)
@@ -76,6 +86,7 @@ class KittiDataset(object):
 
     for frame_idx in range(self.num_files):
       labels = self.get_label(frame_idx)
+      #print(labels[0])
       for label in labels:
         if label['ymin'] > 0:
           if label['ymax']- label['ymin'] > 25: # TODO: What is this restriction for?
@@ -92,9 +103,9 @@ class KittiDataset(object):
             yaw_dict[object_name].append(label['yaw'])
     
     # plot pedestrians as scatter plot
-    plt.scatter(z_dict['Pedestrian'],np.array(l_dict['Pedestrian'])) # plot singular points representing pedestrians
-    plt.title('Pedestrian Scatter Plot')
-    plt.show()
+    # plt.scatter(z_dict['Pedestrian'],np.array(l_dict['Pedestrian'])) # plot singular points representing pedestrians
+    # plt.title('Pedestrian Scatter Plot')
+    # plt.show()
 
     # compute statistics
     truncation_rates    = []  # TODO: what are truncation rates for?
@@ -146,37 +157,42 @@ class KittiDataset(object):
           corners_xy          = corners_img_points.xyz[:,:2]                        # get 2D coordinates
           xmax, ymax          = np.amax(corners_xy, axis=0)                         # get max values
           xmin, ymin          = np.amin(corners_xy, axis=0)                         # get min values
-          clip_xmin           = np.clip(xmin,0)                                     # left clipping bound
-          clip_ymin           = np.clip(ymin,0)                                     # bottom clipping bound                  
-          clip_xmax           = np.clip(xmax,IMG_WIDTH)                             # right clipping bound
-          clip_ymax           = np.clip(ymax,IMG_HEIGHT)                            # top clipping bound                    
+          clip_xmax           = max(xmax,IMG_WIDTH)                             # right clipping bound
+          clip_ymax           = max(ymax,IMG_HEIGHT)                            # top clipping bound 
+          clip_xmin           = min(xmin,0)                                     # left clipping bound
+          clip_ymin           = min(ymin,0)                                     # bottom clipping bound                        
           height              = clip_ymax - clip_ymin
           width               = clip_xmax - clip_xmin
           point_frame_size    = (ymax-ymin)*(xmax-xmin)
-          truncation_rate    = 1.0 - height*width/point_frame_size                  # amount of datapoints outside frame
+          truncation_rate     = 1.0 - height*width/point_frame_size                  # amount of datapoints outside frame
 
           # categorize labels by truncation rate
           if label['truncation'] > 0.5: truncation_rates.append(truncation_rate)    # ignore objects that were truncated too much
           else: no_truncation_rates.append(truncation_rate)   
 
-          if label['occlusion'] > 2: # TODO: What the fuck is the occlusion rate!!! ???
+          if label['occlusion'] > 2:
+            #print(f"{self.file_list[frame_idx]}: {label['yaw']}")
+
             h_dict['ignored_by_occlusion'].append(label['height'])
             w_dict['ignored_by_occlusion'].append(label['width'])
             l_dict['ignored_by_occlusion'].append(label['length'])
             x_dict['ignored_by_occlusion'].append(label['x3d'])
             y_dict['ignored_by_occlusion'].append(label['y3d'])
             z_dict['ignored_by_occlusion'].append(label['z3d'])
-            view_angle_dict['ignored_by_occlusion'].append( np.arctan(label['x3d']/label['z3d']) )
-            yaw_dict['ignored_by_collection'].append(label['yaw'])
+            view_angle_dict['ignored_by_occlusion'].append( 
+              np.arctan(label['x3d']/label['z3d']) )
+            yaw_dict['ignored_by_occlusion'].append(label['yaw'])
 
     stats = ""
 
-    for object_name in h_dict:
-      print(object_name + "l="+str(np.histogram(l_dict[object_name], 10, density=True)))
+    for object_name in h_dict.keys():
+      print(object_name + " l="+str(np.histogram(l_dict[object_name], 10, density=True)))
+
       if len(h_dict[object_name]):
         stats += (
           str(len(h_dict[object_name])) + " " + str(object_name)
           + " "
+
           + "mh=" + str(np.min(h_dict[object_name])) + " "
                   + str(np.median(h_dict[object_name])) + " "
                   + str(np.max(h_dict[object_name])) + "; "
@@ -291,17 +307,15 @@ class KittiDataset(object):
     @return [dict]: 
     """
 
-    calib_file = join(self._calib_dir, self._file_list[frame_idx])+'.txt'
-    with open('calib/training/calib/000000.txt', 'r') as f:
+    calib_file = join(self.calib_dir, self.file_list[frame_idx])+'.txt'
+    with open(calib_file, 'r') as f:
       lines       = f.readlines()
-      fields      =  np.array(list(map(lambda line: line.split(' '), lines)))
-      matrix_name = fields[0].rstrip(':')
-      matrix      = np.array(fields[1:],dtype=np.float32)
-      calib       = {field[0]:field[1:] for field in fields}    # calibration matrices
+      fields      =  list(map(lambda line: line.split(' '), lines))
+      calib       = {field[0].rstrip(':'):np.array(field[1:],dtype=np.float32) for field in fields}    # calibration matrices
 
-    for i in len(fields): 
-      field = fields[i][0]
-      if field in ['P2','R0_rect','Tr_velo_to_cam']: calib[i] = calib[i].reshape(3,4)
+    for field,values in calib.items():
+      if field in ['P2','Tr_velo_to_cam']:  calib[field] = values.reshape(3,4)
+      elif field in ['R0_rect']:            calib[field] = values.reshape(3,3)
       else: continue
 
     R0_rect = np.eye(4)
@@ -431,7 +445,7 @@ class KittiDataset(object):
     @return [Points]: 3D points
     """
 
-    point_file  = join(self._point_dir, self._file_list[frame_idx])+'.bin'
+    point_file  = join(self.point_dir, self.file_list[frame_idx])+'.bin'
     velo_data   = np.fromfile(point_file, dtype=np.float32).reshape(-1, 4)
     velo_points = velo_data[:,:3]
     reflections = velo_data[:,[3]]
@@ -451,19 +465,20 @@ class KittiDataset(object):
   def get_cam_points(self, frame_idx, downsample_voxel_size=None, calib=None, xyz_range=None):
     """Load velo points and convert them to camera coordinates.
 
-    @param frame_idx[int]: frame index
-    @param downsample_voxel_size[float]: voxel size for downsampling
-    @param calib[dict]: calibration matrix
-    @param xyz_range[tuple]: range of points to consider
+    @param frame_idx[int]:                frame index
+    @param downsample_voxel_size[float]:  voxel size for downsampling
+    @param calib[dict]:                   calibration matrix
+    @param xyz_range[tuple]:              range of points to consider
 
-    Returns: Points.
+    Returns: Points in camera coordinates
     """
     velo_points = self.get_velo_points(frame_idx, xyz_range=xyz_range)
+    from pprint import pprint
+    pprint(velo_points)
     if calib is None: calib = self.get_calib(frame_idx)
     cam_points  = self.velo_points_to_cam(velo_points, calib)
     if downsample_voxel_size is not None:
-      cam_points = downsample_by_average(cam_points,
-        downsample_voxel_size)
+      cam_points = downsample_by_average(cam_points,downsample_voxel_size)
     return cam_points
 
   calc_distances = lambda p0, points: ((p0 - points)**2).sum(axis=1) # squared distance
@@ -655,7 +670,7 @@ class KittiDataset(object):
     Returns: cv2.matrix
     """
 
-    image_file = join(self._image_dir, self._file_list[frame_idx])+'.png'
+    image_file = join(self.image_dir, self.file_list[frame_idx])+'.png'
     return cv2.imread(image_file)
 
   def get_label(self, frame_idx, no_orientation=False):
@@ -667,11 +682,12 @@ class KittiDataset(object):
     Returns: a list of object label dictionaries.
     """
 
-    MIN_HEIGHT = [40, 25, 25]
-    MAX_OCCLUSION = [0, 1, 2]
-    MAX_TRUNCATION = [0.15, 0.3, 0.5]
-    label_file = join(self._label_dir, self._file_list[frame_idx])+'.txt'
+    MIN_HEIGHT      = [40, 25, 25]
+    MAX_OCCLUSION   = [0, 1, 2]
+    MAX_TRUNCATION  = [0.15, 0.3, 0.5]
+    label_file = join(self.label_dir, self.file_list[frame_idx])+'.txt'
     label_list = []
+
     with open(label_file, 'r') as f:
       for line in f:
         label={}
@@ -694,18 +710,19 @@ class KittiDataset(object):
         label['y3d']    =  float(fields[12])
         label['z3d']    =  float(fields[13])
         label['yaw']    =  float(fields[14])
+        #print(label['yaw'])
 
         if len(fields) > 15:
           label['score'] =  float(fields[15])
 
         if self.difficulty > -1:
           if label['truncation'] > MAX_TRUNCATION[self.difficulty]:
-              continue
+            continue
           if label['occlusion'] > MAX_OCCLUSION[self.difficulty]:
-              continue
-          if (label['ymax'] - label['ymin']
-              ) < MIN_HEIGHT[self.difficulty]:
-              continue
+            continue
+          if (label['ymax'] - label['ymin']) < MIN_HEIGHT[self.difficulty]:
+            continue
+        
         label_list.append(label)
 
     return label_list
@@ -714,17 +731,17 @@ class KittiDataset(object):
   def box3d_to_cam_points(self, label, expend_factor=(1.0, 1.0, 1.0)):
     """Project 3D box into camera coordinates.
     Args:
-        label: a dictionary containing "x3d", "y3d", "z3d", "yaw", "height"
-            "width", "length".
+      label: a dictionary containing "x3d", "y3d", "z3d", "yaw", "height"
+        "width", "length".
 
     Returns: a numpy array [8, 3] representing the corners of the 3d box in
-        camera coordinates.
+      camera coordinates.
     """
 
     yaw = label['yaw']
     R = np.array([[np.cos(yaw),  0,  np.sin(yaw)],
                   [0,            1,  0          ],
-                  [-np.sin(yaw), 0,  np.cos(yaw)]]);
+                  [-np.sin(yaw), 0,  np.cos(yaw)]])
     h = label['height']
     delta_h = h*(expend_factor[0]-1)
     w = label['width']*expend_factor[1]
@@ -1242,61 +1259,60 @@ class KittiDataset(object):
     return cls_labels, boxes_3d, valid_boxes, label_map
 
   def vis_points(self, cam_points_in_img_with_rgb,
-      label_list=None, expend_factor=(1.0, 1.0, 1.0)):
-      color_map = {
-          'Pedestrian': ["DeepPink",(255,20,147)],
-          'Person_sitting': ["DeepPink",(255,255,147)],
-          'Car': ['Red', (255, 0, 0)],
-          'Van': ['Red', (255, 255, 0)],
-          'Cyclist': ["Salmon",(250,128,114)],
-          'DontCare': ["Blue",(0,0,255)],
-      }
-      mesh_list = []
-      if label_list is not None:
-          for label in label_list:
-              print(label['name'])
-              point_mask = self.sel_points_in_box3d(label,
-                  cam_points_in_img_with_rgb, expend_factor=expend_factor)
-              color = np.array(
-                  color_map.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
-              cam_points_in_img_with_rgb.attr[point_mask, 1:] = color
-              mesh_list = mesh_list + self.draw_open3D_box(
-                  label, expend_factor=expend_factor)
-      pcd = open3d.PointCloud()
-      pcd.points = open3d.Vector3dVector(cam_points_in_img_with_rgb.xyz)
-      pcd.colors = open3d.Vector3dVector(
-          cam_points_in_img_with_rgb.attr[:,1:4])
-      def custom_draw_geometry_load_option(geometry_list):
-          vis = open3d.Visualizer()
-          vis.create_window()
-          for geometry in geometry_list:
-              vis.add_geometry(geometry)
-          ctr = vis.get_view_control()
-          ctr.rotate(0.0, 3141.0, 0)
-          vis.run()
-          vis.destroy_window()
-      custom_draw_geometry_load_option(mesh_list + [pcd])
+    label_list=None, expend_factor=(1.0, 1.0, 1.0)):
+    color_map = {
+      'Pedestrian': ["DeepPink",(255,20,147)],
+      'Person_sitting': ["DeepPink",(255,255,147)],
+      'Car': ['Red', (255, 0, 0)],
+      'Van': ['Red', (255, 255, 0)],
+      'Cyclist': ["Salmon",(250,128,114)],
+      'DontCare': ["Blue",(0,0,255)],
+    }
+    mesh_list = []
+    if label_list is not None:
+      for label in label_list:
+        print(label['name'])
+        point_mask = self.sel_points_in_box3d(label,
+          cam_points_in_img_with_rgb, expend_factor=expend_factor)
+        color = np.array(
+          color_map.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
+        cam_points_in_img_with_rgb.attr[point_mask, 1:] = color
+        mesh_list = mesh_list + self.draw_open3D_box(
+          label, expend_factor=expend_factor)
+    pcd = open3d.PointCloud()
+    pcd.points = open3d.Vector3dVector(cam_points_in_img_with_rgb.xyz)
+    pcd.colors = open3d.Vector3dVector(
+        cam_points_in_img_with_rgb.attr[:,1:4])
+    def custom_draw_geometry_load_option(geometry_list):
+      vis = open3d.Visualizer()
+      vis.create_window()
+      for geometry in geometry_list:  vis.add_geometry(geometry)
+      ctr = vis.get_view_control()
+      ctr.rotate(0.0, 3141.0, 0)
+      vis.run()
+      vis.destroy_window()
+    custom_draw_geometry_load_option(mesh_list + [pcd])
 
   def vis_graph(self, points, A):
-      """Visualize a 3D graph.
+    """Visualize a 3D graph.
 
-      Args:
-          points: a Point objects containing vertices.
-          A: the adjacency matrix.
+    Args:
+      points: a Point objects containing vertices.
+      A: the adjacency matrix.
 
-      """
-      xyz = points.xyz
-      d_idx = np.tile(
-          np.expand_dims(np.arange(A.shape[0]), 1), [1, A.shape[1]])
-      d_idx = d_idx.reshape([-1, 1])
-      s_idx = A.reshape([-1, 1])
-      lines = np.hstack([d_idx, s_idx])
-      line_set = open3d.LineSet()
-      line_set.points = open3d.Vector3dVector(xyz)
-      line_set.lines = open3d.Vector2iVector(lines)
-      line_set.colors = open3d.Vector3dVector(
-          [[1,0,0] for i in range(lines.shape[0])])
-      open3d.draw_geometries([line_set])
+    """
+    xyz = points.xyz
+    d_idx = np.tile(
+        np.expand_dims(np.arange(A.shape[0]), 1), [1, A.shape[1]])
+    d_idx = d_idx.reshape([-1, 1])
+    s_idx = A.reshape([-1, 1])
+    lines = np.hstack([d_idx, s_idx])
+    line_set = open3d.LineSet()
+    line_set.points = open3d.Vector3dVector(xyz)
+    line_set.lines  = open3d.Vector2iVector(lines)
+    line_set.colors = open3d.Vector3dVector(
+      [[1,0,0] for i in range(lines.shape[0])])
+    open3d.draw_geometries([line_set])
 
   def vis_point_graph(self, cam_points_in_img_with_rgb, A, labels=None,
     edge_color=None):
@@ -1309,13 +1325,13 @@ class KittiDataset(object):
     """
     mesh_list = []
     if labels is not None:
-        # if labels are provided, add 3D bounding boxes.
-        for label in labels:
-            # point_mask = kitti.sel_points_in_box3d(label,
-            #     cam_points_in_img_with_rgb)
-            # cam_points_in_img_with_rgb.attr[point_mask, :]
-            # = (0, 255, 0, 0)
-            mesh_list = mesh_list + self.draw_open3D_box(label)
+      # if labels are provided, add 3D bounding boxes.
+      for label in labels:
+        # point_mask = kitti.sel_points_in_box3d(label,
+        #     cam_points_in_img_with_rgb)
+        # cam_points_in_img_with_rgb.attr[point_mask, :]
+        # = (0, 255, 0, 0)
+        mesh_list = mesh_list + self.draw_open3D_box(label)
     pcd = open3d.PointCloud()
     pcd.points = open3d.Vector3dVector(cam_points_in_img_with_rgb.xyz)
     pcd.colors = open3d.Vector3dVector(
