@@ -16,21 +16,23 @@ gpu = dml.device(0)
 
 
 def multi_layer_downsampling(points_xyz,base_voxel_size,levels=[1],add_rnd3d=False):
-  """ Downsamples the points using base_voxel-size as different scales 
+  """ Downsamples the points using base_voxel_size at different scales 
   
   @param  points_xyz[array (N,3)]:  points
   @param  base_voxel_size[float]:   base voxel size
   @param  levels[list]:             list of levels
   @param  add_rnd3d[bool]:          add random 3d offset
+
+  @return # TODO: what does this return?
   """
    
   xmin, ymin, zmin  = np.min(points_xyz, axis=0)        # get the minimum values of the points
   xyz_offset        = np.asarray([[xmin, ymin, zmin]])  # define min values as offset
-  downsampled_list  = [points_xyz]
+  downsampled_list  = [points_xyz]                      # initialize downsampled list with original data
   last_level        = 0
 
-  for level in levels: # TODO: what is a level
-    if np.isclose(last_level,level): # TODO: understand this condition
+  for level in levels: # TODO: what is a level (assuming scaling factors)
+    if np.isclose(last_level,level): # no significant change in scale
       downsampled_list.append(np.copy(downsampled_list[-1]))
     else:
       if add_rnd3d: # rescaled grid with point adaptation
@@ -58,22 +60,22 @@ def multi_layer_downsampling(points_xyz,base_voxel_size,levels=[1],add_rnd3d=Fal
 
 
 def multi_layer_downsampling_select(points_xyz, base_voxel_size, levels=[1],add_rnd3d=False):
-  """ Downsample the points at different scales and mathc the downsampled points to original points by a nearest neighbor search
+  """ Downsample the points at different scales and match the downsampled points to original points by a nearest neighbor search
   
   @param  points_xyz[array (N,3)]:  points
   @param  base_voxel_size[float]:   base voxel size
   @param  levels[list]:             list of levels # TODO: meaning still unknown
   @param  add_rnd3d[bool]:          add random 3d offset
 
-  returns: downsampled_list, indices_list
+  @returns: downsampled_list, indices_list
   """
 
-  vertex_coord_list = multi_layer_downsampling(     # TODO: what does this return?
-    points_xyz, base_voxel_size, levels, add_rnd3d)
+  # TODO: what does this return?p
+  vertex_coord_list = multi_layer_downsampling(points_xyz, base_voxel_size, levels, add_rnd3d)
   num_levels = len(vertex_coord_list)
   assert num_levels == len(levels) + 1
 
-  # mathc downsampled vertices to original by a nearest neighbor search.
+  # match downsampled vertices to original by a nearest neighbor search.
   keypoint_indices_list = []
   last_level = 0
 
@@ -82,7 +84,7 @@ def multi_layer_downsampling_select(points_xyz, base_voxel_size, levels=[1],add_
     base_points     = vertex_coord_list[i-1]
     current_points  = vertex_coord_list[i]
 
-    if np.isclose(current_level,last_level):
+    if np.isclose(current_level,last_level): # TODO: why do we care about this?
       # same downsample scale (gnn layer)
       # just copy it, no need to search
       vertex_coord_list[i] = base_points
@@ -91,7 +93,7 @@ def multi_layer_downsampling_select(points_xyz, base_voxel_size, levels=[1],add_
     else:
       # different scale (pooling layer), search original points
       nbrs = NearestNeighbors( # TODO: understand the return variable of this function
-        n_neighbors=1,algorithm='kd_tree',n_jobs=1).fit(base_points) 
+        n_neighbors=1,algorithm='kd_tree',n_jobs=-1).fit(base_points) 
 
       indices = nbrs.kneighbors(current_points,return_distance=False)
       vertex_coord_list[i] = base_points[indices[:,0],:]
@@ -174,7 +176,7 @@ def gen_multi_level_local_graph_v3(
   returns: vertex_coord_list, keypoint_indices_list, edges_list
   """
   if isinstance(base_voxel_size, list): # convert list to array
-      base_voxel_size = np.array(base_voxel_size)
+    base_voxel_size = np.array(base_voxel_size)
   # Gather the downsample scale for each graph
   scales = [config['graph_scale'] for config in level_configs] # get graph scales
   # Generate vertex coordinates
@@ -194,31 +196,37 @@ def gen_multi_level_local_graph_v3(
     center_xyz    = vertex_coord_list[graph_level+1]
     vertices      = gen_graph_fn(points_xyz, center_xyz, **method_kwarg)
     edges_list.append(vertices)
+
   return vertex_coord_list, keypoint_indices_list, edges_list
 
+
 def gen_disjointed_rnn_local_graph_v3(
-    points_xyz, center_xyz, radius, num_neighbors,
-    neighbors_downsample_method='random',scale=None):
+  points_xyz, center_xyz, radius, num_neighbors,
+  neighbors_downsample_method='random',
+  scale=None):
   """Generate a local graph by radius neighbors.
   """
   if scale is not None:
-    scale       = np.array(scale)
-    points_xyz  = points_xyz/scale
-    center_xyz  = center_xyz/scale
-  nbrs    = NearestNeighbors(
+    scale = np.array(scale)           # convert scale list to array
+    points_xyz = points_xyz/scale     # normalisation TODO: dont understand why we are not multiplying by scale here
+    center_xyz = center_xyz/scale     # same
+  nbrs = NearestNeighbors(            # init. nearest neighbor model
     radius=radius,algorithm='ball_tree', n_jobs=1, ).fit(points_xyz)
-  indices = nbrs.radius_neighbors(center_xyz, return_distance=False)
+  indices = nbrs.radius_neighbors(center_xyz, return_distance=False) # TODO: makes little sense
+
   if num_neighbors > 0:
-    if neighbors_downsample_method == 'random':
+    if neighbors_downsample_method == 'random': # TODO: what if not?
       indices = [neighbors if neighbors.size <= num_neighbors else
         np.random.choice(neighbors, num_neighbors, replace=False)
         for neighbors in indices]
-  vertices_v  = np.concatenate(indices)
-  vertices_i  = np.concatenate([i*np.ones(neighbors.size, dtype=np.int32)
-                                for i, neighbors in enumerate(indices)])
-  vertices    = np.array([vertices_v, vertices_i]).transpose()
 
+  vertices_v = np.concatenate(indices)
+  vertices_i = np.concatenate(
+    [i*np.ones(neighbors.size, dtype=np.int32) 
+    for i, neighbors in enumerate(indices)])
+  vertices = np.array([vertices_v, vertices_i]).transpose()
   return vertices
+
 
 def get_graph_generate_fn(method_name):
   """ Get the graph generation function by method name """

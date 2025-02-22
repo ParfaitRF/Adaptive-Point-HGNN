@@ -21,15 +21,16 @@ def focal_loss_sigmoid(labels, logits, alpha=0.5, gamma=2):
 
   prob      = sigmoid(logits)
   labels    = F.one_hot(labels, num_classes=prob.shape[-1]).to(torch.float)
-
   criterion = nn.BCEWithLogitsLoss(reduce='none')
-  
   
   cross_ent     = criterion(logits, labels)
   prob_t        = labels*prob + (1-labels)*(1-prob)
   modulating    = torch.pow(1-prob_t, gamma)
   alpha_weight  = (labels*alpha) + (1-labels)*(1-alpha)
   focal_cross_entropy = modulating * alpha_weight * cross_ent
+
+  # Sum over the classes dimension to get a single loss per data point
+  focal_cross_entropy = torch.sum(focal_cross_entropy, dim=-1)
 
   return focal_cross_entropy
 

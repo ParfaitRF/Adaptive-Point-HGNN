@@ -45,7 +45,7 @@ def multi_layer_fc_fn(sv, mask=None, Ks=(64, 32, 64), num_classes=4,
     Args:
         sv: a [N, M] or [T, DEGREE, M] tensor.
         N is the total number of edges, M is the length of features. T is
-        the number of recieving vertices, DEGREE is the in-degree of each
+        the number of receiving vertices, DEGREE is the in-degree of each
         recieving vertices. When a [T, DEGREE, M] tensor is provided, the
         degree of each recieving vertex is assumed to be same.
         N is the total number of edges, M is the length of features. T is
@@ -62,6 +62,7 @@ def multi_layer_fc_fn(sv, mask=None, Ks=(64, 32, 64), num_classes=4,
     """
     assert len(sv.shape) == 2
     assert len(Ks) == num_layer-1
+    
     if is_logits:
         features = sv
         for i in range(num_layer-1):

@@ -1,26 +1,37 @@
-# numeric manipulations
-numpy=2.0.2
-pandas=2.2.3
+# 2 player games
+nashpy==0.0.41
+# kA
+networkx==3.4.2
+
+# numericcal/symbolic manipulations
+numpy==2.0.2
+scipy==1.15.1
+pandas==2.2.3
+
 # visualization
-matplotlib=3.10.0
-open3d=0.19.0
-opencv-python=4.11.0.86
+matplotlib==3.10.0
+open3d==0.19.0
+opencv-python==4.11.0.86
+
 # geometric
-shapely=2.0.6
+shapely==2.0.6
 
 # machine learning
-scikit-learn=1.6.1
-tensorflow=2.18.0
-tensorboard=2.18.0
-torch=2.4.1
-torch_geometric=2.6.1
-torch_vision=0.19.1
+scikit-learn==1.6.1
+tensorflow==2.18.0
+tensorboard==2.18.0
+torch==2.4.1
+torch_geometric==2.6.1
+torchvision==0.19.1
+
 # for broke people gpu support
-torch_directml=0.2.5.dev240914
+torch_directml==0.2.5.dev240914
+
 # for gpu support on nvidia devices
-cudatoolkit=11.2 
-cudnn=8.1
+cudatoolkit==11.2 
+cudnn==8.1
+
 # auxiliary
-tqdm=4.67.1
-tf_slim=1.1.0         # (import tf_slim as slim) instead of (import tensorflow.contrib.slim as slim)
+tqdm==4.67.1      # progress bar
+tf_slim==1.1.0    # tensorflow slim
 

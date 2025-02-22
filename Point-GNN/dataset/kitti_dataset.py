@@ -84,7 +84,6 @@ def downsample_by_random_voxel(points, voxel_size, add_rnd3d=False):
     return Points(xyz=np.array(downsampled_xyz),
         attr=np.array(downsampled_attr))
 
-
 def box3d_to_cam_points(label, expend_factor=(1.0, 1.0, 1.0)):
     """Project 3D box into camera coordinates.
     Args:
@@ -185,7 +184,7 @@ def sel_xyz_in_box2d(label, xyz, expend_factor=(1.0, 1.0, 1.0)):
     return mask
 
 class KittiDataset(object):
-    """A class to interact with KITTI dataset."""
+    """A class to interact with KITTI dataset """
 
     def __init__(self, image_dir, point_dir, calib_dir, label_dir,
         index_filename=None, is_training=True, is_raw=False, difficulty=-100,
@@ -204,6 +203,7 @@ class KittiDataset(object):
         self._calib_dir = calib_dir
         self._label_dir = label_dir
         self._index_filename = index_filename
+
         if index_filename:
             self._file_list = self._read_index_file(index_filename)
         else:
@@ -609,6 +609,68 @@ class KittiDataset(object):
                 velo_points[:, 2] > z_range[0])*(velo_points[:, 2] < z_range[1])
             return Points(xyz = velo_points[mask], attr = reflections[mask])
         return Points(xyz = velo_points, attr = reflections)
+    
+    def get_image(self, frame_idx):
+        """Load the image from frame_idx.
+
+        Args:
+            frame_idx: the index of the frame to read.
+
+        Returns: cv2.matrix
+        """
+
+        image_file = join(self._image_dir, self._file_list[frame_idx])+'.png'
+        return cv2.imread(image_file)
+
+    def get_label(self, frame_idx, no_orientation=False):
+        """Load bbox labels from frame_idx frame.
+
+        Args:
+            frame_idx: the index of the frame to read.
+
+        Returns: a list of object label dictionaries.
+        """
+
+        MIN_HEIGHT = [40, 25, 25]
+        MAX_OCCLUSION = [0, 1, 2]
+        MAX_TRUNCATION = [0.15, 0.3, 0.5]
+        label_file = join(self._label_dir, self._file_list[frame_idx])+'.txt'
+        label_list = []
+        with open(label_file, 'r') as f:
+            for line in f:
+                label={}
+                line = line.strip()
+                if line == '':
+                    continue
+                fields = line.split(' ')
+                label['name'] = fields[0]
+                # 0=visible 1=partly occluded, 2=fully occluded, 3=unknown
+                label['truncation'] = float(fields[1])
+                label['occlusion'] = int(fields[2])
+                label['alpha'] =  float(fields[3])
+                label['xmin'] =  float(fields[4])
+                label['ymin'] =  float(fields[5])
+                label['xmax'] =  float(fields[6])
+                label['ymax'] =  float(fields[7])
+                label['height'] =  float(fields[8])
+                label['width'] =  float(fields[9])
+                label['length'] =  float(fields[10])
+                label['x3d'] =  float(fields[11])
+                label['y3d'] =  float(fields[12])
+                label['z3d'] =  float(fields[13])
+                label['yaw'] =  float(fields[14])
+                if len(fields) > 15:
+                    label['score'] =  float(fields[15])
+                if self.difficulty > -1:
+                    if label['truncation'] > MAX_TRUNCATION[self.difficulty]:
+                        continue
+                    if label['occlusion'] > MAX_OCCLUSION[self.difficulty]:
+                        continue
+                    if (label['ymax'] - label['ymin']
+                        ) < MIN_HEIGHT[self.difficulty]:
+                        continue
+                label_list.append(label)
+        return label_list
 
     def get_cam_points(self, frame_idx,
         downsample_voxel_size=None, calib=None, xyz_range=None):
@@ -690,67 +752,6 @@ class KittiDataset(object):
             image, calib)
         return cam_points_in_img_with_rgb
 
-    def get_image(self, frame_idx):
-        """Load the image from frame_idx.
-
-        Args:
-            frame_idx: the index of the frame to read.
-
-        Returns: cv2.matrix
-        """
-
-        image_file = join(self._image_dir, self._file_list[frame_idx])+'.png'
-        return cv2.imread(image_file)
-
-    def get_label(self, frame_idx, no_orientation=False):
-        """Load bbox labels from frame_idx frame.
-
-        Args:
-            frame_idx: the index of the frame to read.
-
-        Returns: a list of object label dictionaries.
-        """
-
-        MIN_HEIGHT = [40, 25, 25]
-        MAX_OCCLUSION = [0, 1, 2]
-        MAX_TRUNCATION = [0.15, 0.3, 0.5]
-        label_file = join(self._label_dir, self._file_list[frame_idx])+'.txt'
-        label_list = []
-        with open(label_file, 'r') as f:
-            for line in f:
-                label={}
-                line = line.strip()
-                if line == '':
-                    continue
-                fields = line.split(' ')
-                label['name'] = fields[0]
-                # 0=visible 1=partly occluded, 2=fully occluded, 3=unknown
-                label['truncation'] = float(fields[1])
-                label['occlusion'] = int(fields[2])
-                label['alpha'] =  float(fields[3])
-                label['xmin'] =  float(fields[4])
-                label['ymin'] =  float(fields[5])
-                label['xmax'] =  float(fields[6])
-                label['ymax'] =  float(fields[7])
-                label['height'] =  float(fields[8])
-                label['width'] =  float(fields[9])
-                label['length'] =  float(fields[10])
-                label['x3d'] =  float(fields[11])
-                label['y3d'] =  float(fields[12])
-                label['z3d'] =  float(fields[13])
-                label['yaw'] =  float(fields[14])
-                if len(fields) > 15:
-                    label['score'] =  float(fields[15])
-                if self.difficulty > -1:
-                    if label['truncation'] > MAX_TRUNCATION[self.difficulty]:
-                        continue
-                    if label['occlusion'] > MAX_OCCLUSION[self.difficulty]:
-                        continue
-                    if (label['ymax'] - label['ymin']
-                        ) < MIN_HEIGHT[self.difficulty]:
-                        continue
-                label_list.append(label)
-        return label_list
 
     def box3d_to_cam_points(self, label, expend_factor=(1.0, 1.0, 1.0)):
         """Project 3D box into camera coordinates.

@@ -50,9 +50,7 @@ class KittiDataset(object):
 
     self.num_files      = len(self.file_list)
     
-    self.verify_file_list(
-      self.image_dir, self.point_dir, self.calib_dir, self.label_dir, self.file_list,is_training,is_raw
-    )
+    self.verify_file_list( self.image_dir, self.point_dir, self.calib_dir, self.label_dir, self.file_list,is_training,is_raw )
     
 
   def __str__(self):
@@ -260,7 +258,7 @@ class KittiDataset(object):
     file_list.sort()
     return file_list
   
-  def verify_file_list(self, image_dir, pc_dir, label_dir, calib_dir, file_list,is_training, is_raw):
+  def verify_file_list(self, image_dir, point_dir, calib_dir, label_dir, file_list,is_training, is_raw):
     """Verify the files in file_list exist.
 
     @param: image_dir[str]:   path to image folder.
@@ -276,12 +274,12 @@ class KittiDataset(object):
 
     for f in file_list:
       image_file  = join(image_dir, f)+'.png'
-      pc_file     = join(pc_dir, f)+'.bin'
+      point_file  = join(point_dir, f)+'.bin'
       label_file  = join(label_dir, f)+'.txt'
       calib_file  = join(calib_dir, f)+'.txt'
 
       assert isfile(image_file), "Image file %s does not exist" % image_file
-      assert isfile(pc_file), "Point-Cloud file %s does not exist" % pc_file
+      assert isfile(point_file), "Point-Cloud file %s does not exist" % point_file
       if not is_raw:  assert isfile(calib_file), "Calibration file %s does not exist" % calib_file
       if is_training: assert isfile(label_file),"Label %s does not exist" % label_file
 
@@ -473,8 +471,6 @@ class KittiDataset(object):
     Returns: Points in camera coordinates
     """
     velo_points = self.get_velo_points(frame_idx, xyz_range=xyz_range)
-    from pprint import pprint
-    pprint(velo_points)
     if calib is None: calib = self.get_calib(frame_idx)
     cam_points  = self.velo_points_to_cam(velo_points, calib)
     if downsample_voxel_size is not None:
@@ -739,21 +735,24 @@ class KittiDataset(object):
     """
 
     yaw = label['yaw']
-    R = np.array([[np.cos(yaw),  0,  np.sin(yaw)],
-                  [0,            1,  0          ],
-                  [-np.sin(yaw), 0,  np.cos(yaw)]])
+    R   = np.array(
+      [[np.cos(yaw),  0,  np.sin(yaw)],
+       [0,            1,  0          ],
+       [-np.sin(yaw), 0,  np.cos(yaw)]])
+      
     h = label['height']
-    delta_h = h*(expend_factor[0]-1)
     w = label['width']*expend_factor[1]
     l = label['length']*expend_factor[2]
-    corners = np.array([[ l/2,  delta_h/2,  w/2],  # front up right
-                        [ l/2,  delta_h/2, -w/2],  # front up left
-                        [-l/2,  delta_h/2, -w/2],  # back up left
-                        [-l/2,  delta_h/2,  w/2],  # back up right
-                        [ l/2, -h-delta_h/2,  w/2],  # front down right
-                        [ l/2, -h-delta_h/2, -w/2],  # front down left
-                        [-l/2, -h-delta_h/2, -w/2],  # back down left
-                        [-l/2, -h-delta_h/2,  w/2]]) # back down right
+    delta_h = h*(expend_factor[0]-1)
+    corners = np.array(
+      [[ l/2,  delta_h/2,  w/2],    # front up right
+       [ l/2,  delta_h/2, -w/2],     # front up left
+       [-l/2,  delta_h/2, -w/2],     # back up left
+       [-l/2,  delta_h/2,  w/2],     # back up right
+       [ l/2, -h-delta_h/2,  w/2],   # front down right
+       [ l/2, -h-delta_h/2, -w/2],   # front down left
+       [-l/2, -h-delta_h/2, -w/2],   # back down left
+       [-l/2, -h-delta_h/2,  w/2]])  # back down right
     r_corners = corners.dot(np.transpose(R))
     tx = label['x3d']
     ty = label['y3d']
@@ -763,14 +762,16 @@ class KittiDataset(object):
 
 
   def boxes_3d_to_line_set(self, boxes_3d, boxes_color=None):
-    points = []
-    edges = []
-    colors = []
+    points  = []
+    edges   = []
+    colors  = []
     for i, box_3d in enumerate(boxes_3d):
       x3d, y3d, z3d, l, h, w, yaw = box_3d
-      R = np.array([[np.cos(yaw),  0,  np.sin(yaw)],
-                    [0,            1,  0          ],
-                    [-np.sin(yaw), 0,  np.cos(yaw)]]);
+      R = np.array(
+        [[np.cos(yaw),  0,  np.sin(yaw)],
+         [0,            1,  0          ],
+         [-np.sin(yaw), 0,  np.cos(yaw)]])
+      
       corners = np.array([
         [ l/2,  0.0,  w/2], # front up right
         [ l/2,  0.0, -w/2], # front up left
@@ -780,19 +781,21 @@ class KittiDataset(object):
         [ l/2, -h, -w/2],   # front down left
         [-l/2, -h, -w/2],   # back down left
         [-l/2, -h,  w/2]])  # back down right
+      
       r_corners       = corners.dot(np.transpose(R))
       cam_points_xyz  = r_corners+np.array([x3d, y3d, z3d])
       points.append(cam_points_xyz)
       edges.append(
-          np.array([[0, 1], [0, 4], [0, 3],
-                  [1, 2], [1, 5], [2, 3],
-                  [2, 6], [3, 7], [4, 5],
-                  [4, 7], [5, 6], [6, 7]])+i*8)
+        np.array(
+          [[0, 1], [0, 4], [0, 3],
+           [1, 2], [1, 5], [2, 3],
+           [2, 6], [3, 7], [4, 5],
+           [4, 7], [5, 6], [6, 7]])+i*8)
       
       if boxes_color is None:
-          colors.append(np.tile([[1.0, 0.0, 0.0]], [12, 1]))
+        colors.append(np.tile([[1.0, 0.0, 0.0]], [12, 1]))
       else:
-          colors.append(np.tile(boxes_color[[i], :], [12, 1]))
+        colors.append(np.tile(boxes_color[[i], :], [12, 1]))
 
     if len(points) == 0:  return None, None, None
     return np.vstack(points), np.vstack(edges), np.vstack(colors)
@@ -811,7 +814,7 @@ class KittiDataset(object):
     R = np.array([
       [np.cos(yaw),  0,  np.sin(yaw)],
       [0,            1,  0          ],
-      [-np.sin(yaw), 0,  np.cos(yaw)]]);
+      [-np.sin(yaw), 0,  np.cos(yaw)]])
     Rh = np.array([ 
       [1, 0, 0],
       [0, 0, 1],
@@ -980,7 +983,7 @@ class KittiDataset(object):
 
     img_points = self.cam_points_to_image(points, calib)
     rgb = image[np.int32(img_points.xyz[:,1]),
-        np.int32(img_points.xyz[:,0]),::-1].astype(np.float32)/255
+      np.int32(img_points.xyz[:,0]),::-1].astype(np.float32)/255
     return Points(points.xyz, np.hstack([points.attr, rgb]))
 
   def velo_points_to_cam(self, points, calib):
@@ -988,8 +991,8 @@ class KittiDataset(object):
 
     """
     cam_xyz = np.matmul(
-       points.xyz,
-       np.transpose(calib['velo_to_cam'])[:3,:3].astype(np.float32))
+      points.xyz,
+      np.transpose(calib['velo_to_cam'])[:3,:3].astype(np.float32))
     cam_xyz += np.transpose(calib['velo_to_cam'])[[3], :3].astype(np.float32)
     return Points(xyz = cam_xyz, attr = points.attr)
 
@@ -1157,57 +1160,57 @@ class KittiDataset(object):
     return cls_labels, boxes_3d, valid_boxes, label_map
 
   def assign_classaware_car_label_to_points(self, labels, xyz, expend_factor):
-      """Assign class label and bounding boxes to xyz points. """
-      assert self.num_classes == 4
-      num_points = xyz.shape[0]
-      assert num_points > 0, "No point No prediction"
-      assert xyz.shape[1] == 3
-      # define label map
-      label_map = {
-        'Background': 0,
-        'Car': 1,
-        'DontCare': 3
-      }
-      # by default, all points are assigned with background label 0.
-      cls_labels  = np.zeros((num_points, 1), dtype=np.int64)
-      # 3d boxes for each point
-      boxes_3d    = np.zeros((num_points, 1, 7))
-      valid_boxes = np.zeros((num_points, 1, 1), dtype=np.float32)
-      # add label for each object
-      for label in labels:
-        obj_cls_string = label['name']
-        obj_cls = label_map.get(obj_cls_string, 3)
+    """Assign class label and bounding boxes to xyz points. """
+    assert self.num_classes == 4
+    num_points = xyz.shape[0]
+    assert num_points > 0, "No point No prediction"
+    assert xyz.shape[1] == 3
+    # define label map
+    label_map = {
+      'Background': 0,
+      'Car': 1,
+      'DontCare': 3
+    }
+    # by default, all points are assigned with background label 0.
+    cls_labels  = np.zeros((num_points, 1), dtype=np.int64)
+    # 3d boxes for each point
+    boxes_3d    = np.zeros((num_points, 1, 7))
+    valid_boxes = np.zeros((num_points, 1, 1), dtype=np.float32)
+    # add label for each object
+    for label in labels:
+      obj_cls_string = label['name']
+      obj_cls = label_map.get(obj_cls_string, 3)
+    
+      if obj_cls >= 1 and obj_cls <= 2:
+        mask  = self.sel_xyz_in_box3d(label, xyz, expend_factor)
+        yaw   = label['yaw']
       
-        if obj_cls >= 1 and obj_cls <= 2:
-          mask  = self.sel_xyz_in_box3d(label, xyz, expend_factor)
-          yaw   = label['yaw']
-        
-          while yaw < -0.25*np.pi:
-            yaw += np.pi
-          while yaw > 0.75*np.pi:
-            yaw -= np.pi
+        while yaw < -0.25*np.pi:
+          yaw += np.pi
+        while yaw > 0.75*np.pi:
+          yaw -= np.pi
 
-          if yaw < 0.25*np.pi:
-            # horizontal
-            cls_labels[mask, :] = obj_cls
-            boxes_3d[mask, 0, :] = (label['x3d'], label['y3d'],
-              label['z3d'], label['length'], label['height'],
-              label['width'], yaw)
-            valid_boxes[mask, 0, :] = 1
-          else:
-            # vertical
-            cls_labels[mask, :] = obj_cls+1
-            boxes_3d[mask, 0, :] = (label['x3d'], label['y3d'],
-              label['z3d'], label['length'], label['height'],
-              label['width'], yaw)
-            valid_boxes[mask, 0, :] = 1
+        if yaw < 0.25*np.pi:
+          # horizontal
+          cls_labels[mask, :] = obj_cls
+          boxes_3d[mask, 0, :] = (label['x3d'], label['y3d'],
+            label['z3d'], label['length'], label['height'],
+            label['width'], yaw)
+          valid_boxes[mask, 0, :] = 1
         else:
-          if obj_cls_string != 'DontCare':
-            mask = self.sel_xyz_in_box3d(label, xyz, expend_factor)
-            cls_labels[mask, :] = obj_cls
-            valid_boxes[mask, 0, :] = 0.0
+          # vertical
+          cls_labels[mask, :] = obj_cls+1
+          boxes_3d[mask, 0, :] = (label['x3d'], label['y3d'],
+            label['z3d'], label['length'], label['height'],
+            label['width'], yaw)
+          valid_boxes[mask, 0, :] = 1
+      else:
+        if obj_cls_string != 'DontCare':
+          mask = self.sel_xyz_in_box3d(label, xyz, expend_factor)
+          cls_labels[mask, :] = obj_cls
+          valid_boxes[mask, 0, :] = 0.0
 
-      return cls_labels, boxes_3d, valid_boxes, label_map
+    return cls_labels, boxes_3d, valid_boxes, label_map
 
   def assign_classaware_ped_and_cyc_label_to_points(self, labels, xyz,expend_factor):
     """Assign class label and bounding boxes to xyz points. """
