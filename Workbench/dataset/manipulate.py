@@ -20,8 +20,8 @@ def downsample_by_average(points,voxel_size):
   """
 
   # create voxel grid
-  xmax,ymax,zmax    = np.amax(points, axis=0)         # max cloud values along all axes
-  xmin,ymin,zmin    = np.amin(points, axis=0)         # min cloud values along all axes
+  xmax,ymax,zmax    = np.amax(points.xyz, axis=0)         # max cloud values along all axes
+  xmin,ymin,zmin    = np.amin(points.xyz, axis=0)         # min cloud values along all axes
   o                 = np.zeros(3,dtype=np.float32)    # origin
   xyz_offset        = np.array([xmin,ymin,zmin])      # cloud offset from origin
   xyz_idx           = np.asarray(points.xyz - xyz_offset,dtype=np.float32) // voxel_size # point voxel indezes

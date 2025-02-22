@@ -33,18 +33,18 @@ for frame_idx in tqdm(range(0, dataset.num_files)):
         point_mask = (cos > lower) * (cos < higher)
         point_total_mask += point_mask
         # Visualization
-        # pcd = open3d.PointCloud()
-        # pcd.points = open3d.Vector3dVector(velo_points.xyz[point_total_mask, :])
-        # def custom_draw_geometry_load_option(geometry_list):
-        #     vis = open3d.Visualizer()
-        #     vis.create_window()
-        #     for geometry in geometry_list:
-        #         vis.add_geometry(geometry)
-        #     ctr = vis.get_view_control()
-        #     ctr.rotate(0.0, 3141.0, 0)
-        #     vis.run()
-        #     vis.destroy_window()
-        # custom_draw_geometry_load_option([pcd])
+        pcd = open3d.PointCloud()
+        pcd.points = open3d.Vector3dVector(velo_points.xyz[point_total_mask, :])
+        def custom_draw_geometry_load_option(geometry_list):
+            vis = open3d.Visualizer()
+            vis.create_window()
+            for geometry in geometry_list:
+                vis.add_geometry(geometry)
+            ctr = vis.get_view_control()
+            ctr.rotate(0.0, 3141.0, 0)
+            vis.run()
+            vis.destroy_window()
+        custom_draw_geometry_load_option([pcd])
 
     output = np.hstack([velo_points.xyz[point_total_mask, :], velo_points.attr[point_total_mask, :]])
     point_file = output_dir + filename + '.bin'
