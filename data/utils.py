@@ -1,0 +1,132 @@
+# =============================================================================#
+# ================================== IMPORTS ==================================#
+# =============================================================================#
+
+from collections import defaultdict
+import random
+import numpy as np
+
+from globals import Points
+from data.transformations import box3d_to_normals
+
+# =============================================================================#
+# =========================== DOWNSAMPLING FUNCTIONS ==========================#
+# =============================================================================#
+
+def downsample_by_average_voxel(points:Points, voxel_size:float):
+  """Voxel downsampling using average function.
+  
+  @param points:      a Points namedtuple containing "xyz" and "attr".
+  @param voxel_size:  the size of voxel cells used for downsampling.
+
+  @return downsampled points and attributes.
+  """
+
+  xmin, ymin, zmin    = np.amin(points.xyz, axis=0)                             # get min values for each axis  
+  xyz_offset  = np.asarray([[xmin, ymin, zmin]])                                # offset defined using min vals
+  xyz_idx     = (points.xyz - xyz_offset) // voxel_size                         # define points voxel index
+  xyz_idx     = xyz_idx.astype(np.int32)                                                      
+  dim_x, dim_y, dim_z = np.amax(xyz_idx, axis=0) + 1                            # get grid dimensionss
+  keys        = xyz_idx[:, 0] + (xyz_idx[:, 1] + xyz_idx[:, 2]*dim_y)*dim_x     # create unique voxel keys
+  order       = np.argsort(keys)                                                                         
+  keys        = keys[order]
+  points_xyz  = points.xyz[order]
+  unique_keys, lens   = np.unique(keys, return_counts=True)
+  indices     = np.hstack([[0], lens[:-1]]).cumsum()
+  downsampled_xyz     = np.add.reduceat(                                        # get downsampled points   
+    points_xyz, indices, axis=0
+  )/lens[:,np.newaxis]
+
+  downsampled_attr    = None                                                    # downsample attributes if any exist
+  if points.attr is not None:
+    downsampled_attr  = np.add.reduceat(
+      points.attr[order], indices, axis=0)/lens[:,np.newaxis]
+
+  return Points(xyz=downsampled_xyz,attr=downsampled_attr)
+
+
+def downsample_by_random_voxel(points:Points, 
+                               voxel_size:float, add_rnd3d:bool=False):
+  """Downsample the points using base_voxel_size at different scales and 
+  randomly choosing a point in the voxel
+
+  @param points:     a Points namedtuple containing "xyz" and "attr".
+  @param voxel_size: base voxel size for downsampling.
+  @param add_rnd3d:  add random noise to the voxel size.
+
+  @return downsampled points and attributes.
+  """
+
+  xmin, ymin, zmin = np.amin(points.xyz, axis=0)                                # get min values for each axis               
+  xyz_offset  = np.asarray([[xmin, ymin, zmin]])                                # offset defined using min vals
+
+  xyz_idx     = (points.xyz - xyz_offset)                                       # define points voxel index
+  if add_rnd3d:
+    xyz_idx += voxel_size*np.random.random((1,3))
+  xyz_idx     = xyz_idx // voxel_size
+
+  dim_x, dim_y, dim_z = np.amax(xyz_idx, axis=0) + 1                            # get grid dimensionss
+  keys        = xyz_idx[:, 0] + (xyz_idx[:, 1] + xyz_idx[:, 2]*dim_y)*dim_x     # create unique voxel keys
+  voxels_idx  = defaultdict(list)                                               # dictionary containing voxel_key:point_indices  
+
+  for pidx, key in enumerate(keys):                                             # assign points to voxels
+    voxels_idx[key].append(pidx)
+  voxels_idx  = dict(voxels_idx)           
+
+
+  downsampled_xyz     = []                                                      # downsample points and attributes by random selection
+  downsampled_attr    = []
+
+  for key in voxels_idx:
+    center_idx = random.choice(voxels_idx[key])
+    downsampled_xyz.append(points.xyz[center_idx])
+    downsampled_attr.append(points.attr[center_idx])
+
+  return Points(xyz=np.array(downsampled_xyz),attr=np.array(downsampled_attr))
+
+
+def sel_xyz_in_box3d(label:dict, xyz:list, expend_factor:tuple=(1.0, 1.0, 1.0)):
+  """ Identifies points in a bounding box
+
+  @param label:         a dictionary containing "x3d", "y3d", "z3d", "yaw", 
+                        "height", "width", "length".
+  @param xyz:           a numpy array containing the points to be filtered.
+  @param expend_factor: a tuple containing the scaling factors for the box.
+  
+  @return:              boolean mask indicating which points are within the bounding box
+  """
+
+  normals, lower, upper = box3d_to_normals(label, expend_factor)                # get normal vectors
+  projected   = np.matmul(xyz, np.transpose(normals))                           # project points onto normal surfaces
+  points_in_x = np.logical_and(projected[:, 0] > lower[0],                      # filter points within bounds 
+      projected[:, 0] < upper[0])
+  points_in_y = np.logical_and(projected[:, 1] > lower[1],
+      projected[:, 1] < upper[1])
+  points_in_z = np.logical_and(projected[:, 2] > lower[2],
+      projected[:, 2] < upper[2])
+  mask        = np.logical_and.reduce((points_in_x, points_in_y, points_in_z))
+
+  return mask
+
+
+def sel_xyz_in_box2d(label, xyz, expend_factor=(1.0, 1.0, 1.0)):
+  """ Select points in a 2D (yz-plane) bounding box 
+
+  @param label:        a dictionary containing "x3d", "y3d", "z3d", "yaw", 
+                        "height", "width", "length".
+  @param xyz:          a numpy array containing the points to be filtered.
+  @param expend_factor:a tuple containing the scaling factors for the box.
+
+  @return:             boolean mask indicating which points are within the bounding box
+  """
+
+  normals, lower, upper = box3d_to_normals(label, expend_factor)                # get normal vectors
+  normals, lower, upper = normals[1:], lower[1:], upper[1:]                     
+  projected   = np.matmul(xyz, np.transpose(normals))                           # project points onto normal planes
+  points_in_y = np.logical_and(projected[:, 0] > lower[0],
+                               projected[:, 0] < upper[0])
+  points_in_z = np.logical_and(projected[:, 1] > lower[1],
+                               projected[:, 1] < upper[1])
+  mask = np.logical_and.reduce((points_in_y, points_in_z))                      # define point in y-z-plane bound
+
+  return mask
