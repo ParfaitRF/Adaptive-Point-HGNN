@@ -1,10 +1,10 @@
 """ contains all functionalities needed for non-maximum suppression """
-
+from typing import Callable
 import cv2
 import numpy as np
 from shapely.geometry import Polygon                                            # A polygon is a 2D object
 
-from globals import M_ROT,COLOR1
+from globals import COLOR1
 from data.transformations import boxes_3d_to_corners
 
     
@@ -26,14 +26,14 @@ def overlapped_boxes_3d(single_box:np.array, box_list:list):
     x_min, y_min, z_min = np.min(box, axis=0)
 
     if x0_max < x_min or x0_min > x_max:                                        # caces of no overlap              
-        overlap[i] = 0
-        continue
+      overlap[i] = 0
+      continue
     if y0_max < y_min or y0_min > y_max:
-        overlap[i] = 0
-        continue
+      overlap[i] = 0
+      continue
     if z0_max < z_min or z0_min > z_max:
-        overlap[i] = 0
-        continue
+      overlap[i] = 0
+      continue
     
     x_draw_min  = min(x0_min, x_min)                                            # define frame dimensions
     x_draw_max  = max(x0_max, x_max)
@@ -42,7 +42,7 @@ def overlapped_boxes_3d(single_box:np.array, box_list:list):
     offset      = np.array([x_draw_min, z_draw_min])                            # define offset
     buf1        = np.zeros((z_draw_max-z_draw_min, x_draw_max-x_draw_min),      # create buffes
                            dtype=np.int32)
-    buf2  = np.zeros_like(buf1)
+    buf2        = np.zeros_like(buf1)
     cv2.fillPoly(buf1, [single_box[:4, [0,2]]-offset], color=COLOR1)            # fill polygon representation in buffer
     cv2.fillPoly(buf2, [box[:4, [0,2]]-offset], color=COLOR1)                   # fill polygon representation in buffer
     shared_area = cv2.countNonZero(buf1*buf2)                                   # intersection area
@@ -57,7 +57,7 @@ def overlapped_boxes_3d(single_box:np.array, box_list:list):
 
 
 def overlapped_boxes_3d_fast_poly(single_box:np.array, box_list:list):
-  """ Computes the overlap faster using the polygon class
+  """ Computes the overlap between a single box and multiple query boxes
 
   @param single_box: a single bounding box
   @param box_list:   list of bounding boxes 
@@ -69,26 +69,26 @@ def overlapped_boxes_3d_fast_poly(single_box:np.array, box_list:list):
   single_box_min_corner = np.min(single_box, axis=0)                            # get min values of all dimensions                    
   x0_max, y0_max, z0_max = single_box_max_corner                                # get coordinate values of max/min
   x0_min, y0_min, z0_min = single_box_min_corner
-  max_corner = np.max(box_list, axis=1)                                         # get max and min lits for list of query boxes
-  min_corner = np.min(box_list, axis=1)
-  overlap = np.zeros(len(box_list))                                             # intialize overlap list
+  max_corner    = np.max(box_list, axis=1)                                      # get max and min lits for list of query boxes
+  min_corner    = np.min(box_list, axis=1)
+  overlap       = np.zeros(len(box_list))                                       # intialize overlap list
   non_overlap_mask =  np.logical_or(single_box_max_corner < min_corner,         # mask indicating which boxes overlap
         single_box_min_corner > max_corner)
-  overlap_mask = not np.any(non_overlap_mask, axis=1)
-  p1  = Polygon(single_box[:4, [0,2]])
+  overlap_mask  = not np.any(non_overlap_mask, axis=1)
+  p1    = Polygon(single_box[:4, [0,2]])
   area1 = p1.area                                                               # get single box area
 
   for i,box in enumerate(box_list):
     if overlap_mask[i]:
       x_max, y_max, z_max = max_corner[i]
       x_min, y_min, z_min = min_corner[i]
-      p2 =  Polygon(box[:4, [0,2]])
-      shared_area = p1.intersection(p2).area                                    # get 2D overlap area   
+      p2    =  Polygon(box[:4, [0,2]])
+      shared_area   = p1.intersection(p2).area                                  # get 2D overlap area   
       area2 = p2.area
-      shared_y = min(y_max, y0_max) - max(y_min, y0_min)
-      intersection = shared_y * shared_area                                     # get 3D overlap volume
+      shared_y      = min(y_max, y0_max) - max(y_min, y0_min)
+      intersection  = shared_y * shared_area                                    # get 3D overlap volume
       union = (y_max-y_min) * area2 + (y0_max-y0_min) * area1
-      overlap[i] = np.float32(intersection) / (union - intersection)            # IoU
+      overlap[i]    = np.float32(intersection) / (union - intersection)         # IoU
 
   return overlap
 
@@ -124,7 +124,7 @@ def bboxes_sort(
 
 def bboxes_nms(
     classes:list, scores:list, bboxes:list, nms_threshold:float=0.45,
-    overlapped_fn:function=overlapped_boxes_3d_fast_poly,appr_factor:float=10.0, 
+    overlapped_fn:Callable=overlapped_boxes_3d_fast_poly,appr_factor:float=10.0, 
     attributes:list=None):
   """ Applies non-maximum supression to bounding boxes
 
@@ -146,8 +146,8 @@ def bboxes_nms(
 
   for i in range(scores.size-1):
     if keep_bboxes[i]:
-      overlap = overlapped_fn(boxes_corners[i], boxes_corners[(i+1):])          # compute overlap
-      keep_overlap = np.logical_or(                                             # keep those outside overlap threshold or diff class
+      overlap       = overlapped_fn(boxes_corners[i], boxes_corners[(i+1):])    # compute overlap
+      keep_overlap  = np.logical_or(                                            # keep those outside overlap threshold or diff class
         overlap <= nms_threshold, classes[(i+1):] != classes[i])
       keep_bboxes[(i+1):] = np.logical_and(keep_bboxes[(i+1):], keep_overlap)   # update mask
           
@@ -155,6 +155,7 @@ def bboxes_nms(
   classes = classes[idxes]
   scores  = scores[idxes]
   bboxes  = bboxes[idxes]
+  
   if attributes is not None: attributes = attributes[idxes]
 
   return classes, scores, bboxes, attributes
@@ -162,7 +163,7 @@ def bboxes_nms(
 
 def bboxes_nms_uncertainty(
     classes:list, scores:list, bboxes:np.array,scores_threshold:float=0.25,
-    nms_threshold:float=0.45,overlapped_fn:function=overlapped_boxes_3d,
+    nms_threshold:float=0.45,overlapped_fn:Callable=overlapped_boxes_3d,
     appr_factor:float=10.0,attributes:list=None):
   """ Applies non-maximum supression to bounding boxes with uncertainty 
   
@@ -213,7 +214,7 @@ def bboxes_nms_uncertainty(
 
 def bboxes_nms_merge_only(
     classes:list, scores:list, bboxes:list,scores_threshold:float=0.25,
-    nms_threshold:float=0.45,overlapped_fn:function=overlapped_boxes_3d,
+    nms_threshold:float=0.45,overlapped_fn:Callable=overlapped_boxes_3d,
     appr_factor:float=10.0,attributes:list=None):
   """ Applies non-maximum selection to bounding boxes.
 
@@ -256,7 +257,7 @@ def bboxes_nms_merge_only(
 
 def bboxes_nms_score_only(
     classes:list, scores:list, bboxes:list,scores_threshold:float=0.25,
-    nms_threshold:float=0.45,overlapped_fn:function=overlapped_boxes_3d,
+    nms_threshold:float=0.45,overlapped_fn:Callable=overlapped_boxes_3d,
     appr_factor:float=10.0,attributes:list=None):
   """ Applies non-maximum selection to bounding boxes.
 
@@ -305,7 +306,7 @@ def bboxes_nms_score_only(
 
 def nms_boxes_3d(
     class_labels:list, detection_boxes_3d:np.array,detection_scores:list,
-    overlapped_thres:float=0.5,overlapped_fn:function=overlapped_boxes_3d,
+    overlapped_thres:float=0.5,overlapped_fn:Callable=overlapped_boxes_3d,
     appr_factor:float=10.0,top_k:int=-1, attributes:list=None):
   """ Applies non-maximum selection to bounding boxes.
   
@@ -334,7 +335,7 @@ def nms_boxes_3d(
 
 def nms_boxes_3d_uncertainty(
   class_labels:list, detection_boxes_3d:np.array,detection_scores:list,
-  overlapped_thres:float=0.5,overlapped_fn:function=overlapped_boxes_3d, 
+  overlapped_thres:float=0.5,overlapped_fn:Callable=overlapped_boxes_3d, 
   appr_factor:float=10.0,top_k:int=-1, attributes:list=None):
   """ Applies non-maximum selection to bounding boxes with uncertainty 
   
@@ -365,7 +366,7 @@ def nms_boxes_3d_uncertainty(
 
 def nms_boxes_3d_merge_only(
   class_labels:list, detection_boxes_3d:np.array,detection_scores:list,
-  overlapped_thres:float=0.5,overlapped_fn:function=overlapped_boxes_3d, 
+  overlapped_thres:float=0.5,overlapped_fn:Callable=overlapped_boxes_3d, 
   appr_factor:float=10.0,top_k:int=-1, attributes:list=None):
   """ Applies non-maximum selection to bounding boxes by merging them
   
@@ -395,7 +396,7 @@ def nms_boxes_3d_merge_only(
 
 def nms_boxes_3d_score_only(
   class_labels:list, detection_boxes_3d:np.array,detection_scores:list,
-  overlapped_thres:float=0.5,overlapped_fn:function=overlapped_boxes_3d, 
+  overlapped_thres:float=0.5,overlapped_fn:Callable=overlapped_boxes_3d, 
   appr_factor:float=10.0,top_k:int=-1, attributes:list=None):
   """ Applies non-maximum selection to bounding boxes by selecting highest score 
   

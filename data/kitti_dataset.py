@@ -7,7 +7,7 @@ import cv2
 import open3d as o3d
 
 from globals import (
-  Points,M_ROT,
+  M_ROT,BOX_OFFSET,
   IMG_WIDTH, IMG_HEIGHT,                                                        # image dimensions
   OBJECT_HEIGHT_THRESHOLDS,TRUNCATION_THRESHOLDS,OCCULUSION_THRESHOLDS,         # thresholds
   OCCLUSION_COLORS,OBJECT_COLORS                                                # colors
@@ -16,7 +16,12 @@ from .transformations import (
   boxes_3d_to_corners,box3d_to_cam_points,box3d_to_normals,
   cam_points_to_image,velo_to_cam,
 )
-from .utils import downsample_by_average_voxel
+from .utils import (
+  Points,
+  downsample_by_average_voxel,sel_points_in_box3d,
+  sel_points_in_box2d,downsample_by_voxel
+)
+
 
 class KittiDataset(object):
   """ A class for interactions with the KITTI dataset """
@@ -316,7 +321,7 @@ class KittiDataset(object):
       calib['rect_to_cam'],calib['velo_to_rect'])
     calib['cam_to_velo']    = np.linalg.inv(calib['velo_to_cam'])
 
-    calib['velo_to_image'] = np.matmul(                                         # sanity check
+    calib['velo_to_image']  = np.matmul(                                        # sanity check
       calib['cam_to_image'],calib['velo_to_cam'])
     assert np.isclose(calib['velo_to_image'],
       np.matmul(np.matmul(calib['P2'], R0_rect),calib['velo_to_rect'])).all()
@@ -539,7 +544,7 @@ class KittiDataset(object):
     if len(points) == 0:  return None, None, None                               # empty set
 
     return np.vstack(points), np.vstack(edges), np.vstack(colors)
-  
+    
 
   def get_open3D_box(self, label:dict, expend_factor:tuple=(1.0, 1.0, 1.0)):
     """ creates o3d representation of bounding box
@@ -557,7 +562,6 @@ class KittiDataset(object):
     tx  = label['x3d']
     ty  = label['y3d']
     tz  = label['z3d']
-    #print((l, w, h))
     Rh  = np.array([ 
       [1, 0, 0],
       [0, 0, 1],
@@ -568,21 +572,7 @@ class KittiDataset(object):
       [1, 0, 0]])
 
     
-    box_offset = np.array([                                                     # somehow defines the bounding box 
-      [ l/2,  -h/2-delta_h/2,  w/2],
-      [ l/2,  -h/2-delta_h/2, -w/2],
-      [-l/2,  -h/2-delta_h/2, -w/2],
-      [-l/2,  -h/2-delta_h/2,  w/2],
-
-      [ l/2, delta_h/2, 0],
-      [ -l/2, delta_h/2, 0],
-      [l/2, -h-delta_h/2, 0],
-      [-l/2, -h-delta_h/2, 0],
-
-      [0, delta_h/2, w/2],
-      [0, delta_h/2, -w/2],
-      [0, -h-delta_h/2, w/2],
-      [0, -h-delta_h/2, -w/2]])
+    box_offset = BOX_OFFSET(l,w,h,delta_h)                                      # get box vertices  
     R = M_ROT(yaw)                                                              # define rotation matrix
 
     transform = np.matmul(R, np.transpose(box_offset))                          # rotate bounding box  
@@ -591,7 +581,7 @@ class KittiDataset(object):
     hrotation = np.vstack((R.dot(Rh), np.zeros((1,3))))
     lrotation = np.vstack((R.dot(Rl), np.zeros((1,3))))
     wrotation = np.vstack((R, np.zeros((1,3))))
-    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]                            # get box color
+    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]               # get box color
 
     h1_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
     #h1_cylinder = o3d.create_mesh_cylinder(radius = h/100, height = h)          # create edges
@@ -660,28 +650,14 @@ class KittiDataset(object):
     ]
   
 
-  def sel_points_in_box3d(
-    self, label:dict, points:Points,expend_factor:tuple=(1.0, 1.0, 1.0)):
-    """ Filters points bounding box
+  def sel_points_in_box3d(self, label:dict, points:Points,
+                          expend_factor:tuple=(1.0, 1.0, 1.0)):
+    return sel_points_in_box3d(label, points, expend_factor)
+  
 
-    @param label:   a dictionary containing "x3d", "y3d", "z3d", "yaw",
-                    "height", "width", "lenth".
-    @param points:  a Points object containing "xyz" and "attr".
-    @expend_factor: a tuple of (h, w, l) to expand the box.
-    @return: a bool mask indicating points inside a 3D box.
-    """
-
-    normals, lower, upper = box3d_to_normals(label, expend_factor)              # get box normals
-    projected   = np.matmul(points.xyz, np.transpose(normals))                  # project points to box normals
-    points_in_x = np.logical_and(projected[:, 0] > lower[0],                    # create filters along all axis
-                                projected[:, 0] < upper[0])
-    points_in_y = np.logical_and(projected[:, 1] > lower[1],
-                                projected[:, 1] < upper[1])
-    points_in_z = np.logical_and(projected[:, 2] > lower[2],
-                                projected[:, 2] < upper[2])
-    mask = np.logical_and.reduce((points_in_x, points_in_y, points_in_z))       # filter boxes
-
-    return mask
+  def sel_points_in_box2d(self, label:dict, points:Points,
+                          expend_factor:tuple=(1.0, 1.0)):
+    return sel_points_in_box2d(label, points, expend_factor)
   
 
   def inspect_points(self, frame_idx, downsample_voxel_size=None, calib=None, 
@@ -709,8 +685,8 @@ class KittiDataset(object):
     if label_list is not None:
       for label in label_list:                                                  # iterate all objects label list
         #print(label['name'])
-        point_mask = self.sel_points_in_box3d(label,cam_points_in_img_with_rgb, # select points in bounding box 
-                                              expend_factor=expend_factor)
+        point_mask = self.sel_points_in_box3d(
+          label,cam_points_in_img_with_rgb.xyz,expend_factor=expend_factor)     # select points in bounding box 
         color = np.array(                                                       # get object color
           OBJECT_COLORS.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
         cam_points_in_img_with_rgb.attr[point_mask, 1:] = color                 # add colors to point attributes  
@@ -741,21 +717,7 @@ class KittiDataset(object):
 
   def downsample_by_voxel(self, points:Points, voxel_size:float, 
                           method:str='AVERAGE'):
-    """Downsample point cloud by voxel.
-
-    @param points:      a Points namedtuple containing "xyz" and "attr".
-    @param voxel_size:  the size of voxel cells used for downsampling.
-    @param method:      'AVERAGE', all points inside a voxel cell are averaged
-                        including xyz and attr.
-
-    @return:  downsampled points and attributes.
-    """
-
-    if method == 'AVERAGE':
-      res = downsample_by_average_voxel(points,voxel_size)                      # get downsampled points
-    else: raise Exception("Unknown method: %s" % method)
-    
-    return res
+    return downsample_by_voxel(points,voxel_size,method='AVERAGE')
   
 
   def rgb_to_cam_points(self, points:Points, image:np.array, calib:dict):

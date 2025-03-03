@@ -3,15 +3,81 @@
 # =============================================================================#
 
 from collections import defaultdict
+from collections import namedtuple
 import random
 import numpy as np
 
-from globals import Points
 from data.transformations import box3d_to_normals
+from data.preprocess import (
+  random_jitter,random_box_rotation,random_box_shift,random_transition,
+  remove_background,random_rotation_all,random_flip_all,random_drop,
+  random_global_drop,random_voxel_downsample,random_scale_all,
+  random_box_global_rotation,dilute_background,empty
+)
+
+
+# =============================================================================#
+# ============================== DATA AUGMENTATION ============================#
+# =============================================================================#
+
+AUG_METHOD_MAP = {
+  'random_jitter':        random_jitter,
+  'random_box_rotation':  random_box_rotation,
+  'random_box_shift':     random_box_shift,
+  'random_transition':    random_transition,
+  'remove_background':    remove_background,
+  'random_rotation_all':  random_rotation_all,
+  'random_flip_all':      random_flip_all,
+  'random_drop':          random_drop,
+  'random_global_drop':   random_global_drop,
+  'random_voxel_downsample':    random_voxel_downsample,
+  'random_scale_all':     random_scale_all,
+  'random_box_global_rotation': random_box_global_rotation,
+  'dilute_background':    dilute_background,
+}
+
+def get_data_aug(aug_configs=[]):
+  """ Get data augmentation function based on the configuration.
+  @param aug_configs: a list of dictionaries containing the augmentation
+                      configurations. 
+  @return a function that applies the augmentation.
+  """
+  if len(aug_configs)==0: return empty
+
+  def multiple_aug(cam_rgb_points, labels):
+    for aug_config in aug_configs:
+      aug_method = AUG_METHOD_MAP[aug_config['method_name']]
+      cam_rgb_points, labels = aug_method(
+        cam_rgb_points, labels, **aug_config['method_kwargs'])
+    return cam_rgb_points, labels
+  
+  return multiple_aug
 
 # =============================================================================#
 # =========================== DOWNSAMPLING FUNCTIONS ==========================#
 # =============================================================================#
+
+Points  = namedtuple('Points', ['xyz', 'attr'])                                 # data type for managing points/
+
+def downsample_by_voxel(points:Points, voxel_size:float,method:str='AVERAGE',add_rnd3d:bool=False):
+  """Downsample point cloud by voxel.
+
+  @param points:      a Points namedtuple containing "xyz" and "attr".
+  @param voxel_size:  the size of voxel cells used for downsampling.
+  @param method:      'AVERAGE', all points inside a voxel cell are averaged
+                      including xyz and attr.
+
+  @return:  downsampled points and attributes.
+  """
+
+  if method == 'AVERAGE':   res = downsample_by_average_voxel(                  # downsample by averaging points in voxel
+    points,voxel_size)  
+  elif method == 'RANDOM':  res = downsample_by_random_voxel(                   # downsample by random voxel sizes
+    points,voxel_size,add_rnd3d)
+  else: raise Exception("Unknown method: %s" % method)                          # raise exception if method is unknown           
+  
+  return res
+
 
 def downsample_by_average_voxel(points:Points, voxel_size:float):
   """Voxel downsampling using average function.
@@ -85,31 +151,31 @@ def downsample_by_random_voxel(points:Points,
   return Points(xyz=np.array(downsampled_xyz),attr=np.array(downsampled_attr))
 
 
-def sel_xyz_in_box3d(label:dict, xyz:list, expend_factor:tuple=(1.0, 1.0, 1.0)):
-  """ Identifies points in a bounding box
+def sel_points_in_box3d(label:dict, points_xyz:np.array,
+                        expend_factor:tuple=(1.0, 1.0, 1.0)):
+  """ Filters points bounding box
 
-  @param label:         a dictionary containing "x3d", "y3d", "z3d", "yaw", 
-                        "height", "width", "length".
-  @param xyz:           a numpy array containing the points to be filtered.
-  @param expend_factor: a tuple containing the scaling factors for the box.
-  
-  @return:              boolean mask indicating which points are within the bounding box
+  @param label:   a dictionary containing "x3d", "y3d", "z3d", "yaw",
+                  "height", "width", "lenth".
+  @param points:  a Points object containing "xyz" and "attr".
+  @expend_factor: a tuple of (h, w, l) to expand the box.
+  @return: a bool mask indicating points inside a 3D box.
   """
 
-  normals, lower, upper = box3d_to_normals(label, expend_factor)                # get normal vectors
-  projected   = np.matmul(xyz, np.transpose(normals))                           # project points onto normal surfaces
-  points_in_x = np.logical_and(projected[:, 0] > lower[0],                      # filter points within bounds 
-      projected[:, 0] < upper[0])
+  normals, lower, upper = box3d_to_normals(label, expend_factor)                # get box normals
+  projected   = np.matmul(points_xyz, np.transpose(normals))                    # project points to box normals
+  points_in_x = np.logical_and(projected[:, 0] > lower[0],                      # create filters along all axis
+                              projected[:, 0] < upper[0])
   points_in_y = np.logical_and(projected[:, 1] > lower[1],
-      projected[:, 1] < upper[1])
+                              projected[:, 1] < upper[1])
   points_in_z = np.logical_and(projected[:, 2] > lower[2],
-      projected[:, 2] < upper[2])
-  mask        = np.logical_and.reduce((points_in_x, points_in_y, points_in_z))
+                              projected[:, 2] < upper[2])
+  mask        = np.logical_and.reduce((points_in_x, points_in_y, points_in_z))  # filter boxes
 
   return mask
 
 
-def sel_xyz_in_box2d(label, xyz, expend_factor=(1.0, 1.0, 1.0)):
+def sel_points_in_box2d(label:str, points:Points, expend_factor:tuple=(1.0, 1.0, 1.0)):
   """ Select points in a 2D (yz-plane) bounding box 
 
   @param label:        a dictionary containing "x3d", "y3d", "z3d", "yaw", 
@@ -122,7 +188,7 @@ def sel_xyz_in_box2d(label, xyz, expend_factor=(1.0, 1.0, 1.0)):
 
   normals, lower, upper = box3d_to_normals(label, expend_factor)                # get normal vectors
   normals, lower, upper = normals[1:], lower[1:], upper[1:]                     
-  projected   = np.matmul(xyz, np.transpose(normals))                           # project points onto normal planes
+  projected   = np.matmul(points.xyz, np.transpose(normals))                    # project points onto normal planes
   points_in_y = np.logical_and(projected[:, 0] > lower[0],
                                projected[:, 0] < upper[0])
   points_in_z = np.logical_and(projected[:, 1] > lower[1],
@@ -130,3 +196,4 @@ def sel_xyz_in_box2d(label, xyz, expend_factor=(1.0, 1.0, 1.0)):
   mask = np.logical_and.reduce((points_in_y, points_in_z))                      # define point in y-z-plane bound
 
   return mask
+
