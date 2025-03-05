@@ -12,7 +12,6 @@ from data.transformations import boxes_3d_to_corners
 from utils.nms import overlapped_boxes_3d_fast_poly
 
 
-
 def random_jitter(
   cam_rgb_points:Points, labels:dict, xyz_std:tuple=(0.1, 0.1, 0.1)):
   """ Adds random noise to points coordinates

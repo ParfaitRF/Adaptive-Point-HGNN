@@ -3,11 +3,55 @@
 # =============================================================================#
 
 from collections import defaultdict
+from collections import namedtuple
 import random
 import numpy as np
 
-from globals import Points
 from data.transformations import box3d_to_normals
+from data.preprocess import (
+  random_jitter,random_box_rotation,random_box_shift,random_transition,
+  remove_background,random_rotation_all,random_flip_all,random_drop,
+  random_global_drop,random_voxel_downsample,random_scale_all,
+  random_box_global_rotation,dilute_background,empty
+)
+
+
+# =============================================================================#
+# ============================== DATA AUGMENTATION ============================#
+# =============================================================================#
+
+AUG_METHOD_MAP = {
+  'random_jitter':        random_jitter,
+  'random_box_rotation':  random_box_rotation,
+  'random_box_shift':     random_box_shift,
+  'random_transition':    random_transition,
+  'remove_background':    remove_background,
+  'random_rotation_all':  random_rotation_all,
+  'random_flip_all':      random_flip_all,
+  'random_drop':          random_drop,
+  'random_global_drop':   random_global_drop,
+  'random_voxel_downsample':    random_voxel_downsample,
+  'random_scale_all':     random_scale_all,
+  'random_box_global_rotation': random_box_global_rotation,
+  'dilute_background':    dilute_background,
+}
+
+def get_data_aug(aug_configs=[]):
+  """ Get data augmentation function based on the configuration.
+  @param aug_configs: a list of dictionaries containing the augmentation
+                      configurations. 
+  @return a function that applies the augmentation.
+  """
+  if len(aug_configs)==0: return empty
+
+  def multiple_aug(cam_rgb_points, labels):
+    for aug_config in aug_configs:
+      aug_method = AUG_METHOD_MAP[aug_config['method_name']]
+      cam_rgb_points, labels = aug_method(
+        cam_rgb_points, labels, **aug_config['method_kwargs'])
+    return cam_rgb_points, labels
+  
+  return multiple_aug
 
 
 # =============================================================================#

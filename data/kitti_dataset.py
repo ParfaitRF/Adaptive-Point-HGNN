@@ -317,6 +317,7 @@ class KittiDataset(object):
     calib['cam_to_velo']    = np.linalg.inv(calib['velo_to_cam'])
 
     calib['velo_to_image']  = np.matmul(                                        # sanity check
+    calib['velo_to_image']  = np.matmul(                                        # sanity check
       calib['cam_to_image'],calib['velo_to_cam'])
     assert np.isclose(calib['velo_to_image'],
       np.matmul(np.matmul(calib['P2'], R0_rect),calib['velo_to_rect'])).all()
@@ -540,6 +541,7 @@ class KittiDataset(object):
 
     return np.vstack(points), np.vstack(edges), np.vstack(colors)
     
+    
 
   def get_open3D_box(self, label:dict, expend_factor:tuple=(1.0, 1.0, 1.0)):
     """ creates o3d representation of bounding box
@@ -567,6 +569,7 @@ class KittiDataset(object):
       [1, 0, 0]])
 
     
+    box_offset = BOX_OFFSET(l,w,h,delta_h)                                      # get box vertices  
     box_offset = BOX_OFFSET(l,w,h,delta_h)                                      # get box vertices  
     R = M_ROT(yaw)                                                              # define rotation matrix
 
