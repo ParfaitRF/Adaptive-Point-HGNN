@@ -1,7 +1,6 @@
 """ Contains all fucntions needed for coordinate transformations """
 import numpy as np
-
-from globals import Points,M_ROT
+from globals import M_ROT,Points
 
 
 def box3d_to_cam_points(label:tuple, expend_factor:list=(1.0, 1.0, 1.0)):

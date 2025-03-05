@@ -1,1 +1,6 @@
 **/kitti/
+/test.json
+**/__pycache__/
+paper/*/
+*.tex
+*.log

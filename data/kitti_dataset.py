@@ -1,39 +1,40 @@
 import os
 from os.path import isfile, join
-from collections import defaultdict
+from copy import deepcopy
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import open3d as o3d
+from collections import defaultdict
+from tqdm import tqdm
+import json
 
 from globals import (
-  Points,M_ROT,
+  M_ROT,BOX_OFFSET,Points,
   IMG_WIDTH, IMG_HEIGHT,                                                        # image dimensions
   OBJECT_HEIGHT_THRESHOLDS,TRUNCATION_THRESHOLDS,OCCULUSION_THRESHOLDS,         # thresholds
   OCCLUSION_COLORS,OBJECT_COLORS                                                # colors
 )
 from .transformations import (
-  boxes_3d_to_corners,box3d_to_cam_points,box3d_to_normals,
-  cam_points_to_image,velo_to_cam,
+  boxes_3d_to_corners,box3d_to_cam_points,cam_points_to_image,velo_to_cam,
 )
-from .utils import downsample_by_average_voxel
+from .utils import (
+  sel_points_in_box3d,sel_points_in_box2d,downsample_by_voxel
+)
+from .preprocess import get_data_aug
+from utils.nms import overlapped_boxes_3d_fast_poly
+
 
 class KittiDataset(object):
   """ A class for interactions with the KITTI dataset """
-# =============================================================================#
-# ============================== INITIALIZATION ===============================#
-# =============================================================================#
+  # =============================================================================#
+  # ============================== INITIALIZATION ===============================#
+  # =============================================================================#
 
-  def __init__(
-    self, index_filename:str=None, is_training:bool=True, is_raw:bool=False, 
-    difficulty:int=0,num_classes:int=8):
-    """ Constructor of KittiDataset.
-
-    @param image_dir:   path to image folder.ooo
-    @param point_dir:   path to point cloud data folder.
-    @param calib_dir:   path to the calibration matrices.
-    @param label_dir:   path to the label folder.
-    @param index_filename:  path an index file.
+  def __init__(self,is_training:bool=True, is_raw:bool=False, difficulty:int=0,
+               num_classes:int=8):
+    """ Constructor
     @param is_training: determines if datasset is training set
     @param is_raw:      determines if dataset is raw dataset
     @param difficulty:  determines the difficulty of the dataset
@@ -46,14 +47,15 @@ class KittiDataset(object):
     self.difficulty     = difficulty
     # initialize input variables
     data_root_dir = os.path.dirname(os.path.abspath(__file__))
-    data_root_dir = join(data_root_dir,'kitti')
+    kitti_root_dir = join(data_root_dir,'kitti')
     subfolder     = 'training' if is_training else 'testing'
 
-    self._calib_dir = join(data_root_dir,subfolder,'calib')
-    self._image_dir = join(data_root_dir,subfolder,'image_2')
-    self._point_dir = join(data_root_dir,subfolder,'velodyne')
+    self._calib_dir = join(kitti_root_dir,subfolder,'calib')
+    self._image_dir = join(kitti_root_dir,subfolder,'image_2')
+    self._point_dir = join(kitti_root_dir,subfolder,'velodyne')
+    self._crop_file = join(data_root_dir,'cropped_boxes\\cropped.json')
     if is_training: 
-      self._label_dir = join(data_root_dir,subfolder,'label_2')
+      self._label_dir = join(kitti_root_dir,subfolder,'label_2')
 
     self._file_list = self._get_file_list(self._image_dir)
 
@@ -62,6 +64,8 @@ class KittiDataset(object):
     # set the maximum image height and width
     self._max_image_height  = IMG_HEIGHT
     self._max_image_width   = IMG_WIDTH
+
+    self._cropped_labels, self._cropped_cam_points = self.load_cropped_boxes()
 
   # ===========================================================================#
   # =========================== STRING REPRESENTATION =========================#
@@ -114,10 +118,6 @@ class KittiDataset(object):
               np.arctan(label['x3d']/label['z3d']))
             yaw_dict[object_name].append(label['yaw'])
 
-    plt.scatter(z_dict['Pedestrian'], np.array(l_dict['Pedestrian']))           # plot scatter plot of pedestrians
-    plt.title('Scatter plot pythonspot.com')
-    plt.show()
-
     # compute ingore statics
     truncation_rates    = []
     no_truncation_rates = []
@@ -125,7 +125,7 @@ class KittiDataset(object):
     image_width         = []
 
     for frame_idx in range(self.num_files):
-      labels  = self.get_label(frame_idx)                                       # get labels for in frame
+      labels  = self.get_label(frame_idx)                                       # get labels in frame
       calib   = self.get_calib(frame_idx)
       image   = self.get_image(frame_idx)
       image_height.append(image.shape[0])
@@ -316,7 +316,7 @@ class KittiDataset(object):
       calib['rect_to_cam'],calib['velo_to_rect'])
     calib['cam_to_velo']    = np.linalg.inv(calib['velo_to_cam'])
 
-    calib['velo_to_image'] = np.matmul(                                         # sanity check
+    calib['velo_to_image']  = np.matmul(                                        # sanity check
       calib['cam_to_image'],calib['velo_to_cam'])
     assert np.isclose(calib['velo_to_image'],
       np.matmul(np.matmul(calib['P2'], R0_rect),calib['velo_to_rect'])).all()
@@ -424,10 +424,10 @@ class KittiDataset(object):
     if calib is None: calib = self.get_calib(frame_idx)                         # get calibration matrices
 
     velo_points = self.get_velo_points(frame_idx, xyz_range=xyz_range)
-    cam_points  = velo_to_cam(velo_points, calib)                           # convert velodyne to camera points
+    cam_points  = velo_to_cam(velo_points, calib)                               # convert velodyne to camera points
 
     if downsample_voxel_size is not None:
-      cam_points = self.downsample_by_voxel(cam_points,downsample_voxel_size) # downsample points by voxel
+      cam_points = self.downsample_by_voxel(cam_points,downsample_voxel_size)   # downsample points by voxel
         
     return cam_points
   
@@ -539,7 +539,7 @@ class KittiDataset(object):
     if len(points) == 0:  return None, None, None                               # empty set
 
     return np.vstack(points), np.vstack(edges), np.vstack(colors)
-  
+    
 
   def get_open3D_box(self, label:dict, expend_factor:tuple=(1.0, 1.0, 1.0)):
     """ creates o3d representation of bounding box
@@ -557,7 +557,6 @@ class KittiDataset(object):
     tx  = label['x3d']
     ty  = label['y3d']
     tz  = label['z3d']
-    #print((l, w, h))
     Rh  = np.array([ 
       [1, 0, 0],
       [0, 0, 1],
@@ -568,21 +567,7 @@ class KittiDataset(object):
       [1, 0, 0]])
 
     
-    box_offset = np.array([                                                     # somehow defines the bounding box 
-      [ l/2,  -h/2-delta_h/2,  w/2],
-      [ l/2,  -h/2-delta_h/2, -w/2],
-      [-l/2,  -h/2-delta_h/2, -w/2],
-      [-l/2,  -h/2-delta_h/2,  w/2],
-
-      [ l/2, delta_h/2, 0],
-      [ -l/2, delta_h/2, 0],
-      [l/2, -h-delta_h/2, 0],
-      [-l/2, -h-delta_h/2, 0],
-
-      [0, delta_h/2, w/2],
-      [0, delta_h/2, -w/2],
-      [0, -h-delta_h/2, w/2],
-      [0, -h-delta_h/2, -w/2]])
+    box_offset = BOX_OFFSET(l,w,h,delta_h)                                      # get box vertices  
     R = M_ROT(yaw)                                                              # define rotation matrix
 
     transform = np.matmul(R, np.transpose(box_offset))                          # rotate bounding box  
@@ -591,64 +576,52 @@ class KittiDataset(object):
     hrotation = np.vstack((R.dot(Rh), np.zeros((1,3))))
     lrotation = np.vstack((R.dot(Rl), np.zeros((1,3))))
     wrotation = np.vstack((R, np.zeros((1,3))))
-    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]                            # get box color
+    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]               # get box color
 
     h1_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
-    #h1_cylinder = o3d.create_mesh_cylinder(radius = h/100, height = h)          # create edges
     h1_cylinder.paint_uniform_color(box_color)
     h1_cylinder.transform(np.hstack((hrotation, transform[:, [0]])))
 
-    #h2_cylinder = o3d.create_mesh_cylinder(radius = h/100, height = h)
     h2_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
     h2_cylinder.paint_uniform_color(box_color)
     h2_cylinder.transform(np.hstack((hrotation, transform[:, [1]])))
 
-    #h3_cylinder = o3d.create_mesh_cylinder(radius = h/100, height = h)
     h3_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
     h3_cylinder.paint_uniform_color(box_color)
     h3_cylinder.transform(np.hstack((hrotation, transform[:, [2]])))
 
-    #h4_cylinder = o3d.create_mesh_cylinder(radius = h/100, height = h)
     h4_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
     h4_cylinder.paint_uniform_color(box_color)
     h4_cylinder.transform(np.hstack((hrotation, transform[:, [3]])))
 
-    #w1_cylinder = o3d.create_mesh_cylinder(radius = w/100, height = w)
     w1_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=w/100, height=w)
     w1_cylinder.paint_uniform_color(box_color)
     w1_cylinder.transform(np.hstack((wrotation, transform[:, [4]])))
 
-    #w2_cylinder = o3d.create_mesh_cylinder(radius = w/100, height = w)
     w2_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=w/100, height=w)
     w2_cylinder.paint_uniform_color(box_color)
     w2_cylinder.transform(np.hstack((wrotation, transform[:, [5]])))
 
-    #w3_cylinder = o3d.create_mesh_cylinder(radius = w/100, height = w)
     w3_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=w/100, height=w)
     w3_cylinder.paint_uniform_color(box_color)
     w3_cylinder.transform(np.hstack((wrotation, transform[:, [6]])))
 
-    #w4_cylinder = o3d.create_mesh_cylinder(radius = w/100, height = w)
     w4_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=w/100, height=w)
     w4_cylinder.paint_uniform_color(box_color)
     w4_cylinder.transform(np.hstack((wrotation, transform[:, [7]])))
 
-    #l1_cylinder = o3d.create_mesh_cylinder(radius = l/100, height = l)
     l1_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=l/100, height=l)
     l1_cylinder.paint_uniform_color(box_color)
     l1_cylinder.transform(np.hstack((lrotation, transform[:, [8]])))
 
-    #l2_cylinder = o3d.create_mesh_cylinder(radius = l/100, height = l)
     l2_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=l/100, height=l)
     l2_cylinder.paint_uniform_color(box_color)
     l2_cylinder.transform(np.hstack((lrotation, transform[:, [9]])))
 
-    #l3_cylinder = o3d.create_mesh_cylinder(radius = l/100, height = l)
     l3_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=l/100, height=l)
     l3_cylinder.paint_uniform_color(box_color)
     l3_cylinder.transform(np.hstack((lrotation, transform[:, [10]])))
 
-    #l4_cylinder = o3d.create_mesh_cylinder(radius = l/100, height = l)
     l4_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=l/100, height=l)
     l4_cylinder.paint_uniform_color(box_color)
     l4_cylinder.transform(np.hstack((lrotation, transform[:, [11]])))
@@ -660,28 +633,14 @@ class KittiDataset(object):
     ]
   
 
-  def sel_points_in_box3d(
-    self, label:dict, points:Points,expend_factor:tuple=(1.0, 1.0, 1.0)):
-    """ Filters points bounding box
+  def sel_points_in_box3d(self, label:dict, points_xyz:np.array,
+                          expend_factor:tuple=(1.0, 1.0, 1.0)):
+    return sel_points_in_box3d(label, points_xyz, expend_factor)
+  
 
-    @param label:   a dictionary containing "x3d", "y3d", "z3d", "yaw",
-                    "height", "width", "lenth".
-    @param points:  a Points object containing "xyz" and "attr".
-    @expend_factor: a tuple of (h, w, l) to expand the box.
-    @return: a bool mask indicating points inside a 3D box.
-    """
-
-    normals, lower, upper = box3d_to_normals(label, expend_factor)              # get box normals
-    projected   = np.matmul(points.xyz, np.transpose(normals))                  # project points to box normals
-    points_in_x = np.logical_and(projected[:, 0] > lower[0],                    # create filters along all axis
-                                projected[:, 0] < upper[0])
-    points_in_y = np.logical_and(projected[:, 1] > lower[1],
-                                projected[:, 1] < upper[1])
-    points_in_z = np.logical_and(projected[:, 2] > lower[2],
-                                projected[:, 2] < upper[2])
-    mask = np.logical_and.reduce((points_in_x, points_in_y, points_in_z))       # filter boxes
-
-    return mask
+  def sel_points_in_box2d(self, label:dict, points_xyz,
+                          expend_factor:tuple=(1.0, 1.0)):
+    return sel_points_in_box2d(label, points_xyz, expend_factor)
   
 
   def inspect_points(self, frame_idx, downsample_voxel_size=None, calib=None, 
@@ -708,17 +667,17 @@ class KittiDataset(object):
 
     if label_list is not None:
       for label in label_list:                                                  # iterate all objects label list
-        #print(label['name'])
-        point_mask = self.sel_points_in_box3d(label,cam_points_in_img_with_rgb, # select points in bounding box 
-                                              expend_factor=expend_factor)
+        if label['name'] == 'DontCare': continue                                # skip DontCare objects
+        point_mask = self.sel_points_in_box3d(
+          label,cam_points_in_img_with_rgb.xyz,expend_factor=expend_factor)     # select points in bounding box 
         color = np.array(                                                       # get object color
           OBJECT_COLORS.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
         cam_points_in_img_with_rgb.attr[point_mask, 1:] = color                 # add colors to point attributes  
         mesh_list += self.get_open3D_box(label, expend_factor=expend_factor)    # add 3D bounding box to mesh list
 
-    pcd = o3d.geometry.PointCloud()                                                      # create point cloud object
-    pcd.points = o3d.utility.Vector3dVector(cam_points_in_img_with_rgb.xyz)             # add points to point cloud
-    pcd.colors = o3d.utility.Vector3dVector(                                            # add colors to point cloud
+    pcd = o3d.geometry.PointCloud()                                             # create point cloud object
+    pcd.points = o3d.utility.Vector3dVector(cam_points_in_img_with_rgb.xyz)     # add points to point cloud
+    pcd.colors = o3d.utility.Vector3dVector(                                    # add colors to point cloud
       cam_points_in_img_with_rgb.attr[:,1:4])
     
     def custom_draw_geometry_load_option(geometry_list):                        # visualize point cloud    
@@ -741,21 +700,7 @@ class KittiDataset(object):
 
   def downsample_by_voxel(self, points:Points, voxel_size:float, 
                           method:str='AVERAGE'):
-    """Downsample point cloud by voxel.
-
-    @param points:      a Points namedtuple containing "xyz" and "attr".
-    @param voxel_size:  the size of voxel cells used for downsampling.
-    @param method:      'AVERAGE', all points inside a voxel cell are averaged
-                        including xyz and attr.
-
-    @return:  downsampled points and attributes.
-    """
-
-    if method == 'AVERAGE':
-      res = downsample_by_average_voxel(points,voxel_size)                      # get downsampled points
-    else: raise Exception("Unknown method: %s" % method)
-    
-    return res
+    return downsample_by_voxel(points,voxel_size,method)
   
 
   def rgb_to_cam_points(self, points:Points, image:np.array, calib:dict):
@@ -857,8 +802,300 @@ class KittiDataset(object):
       cv2.line(image, tuple(img_points_xy[4,:]),
                tuple(img_points_xy[7,:]),color,2)
       
+  # ===========================================================================#
+  # ============================ DATA AUGMENTATION ============================#
+  # ===========================================================================#
+
+  def save_cropped_boxes(
+    self, expand_factor:tuple=[1.1, 1.1, 1.1],
+    minimum_points:int=10,backlist:list=[]):
+    """ creates a json file containing filtered labels and points within them
+
+    @param filename:        str, the file to save the cropped boxes
+    @param expand_factor:   list of float, the expand factor for cropping
+    @param minimum_points:  int, the minimum number of points in a cropped box
+    @param backlist:        list of str, the list of object names to be ignored
+    """
+
+    cropped_labels      = defaultdict(list)
+    cropped_cam_points  = defaultdict(list)
+
+    for frame_idx in tqdm(range(self.num_files)):
+      labels      = self.get_label(frame_idx)
+      cam_points  = self.get_cam_points_in_image_with_rgb(frame_idx)
+
+      for label in labels:                                                      # iterate all labels                
+        if label['name'] != "DontCare":                                         # check if we care about label
+          if label['name'] not in backlist:                                                            
+            mask = self.sel_points_in_box3d(
+              label, cam_points.xyz,expand_factor)                              # get mask of points in box
+
+            if np.sum(mask) > minimum_points:                                   # sufficiently many points in bbox
+              cropped_labels[label['name']].append(label)
+              cropped_cam_points[label['name']].append(
+                [cam_points.xyz[mask].tolist(),cam_points.attr[mask].tolist()])
+
+    with open(self._crop_file, 'w') as outfile:                                        # save cropped data to file
+      json.dump((cropped_labels,cropped_cam_points), outfile)
 
   
-  
+  def load_cropped_boxes(self):
+    """ load cropped boxes from json file
+
+    @param filename:  str, the file to load
+    @return:          dict, dict, the labels and points in the cropped boxes
+    """
+    with open(self._crop_file, 'r') as infile:                                         # load cropped data from file            
+      cropped_labels, cropped_cam_points = json.load(infile)
+
+    for key in cropped_cam_points:
+      print("Loaded %d %s" % (len(cropped_cam_points[key]), key))
+
+      for i, cam_points in enumerate(cropped_cam_points[key]):                  # convert json to dictionary
+        cropped_cam_points[key][i] = Points(xyz=np.array(cam_points[0]),
+                                            attr=np.array(cam_points[1]))
+          
+    return cropped_labels, cropped_cam_points
   
 
+  def vis_cropped_boxes(self,cropped_labels:dict, cropped_cam_points:dict, 
+                        object_class:list='Pedestrian'):
+    """ Visualizes cropped boxes
+
+    @param cropped_labels:      dict, the labels in the cropped boxes
+    @param cropped_cam_points:  dict, the points in the cropped boxes
+    @param dataset:             KittiDataset object 
+    """
+
+    for key in cropped_cam_points:                                              # iteratte over unique object names
+      if key == object_class:                                                   # visualize only selected
+        for i, cam_points in enumerate(cropped_cam_points[key]):
+          label = cropped_labels[key][i]
+          print(label['name'])
+          pcd = o3d.geometry.PointCloud()
+          pcd.points = o3d.utility.Vector3dVector(cam_points.xyz)
+          pcd.colors = o3d.utility.Vector3dVector(cam_points.attr[:, 1:])
+
+          def custom_draw_geometry_load_option(geometry_list):
+            vis = o3d.visualization.Visualizer()
+            vis.create_window()
+            for geometry in geometry_list:  vis.add_geometry(geometry)
+            ctr = vis.get_view_control()
+            ctr.rotate(0.0, 3141.0, 0)
+            vis.run()
+            vis.destroy_window()
+
+          custom_draw_geometry_load_option(                                     # draw points and boxes
+            [pcd] + self.get_open3D_box(label))
+
+
+  def parser_without_collision(
+    self,cam_rgb_points:Points,labels:dict,sample_cam_points:Points,
+    sample_labels:dict,overlap_mode:str='box',auto_box_height:bool=False,
+    max_overlap_rate:float=0.01,appr_factor:int=100,max_overlap_num_allowed:int=1, 
+    max_trails:int=1,method_name:str='normal',yaw_std:float=0.3, 
+    expand_factor:tuple=(1.1, 1.1, 1.1),must_have_ground:bool=False
+  ):
+    """ Parse cropped boxes to a frame without collision
+
+    @param cam_rgb_points:	    Existing scene point cloud, a Points object 
+                                (xyz coordinates + attributes).
+    @param labels:  	          List of dictionaries describing existing objects 
+                                (3D boxes) already in the scene.
+    @param sample_cam_points:	  Point clouds associated with new objects to be 
+                                inserted.
+    @param sample_labels: 	    Labels (box definitions) for the new objects to be 
+                                inserted.
+    @param overlap_mode:	      How overlap is checked (box, point, or both).
+    @param auto_box_height:	    Whether to auto-adjust box height to ground level.
+    @param max_overlap_rate>	  Maximum allowed overlap between boxes 
+                                (for box mode).
+    @param appr_factor:	        Scaling factor applied to boxes when checking 
+                                overlap.
+    @param max_overlap_num_allowed:	
+                                Maximum allowed number of overlapping points.
+    @param max_trails:	        Max retries per box to find a valid, 
+                                non-overlapping position.
+    @param method_name:	        How rotation is sampled (normal or uniform).
+    @param yaw_std:	            Standard deviation for random yaw sampling.
+    @param expand_factor:	      Expansion factor for boxes (for height adjustment 
+                                and overlap checks).
+    @param must_have_ground:	  If True, box is only valid if some ground points 
+                                exist under it.
+    """
+    xyz   = cam_rgb_points.xyz                                                  # extract points and attributes
+    attr  = cam_rgb_points.attr
+
+    if overlap_mode in ['box','box_and_point']:                                 # prepare bboxes for overlap checks
+      scene_boxes = np.array(
+        [[l['x3d'], l['y3d'], l['z3d'], l['length'],l['height'], 
+          l['width'], l['yaw']] for l in labels ])
+      scene_boxes_corners = np.int32(
+        appr_factor*boxes_3d_to_corners(scene_boxes))
+      
+    for i, label in enumerate(sample_labels):                                   # iterate sample objects and try to place them in scene
+      trial   = 0
+      sucess  = False
+      for trial in range(max_trails):
+        if method_name == 'normal':                                             # define random rotation angle         
+          delta_yaw = np.random.normal(scale=yaw_std)
+        elif method_name == 'uniform':
+          delta_yaw = np.random.uniform(low=-yaw_std, high=yaw_std)
+
+        new_label = deepcopy(label)                                             # create new bbox label with random roation
+        R   = M_ROT(delta_yaw)
+        tx  = new_label['x3d']
+        ty  = new_label['y3d']
+        tz  = new_label['z3d']
+        xyz_center = np.array([[tx, ty, tz]])
+        xyz_center = xyz_center.dot(np.transpose(R))
+        new_label['x3d'], new_label['y3d'], new_label['z3d'] = xyz_center[0]
+        new_label['yaw'] = new_label['yaw']+delta_yaw
+
+        if auto_box_height:                                                     # adjust height to ground
+          mask_2d         = self.sel_points_in_box2d(
+            new_label, xyz, expand_factor)
+
+          if np.sum(mask_2d) > 0:
+            ground_height = np.amax(xyz[mask_2d][:,1])
+            y3d_adjust    = ground_height - new_label['y3d']
+          else:
+            if must_have_ground: continue
+            y3d_adjust = 0
+          # if np.abs(y3d_adjust) > 1:
+          #     y3d_adjust = 0
+          new_label['y3d'] += y3d_adjust
+
+        mask = self.sel_points_in_box3d(new_label, xyz, expand_factor)
+        below_overlap = False
+
+        if not overlap_mode in ['box','point','box_and_point']:
+          raise Exception(f'Unknown overlap mode: {overlap_mode}')
+        
+        below_overlap_b = True
+        below_overlap_p = True
+
+        if 'box' in overlap_mode:                                               # computes intersection rates with scene bboxes
+          new_box = np.array([[
+            new_label['x3d'],
+            new_label['y3d'],
+            new_label['z3d'],
+            new_label['length'],
+            new_label['height'],
+            new_label['width'],
+            new_label['yaw']
+          ]])
+          new_box_corners = np.int32(                                           # get bbox vertices
+            appr_factor*boxes_3d_to_corners(new_box))
+          below_overlap_b = np.all(overlapped_boxes_3d_fast_poly(               # compute overlap between new bbox and scene bboxes
+            new_box_corners[0],
+            scene_boxes_corners) < max_overlap_rate)
+          
+        if 'point' in overlap_mode:                                             # determines if max amount of scene points in box exceded
+          below_overlap_p = np.sum(mask) < max_overlap_num_allowed
+
+        below_overlap = below_overlap_b and below_overlap_p                     # get boolean condition according to overlap mode
+
+        if below_overlap:
+          points_xyz  = sample_cam_points[i].xyz
+          points_attr = sample_cam_points[i].attr
+          points_xyz  = points_xyz.dot(np.transpose(R))                         # rotate according to bbox rotation
+
+          if auto_box_height: points_xyz[:,1] += y3d_adjust                     # align points to ground
+
+          xyz   = xyz[np.logical_not(mask)]                                     # remove colliding scene points
+          xyz   = np.concatenate([points_xyz, xyz], axis=0)
+          attr  = attr[np.logical_not(mask)]
+          attr  = np.concatenate([points_attr, attr], axis=0)
+          
+          labels.append(new_label)                                              # add new bbox to scene bboxes
+
+          if overlap_mode in ['box','box_and_point']:                           # the added objects bbox matters in future insertion in this case
+            if scene_boxes_corners.shape[0] > 0:
+              scene_boxes_corners = np.append(scene_boxes_corners,
+              new_box_corners,axis=0)
+            else:
+              scene_boxes_corners = np.append(np.empty((0,8,3)),                # the scene contains no prior bboxes
+              new_box_corners,axis=0)
+          sucess = True
+          break
+    # if not sucess:
+        # if not sucess, keep the old label
+        # print('Warning: fail to parse cropped box')
+    return Points(xyz=xyz, attr=attr), labels
+
+
+  def crop_aug(
+    self, cam_rgb_points:Points, labels:dict,
+    sample_rate:dict={"Car":1, "Pedestrian":1, "Cyclist":1},parser_kwargs:dict={}):
+    """ Crop and parse the frame with the cropped boxes
+
+    @param cam_rgb_points:  Points, the point cloud in the frame
+    @param labels:          dict, the labels in the frame
+    @param sample_rate:     dict, the number of samples to take from each class
+    @param parser_kwargs:   dict, the arguments for the parser
+    @return: Points, cropped pointcloud
+    """
+    sample_labels     = []
+    sample_cam_points = []
+
+    for key in sample_rate:                                                     # get required number of object per class
+      sample_indices = np.random.choice(len(self._cropped_labels[key]),
+        size=sample_rate[key], replace=False)
+      sample_labels.extend(
+        deepcopy([self._cropped_labels[key][idx] for idx in sample_indices]))
+      sample_cam_points.extend(
+        deepcopy([self._cropped_cam_points[key][idx] for idx in sample_indices]))
+      
+    # parser_kwargs['cam_rgb_points']    = cam_rgb_points
+    # parser_kwargs['labels']            = labels
+    # parser_kwargs['sample_cam_points'] = sample_cam_points
+    # parser_kwargs['sample_labels']     = sample_labels
+      
+    return self.parser_without_collision(
+      cam_rgb_points=cam_rgb_points,
+      labels=labels,
+      sample_cam_points=sample_cam_points,
+      sample_labels=sample_labels,
+      **parser_kwargs)
+
+
+  def vis_crop_aug_sampler(self):
+
+    parser_kwargs = {
+    'overlap_mode':     'box_and_point',
+    'auto_box_height':  True,
+    'max_overlap_rate': 1e-6,
+    'appr_factor':      100,
+    'max_overlap_num_allowed': 50,
+    'max_trails':       100,
+    'method_name':      'normal',
+    'yaw_std':          np.pi/16,
+    'expand_factor':    (1.1, 1.1, 1.1),
+    'must_have_ground': True,
+    }
+
+    aug_config = {
+      'method_name':    'random_box_global_rotation',
+      'method_kwargs':  { 
+        'max_overlap_num_allowed':100,
+        'max_trails':     100,
+        'method_name':    'normal',
+        'yaw_std':        np.pi/8,
+        'expend_factor':  (1.1, 1.1, 1.1)
+      }
+    }
+
+    for frame_idx in range(10):
+      labels          = self.get_label(frame_idx)
+      cam_rgb_points  = self.get_cam_points_in_image_with_rgb(frame_idx)
+      cam_rgb_points, labels = self.crop_aug(
+        cam_rgb_points=cam_rgb_points, 
+        labels=labels,
+        sample_rate={"Car":2, "Pedestrian":10, "Cyclist":10},
+        parser_kwargs=parser_kwargs)
+      aug_configs = [aug_config]
+      aug_fn      = get_data_aug(aug_configs)
+      cam_rgb_points, labels = aug_fn(cam_rgb_points, labels)
+      labels = list(filter(lambda l: l['name'] != 'DontCare', labels))
+      self.vis_points(cam_rgb_points, labels, expend_factor=(1.1, 1.1,1.1))
