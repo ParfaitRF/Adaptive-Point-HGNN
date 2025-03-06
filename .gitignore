@@ -1,4 +1,8 @@
-**/kitti/
+**/calib/
+**/image_2/
+**/label_2/
+**/velodyne/
+**/3DOP_splits/
 **/cropped.json
 **/__pycache__/
 paper/*/
