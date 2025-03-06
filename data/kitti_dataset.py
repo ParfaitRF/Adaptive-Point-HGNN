@@ -317,7 +317,6 @@ class KittiDataset(object):
     calib['cam_to_velo']    = np.linalg.inv(calib['velo_to_cam'])
 
     calib['velo_to_image']  = np.matmul(                                        # sanity check
-    calib['velo_to_image']  = np.matmul(                                        # sanity check
       calib['cam_to_image'],calib['velo_to_cam'])
     assert np.isclose(calib['velo_to_image'],
       np.matmul(np.matmul(calib['P2'], R0_rect),calib['velo_to_rect'])).all()
