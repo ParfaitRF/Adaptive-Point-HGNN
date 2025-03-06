@@ -26,11 +26,28 @@ BOX_OFFSET = lambda l,w,h,delta_h: np.array([                                   
   [0, -h-delta_h/2, w/2],
   [0, -h-delta_h/2, -w/2]])
 
+BOX_OFFSET = lambda l,w,h,delta_h: np.array([                                   # defines untilted bbox 
+  [ l/2,  -h/2-delta_h/2,  w/2],
+  [ l/2,  -h/2-delta_h/2, -w/2],
+  [-l/2,  -h/2-delta_h/2, -w/2],
+  [-l/2,  -h/2-delta_h/2,  w/2],
+
+  [ l/2, delta_h/2, 0],
+  [ -l/2, delta_h/2, 0],
+  [l/2, -h-delta_h/2, 0],
+  [-l/2, -h-delta_h/2, 0],
+
+  [0, delta_h/2, w/2],
+  [0, delta_h/2, -w/2],
+  [0, -h-delta_h/2, w/2],
+  [0, -h-delta_h/2, -w/2]])
+
 
 # COLORS
 COLOR1 = 1
 
 OBJECT_COLORS = {
+  'NMS': ["White",(255,255,255)],
   'NMS': ["White",(255,255,255)],
   'Pedestrian': ["DeepPink",(255,20,147)],
   'Person_sitting': ["DeepPink",(255,255,147)],
@@ -43,6 +60,7 @@ OBJECT_COLORS = {
 }
 OCCLUSION_COLORS = [(0, 128, 0), (0, 255, 255), (0, 0, 128), (255, 255, 255)]
 
+# IMAGE AND OBJECT DIMENSIONS
 # IMAGE AND OBJECT DIMENSIONS
 IMG_WIDTH, IMG_HEIGHT = 1242, 376
 

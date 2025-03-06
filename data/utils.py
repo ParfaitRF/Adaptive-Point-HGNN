@@ -4,6 +4,7 @@
 
 from collections import defaultdict
 from collections import namedtuple
+from collections import namedtuple
 import random
 import numpy as np
 
@@ -159,8 +160,12 @@ def sel_points_in_box3d(label:dict, points_xyz:np.array,
   @param points:  a Points object containing "xyz" and "attr".
   @expend_factor: a tuple of (h, w, l) to expand the box.
   @return: a bool mask indicating points inside a 3D box.
+  @param label:   a dictionary containing "x3d", "y3d", "z3d", "yaw",
+                  "height", "width", "lenth".
+  @param points:  a Points object containing "xyz" and "attr".
+  @expend_factor: a tuple of (h, w, l) to expand the box.
+  @return: a bool mask indicating points inside a 3D box.
   """
-
   normals, lower, upper = box3d_to_normals(label, expend_factor)                # get box normals
   projected   = np.matmul(points_xyz, np.transpose(normals))                    # project points to box normals
   points_in_x = np.logical_and(projected[:, 0] > lower[0],                      # create filters along all axis
@@ -195,4 +200,6 @@ def sel_points_in_box2d(label:str, points_xyz:np.array, expend_factor:tuple=(1.0
   mask = np.logical_and.reduce((points_in_y, points_in_z))                      # define point in y-z-plane bound
 
   return mask
+
+
 

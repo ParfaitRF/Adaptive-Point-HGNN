@@ -580,6 +580,7 @@ class KittiDataset(object):
     lrotation = np.vstack((R.dot(Rl), np.zeros((1,3))))
     wrotation = np.vstack((R, np.zeros((1,3))))
     box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]               # get box color
+    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]               # get box color
 
     h1_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
     h1_cylinder.paint_uniform_color(box_color)
