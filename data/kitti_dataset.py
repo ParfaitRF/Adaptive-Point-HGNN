@@ -351,7 +351,7 @@ class KittiDataset(object):
   
 
   def get_image(self, frame_idx:int):
-    """Load the image from frame_idx.
+    """ Load the image from frame_idx.
 
     @param frame_idx: the index of the frame to read.
     @return: cv2.matrix
@@ -443,7 +443,13 @@ class KittiDataset(object):
 
   def get_cam_points_in_image(self, frame_idx:int, downsample_voxel_size:float=None,
     calib:dict=None, xyz_range:np.array=None):
-    """Load velo points and remove points that are not observed by camera.
+    """ Load velo points and remove points that are not observed by camera.
+
+    @param frame_idx: the index of the frame to read.
+    @param downsample_voxel_size: the size of voxel cells used for downsampling.
+    @param calib: the calibration matrices.
+    @param xyz_range: the range of xyz coordinates to filter.
+    @return: Points object containing the image_points.
     """
     if calib is None: calib = self.get_calib(frame_idx)                         # load calibration matrices
 
@@ -452,21 +458,25 @@ class KittiDataset(object):
     image   = self.get_image(frame_idx)                                         # get frame image
     height  = image.shape[0]                                                    # get image dimensions
     width   = image.shape[1]
-    front_cam_points_idx  = cam_points.xyz[:,2] > 0.1                           # I think this filters points that are within some depth ??
-    filtered_points = cam_points.xyz[front_cam_points_idx, :]
-    filtered_attr   = None
+    front_cam_points_idx  = cam_points.xyz[:,2] > 0.1                           
+    filtered_points       = cam_points.xyz[front_cam_points_idx, :]             # get only points, that are in front of the camera
+    filtered_attr         = None
+
     if cam_points.attr is not None:
       filtered_attr = cam_points.attr[front_cam_points_idx, :]
+
     front_cam_points  = Points(filtered_points,filtered_attr)
-    img_points        = cam_points_to_image(front_cam_points, calib)              # transform to image points
+    img_points        = cam_points_to_image(front_cam_points, calib)            # transform to image points
     img_points_in_image_idx = np.logical_and.reduce(                            # filter points that are within image
       [img_points.xyz[:,0]>0, img_points.xyz[:,0]<width,
         img_points.xyz[:,1]>0, img_points.xyz[:,1]<height])
     
     filtered_points   = front_cam_points.xyz[img_points_in_image_idx, :]
     filtered_attr     = None
+
     if front_cam_points.attr is not None:
       filtered_attr = front_cam_points.attr[img_points_in_image_idx, :]
+
     cam_points_in_img = Points(xyz=filtered_points, attr=filtered_attr)         # create new Points object consisting of filtered objects 
 
     return cam_points_in_img
@@ -495,53 +505,81 @@ class KittiDataset(object):
     return cam_points_in_img_with_rgb
   
   
+  # def boxes_3d_to_line_set(self, boxes_3d:list, boxes_color:list=None):
+  #   """ takes in boxes_3d and returns corner points, lines and colors
+    
+  #   @param boxes_3d:    a list of 3D boxes
+  #   @param boxes_color: a list of colors for the boxes
+  #   """
+  #   points  = []
+  #   edges   = []
+  #   colors  = []
+
+  #   for i, box_3d in enumerate(boxes_3d):
+  #     x3d, y3d, z3d, l, h, w, yaw = box_3d                                      # get box information
+      
+  #     corners = np.array([                                                      # get corners of 3D box
+  #       [ l/2,  0.0,  w/2], # front up right
+  #       [ l/2,  0.0, -w/2], # front up left
+  #       [-l/2,  0.0, -w/2], # back up left
+  #       [-l/2,  0.0,  w/2], # back up right
+  #       [ l/2, -h,  w/2],   # front down right
+  #       [ l/2, -h, -w/2],   # front down left
+  #       [-l/2, -h, -w/2],   # back down left
+  #       [-l/2, -h,  w/2]]   # back down right
+  #     ) 
+  #     R = M_ROT(yaw)
+  #     r_corners       = corners.dot(np.transpose(R))                            # rotate corners              
+  #     cam_points_xyz  = r_corners+np.array([x3d, y3d, z3d])                     # translate from origin
+  #     points.append(cam_points_xyz)                                             
+  #     edges.append(                                                             # define edges
+  #       np.array([
+  #         [0, 1], [0, 4], [0, 3],
+  #         [1, 2], [1, 5], [2, 3],
+  #         [2, 6], [3, 7], [4, 5],
+  #         [4, 7], [5, 6], [6, 7]
+  #       ])+i*8
+  #     )
+      
+  #     if boxes_color is None:                                                   # define edges color
+  #       colors.append(np.tile([[1.0, 0.0, 0.0]], [12, 1]))
+  #     else:
+  #       colors.append(np.tile(boxes_color[[i], :], [12, 1]))
+
+  #   if len(points) == 0:  return None, None, None                               # empty set
+
+  #   return np.vstack(points), np.vstack(edges), np.vstack(colors)
+
+
   def boxes_3d_to_line_set(self, boxes_3d:list, boxes_color:list=None):
     """ takes in boxes_3d and returns corner points, lines and colors
     
-    @param boxes_3d: a list of 3D boxes
+    @param boxes_3d:    a list of 3D boxes
     @param boxes_color: a list of colors for the boxes
     """
     points  = []
     edges   = []
     colors  = []
 
-    for i, box_3d in enumerate(boxes_3d):
-      x3d, y3d, z3d, l, h, w, yaw = box_3d                                      # get box information
-      
-      corners = np.array([                                                      # get corners of 3D box
-        [ l/2,  0.0,  w/2], # front up right
-        [ l/2,  0.0, -w/2], # front up left
-        [-l/2,  0.0, -w/2], # back up left
-        [-l/2,  0.0,  w/2], # back up right
-        [ l/2, -h,  w/2],   # front down right
-        [ l/2, -h, -w/2],   # front down left
-        [-l/2, -h, -w/2],   # back down left
-        [-l/2, -h,  w/2]]   # back down right
-      ) 
-      R = M_ROT(yaw)
-      r_corners       = corners.dot(np.transpose(R))                            # rotate corners              
-      cam_points_xyz  = r_corners+np.array([x3d, y3d, z3d])                     # translate from origin
-      points.append(cam_points_xyz)                                             
-      edges.append(                                                             # define edges
-        np.array([
-          [0, 1], [0, 4], [0, 3],
-          [1, 2], [1, 5], [2, 3],
-          [2, 6], [3, 7], [4, 5],
-          [4, 7], [5, 6], [6, 7]
-        ])+i*8
-      )
-      
-      if boxes_color is None:                                                   # define edges color
-        colors.append(np.tile([[1.0, 0.0, 0.0]], [12, 1]))
-      else:
-        colors.append(np.tile(boxes_color[[i], :], [12, 1]))
+    points = boxes_3d_to_corners(boxes_3d)
+    edges = [
+      np.array([
+        [0, 1], [0, 4], [0, 3],
+        [1, 2], [1, 5], [2, 3],
+        [2, 6], [3, 7], [4, 5],
+        [4, 7], [5, 6], [6, 7]
+      ])+i*8 for i in range(len(boxes_3d))]
+    
+    if boxes_color is None:
+      colors = [np.tile([[1.0, 0.0, 0.0]], [12, 1]) for i in range(len(boxes_3d))]
+    else:
+      colors = [np.tile(boxes_color[[i], :], [12, 1]) for i in range(len(boxes_3d))]
 
     if len(points) == 0:  return None, None, None                               # empty set
 
     return np.vstack(points), np.vstack(edges), np.vstack(colors)
     
     
-
   def get_open3D_box(self, label:dict, expend_factor:tuple=(1.0, 1.0, 1.0)):
     """ creates o3d representation of bounding box
 
@@ -810,8 +848,8 @@ class KittiDataset(object):
   # ===========================================================================#
 
   def save_cropped_boxes(
-    self, expand_factor:tuple=[1.1, 1.1, 1.1],
-    minimum_points:int=10,backlist:list=[]):
+    self, expand_factor:tuple=(1.1, 1.1, 1.1),minimum_points:int=10,
+    blacklist:list=['Van', 'Truck', 'Misc', 'Tram', 'Person_sitting','DonCare']):
     """ creates a json file containing filtered labels and points within them
 
     @param filename:        str, the file to save the cropped boxes
@@ -819,6 +857,8 @@ class KittiDataset(object):
     @param minimum_points:  int, the minimum number of points in a cropped box
     @param backlist:        list of str, the list of object names to be ignored
     """
+
+    print('Cropping boxes and saving to %s' % self._crop_file)                  # print message
 
     cropped_labels      = defaultdict(list)
     cropped_cam_points  = defaultdict(list)
@@ -828,17 +868,16 @@ class KittiDataset(object):
       cam_points  = self.get_cam_points_in_image_with_rgb(frame_idx)
 
       for label in labels:                                                      # iterate all labels                
-        if label['name'] != "DontCare":                                         # check if we care about label
-          if label['name'] not in backlist:                                                            
-            mask = self.sel_points_in_box3d(
-              label, cam_points.xyz,expand_factor)                              # get mask of points in box
+        if label['name'] not in  blacklist:                                     # check if we care                                                         
+          mask = self.sel_points_in_box3d(
+            label, cam_points.xyz,expand_factor)                                # get mask of points in box
 
-            if np.sum(mask) > minimum_points:                                   # sufficiently many points in bbox
-              cropped_labels[label['name']].append(label)
-              cropped_cam_points[label['name']].append(
-                [cam_points.xyz[mask].tolist(),cam_points.attr[mask].tolist()])
+          if np.sum(mask) > minimum_points:                                     # sufficiently many points in bbox
+            cropped_labels[label['name']].append(label)
+            cropped_cam_points[label['name']].append(
+              [cam_points.xyz[mask].tolist(),cam_points.attr[mask].tolist()])
 
-    with open(self._crop_file, 'w') as outfile:                                        # save cropped data to file
+    with open(self._crop_file, 'w') as outfile:                                 # save cropped data to file
       json.dump((cropped_labels,cropped_cam_points), outfile)
 
   
@@ -848,11 +887,16 @@ class KittiDataset(object):
     @param filename:  str, the file to load
     @return:          dict, dict, the labels and points in the cropped boxes
     """
-    with open(self._crop_file, 'r') as infile:                                         # load cropped data from file            
-      cropped_labels, cropped_cam_points = json.load(infile)
+    try:                                                                        # load cropped data from file if exists else create it
+      with open(self._crop_file, 'r') as infile:                                
+        cropped_labels, cropped_cam_points = json.load(infile)
+    except FileNotFoundError:
+      self.save_cropped_boxes()
+      with open(self._crop_file, 'r') as infile:                                
+        cropped_labels, cropped_cam_points = json.load(infile)
 
     for key in cropped_cam_points:
-      print("Loaded %d %s" % (len(cropped_cam_points[key]), key))
+      print("Loaded %d %s for augmentation" % (len(cropped_cam_points[key]), key))
 
       for i, cam_points in enumerate(cropped_cam_points[key]):                  # convert json to dictionary
         cropped_cam_points[key][i] = Points(xyz=np.array(cam_points[0]),
@@ -862,7 +906,7 @@ class KittiDataset(object):
   
 
   def vis_cropped_boxes(self,cropped_labels:dict, cropped_cam_points:dict, 
-                        object_class:list='Pedestrian'):
+                        object_class:str='Pedestrian'):
     """ Visualizes cropped boxes
 
     @param cropped_labels:      dict, the labels in the cropped boxes
@@ -1031,7 +1075,7 @@ class KittiDataset(object):
   def crop_aug(
     self, cam_rgb_points:Points, labels:dict,
     sample_rate:dict={"Car":1, "Pedestrian":1, "Cyclist":1},parser_kwargs:dict={}):
-    """ Crop and parse the frame with the cropped boxes
+    """ uses cropped boxes to augment the scene
 
     @param cam_rgb_points:  Points, the point cloud in the frame
     @param labels:          dict, the labels in the frame
@@ -1049,11 +1093,6 @@ class KittiDataset(object):
         deepcopy([self._cropped_labels[key][idx] for idx in sample_indices]))
       sample_cam_points.extend(
         deepcopy([self._cropped_cam_points[key][idx] for idx in sample_indices]))
-      
-    # parser_kwargs['cam_rgb_points']    = cam_rgb_points
-    # parser_kwargs['labels']            = labels
-    # parser_kwargs['sample_cam_points'] = sample_cam_points
-    # parser_kwargs['sample_labels']     = sample_labels
       
     return self.parser_without_collision(
       cam_rgb_points=cam_rgb_points,

@@ -66,7 +66,7 @@ def random_global_drop(cam_rgb_points:Points, labels:dict, drop_std:float=0.25):
   @param labels:         a dictionary containing the bounding box labels.
   @drop_std:             a standard deviation of drop prob. ditr.
 
-  
+  @return: a tuple of (Points, dict) containing the dropped points and labels.
   """
   drop_prob = np.abs(np.random.normal(scale=drop_std))                          # define "probability distribution"
   return random_drop(cam_rgb_points, labels, drop_prob=drop_prob)
