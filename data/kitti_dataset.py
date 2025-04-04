@@ -91,16 +91,17 @@ class KittiDataset(object):
     """ Get statistics of objects in the dataset """
 
     # coordinates lists
-    x_dict = defaultdict(list)
-    y_dict = defaultdict(list)
-    z_dict = defaultdict(list)
+    self.x_dict = defaultdict(list)
+    self.y_dict = defaultdict(list)
+    self.z_dict = defaultdict(list)
     # bounding box dimensions list
-    h_dict = defaultdict(list)
-    w_dict = defaultdict(list)
-    l_dict = defaultdict(list)
-    view_angle_dict = defaultdict(list) # view angle list
-    yaw_dict        = defaultdict(list) # yaw list
+    self.h_dict = defaultdict(list)
+    self.w_dict = defaultdict(list)
+    self.l_dict = defaultdict(list)
+    self.view_angle_dict = defaultdict(list) # view angle list
+    self.yaw_dict        = defaultdict(list) # yaw list
 
+    # get all relevant values in easy format
     for frame_idx in range(self.num_files):
       labels = self.get_label(frame_idx)                                        # get labels for in frame
       for label in labels:                                                      # get all label information in frame                    
@@ -108,15 +109,15 @@ class KittiDataset(object):
           if label['ymax'] - label['ymin'] > \
             OBJECT_HEIGHT_THRESHOLDS[self.difficulty]:                          # large enough
             object_name = label['name']
-            h_dict[object_name].append(label['height'])                         # object height
-            w_dict[object_name].append(label['width'])                          # object width
-            l_dict[object_name].append(label['length'])                         # object length
-            x_dict[object_name].append(label['x3d'])                            # x coordinate
-            y_dict[object_name].append(label['y3d'])                            # y coordinate
-            z_dict[object_name].append(label['z3d'])                            # z coordinate
-            view_angle_dict[object_name].append(                                # compute view angle  
+            self.w_dict[object_name].append(label['width'])                     # object width
+            self.h_dict[object_name].append(label['height'])                    # object height
+            self.l_dict[object_name].append(label['length'])                    # object length
+            self.x_dict[object_name].append(label['x3d'])                       # x coordinate
+            self.y_dict[object_name].append(label['y3d'])                       # y coordinate
+            self.z_dict[object_name].append(label['z3d'])                       # z coordinate
+            self.view_angle_dict[object_name].append(                           # compute view angle  
               np.arctan(label['x3d']/label['z3d']))
-            yaw_dict[object_name].append(label['yaw'])
+            self.yaw_dict[object_name].append(label['yaw'])
 
     # compute ingore statics
     truncation_rates    = []
@@ -125,7 +126,7 @@ class KittiDataset(object):
     image_width         = []
 
     for frame_idx in range(self.num_files):
-      labels  = self.get_label(frame_idx)                                       # get labels in frame
+      labels  = self.get_label(frame_idx)                                       # get image frame sizes
       calib   = self.get_calib(frame_idx)
       image   = self.get_image(frame_idx)
       image_height.append(image.shape[0])
@@ -135,27 +136,28 @@ class KittiDataset(object):
         object_name = label['name']
 
         if label['name'] == 'Car':
-          if label['ymax'] - label['ymin'] < OBJECT_HEIGHT_THRESHOLDS[-1]:      # too small
-            h_dict['ignored_by_height'].append(label['height'])
-            w_dict['ignored_by_height'].append(label['width'])
-            l_dict['ignored_by_height'].append(label['length'])
-            x_dict['ignored_by_height'].append(label['x3d'])
-            y_dict['ignored_by_height'].append(label['y3d'])
-            z_dict['ignored_by_height'].append(label['z3d'])
-            view_angle_dict['ignored_by_height'].append(
+          # too small
+          if label['ymax'] - label['ymin'] < OBJECT_HEIGHT_THRESHOLDS[self.difficulty]:      
+            self.h_dict['ignored_by_height'].append(label['height'])
+            self.w_dict['ignored_by_height'].append(label['width'])
+            self.l_dict['ignored_by_height'].append(label['length'])
+            self.x_dict['ignored_by_height'].append(label['x3d'])
+            self.y_dict['ignored_by_height'].append(label['y3d'])
+            self.z_dict['ignored_by_height'].append(label['z3d'])
+            self.view_angle_dict['ignored_by_height'].append(
                np.arctan(label['x3d']/label['z3d']))
-            yaw_dict['ignored_by_height'].append(label['yaw'])
+            self.yaw_dict['ignored_by_height'].append(label['yaw'])
 
           if label['truncation'] > TRUNCATION_THRESHOLDS[self.difficulty]:      # too much truncation
-            h_dict['ignored_by_truncation'].append(label['height'])
-            w_dict['ignored_by_truncation'].append(label['width'])
-            l_dict['ignored_by_truncation'].append(label['length'])
-            x_dict['ignored_by_truncation'].append(label['x3d'])
-            y_dict['ignored_by_truncation'].append(label['y3d'])
-            z_dict['ignored_by_truncation'].append(label['z3d'])
-            view_angle_dict['ignored_by_truncation'].append(
+            self.h_dict['ignored_by_truncation'].append(label['height'])
+            self.w_dict['ignored_by_truncation'].append(label['width'])
+            self.l_dict['ignored_by_truncation'].append(label['length'])
+            self.x_dict['ignored_by_truncation'].append(label['x3d'])
+            self.y_dict['ignored_by_truncation'].append(label['y3d'])
+            self.z_dict['ignored_by_truncation'].append(label['z3d'])
+            self.view_angle_dict['ignored_by_truncation'].append(
               np.arctan(label['x3d']/label['z3d']))
-            yaw_dict['ignored_by_truncation'].append(label['yaw'])
+            self.yaw_dict['ignored_by_truncation'].append(label['yaw'])
 
           detection_boxes_3d = np.array(                                        # get label 3D boxes
             [[label['x3d'], label['y3d'], label['z3d'], label['length'], 
@@ -181,49 +183,49 @@ class KittiDataset(object):
             no_truncation_rates.append(truncation_rate)
 
           if label['occlusion'] > OCCULUSION_THRESHOLDS[self.difficulty]:       # check occlusion rate
-            h_dict['ignored_by_occlusion'].append(label['height'])
-            w_dict['ignored_by_occlusion'].append(label['width'])
-            l_dict['ignored_by_occlusion'].append(label['length'])
-            x_dict['ignored_by_occlusion'].append(label['x3d'])
-            y_dict['ignored_by_occlusion'].append(label['y3d'])
-            z_dict['ignored_by_occlusion'].append(label['z3d'])
-            view_angle_dict['ignored_by_occlusion'].append(
+            self.h_dict['ignored_by_occlusion'].append(label['height'])
+            self.w_dict['ignored_by_occlusion'].append(label['width'])
+            self.l_dict['ignored_by_occlusion'].append(label['length'])
+            self.x_dict['ignored_by_occlusion'].append(label['x3d'])
+            self.y_dict['ignored_by_occlusion'].append(label['y3d'])
+            self.z_dict['ignored_by_occlusion'].append(label['z3d'])
+            self.view_angle_dict['ignored_by_occlusion'].append(
               np.arctan(label['x3d']/label['z3d']))
-            yaw_dict['ignored_by_occlusion'].append(label['yaw'])
+            self.yaw_dict['ignored_by_occlusion'].append(label['yaw'])
 
     statistics = ""
-    for object_name in h_dict:
+    for object_name in self.h_dict:
       # print(object_name+
       #   "l="+str(np.histogram(l_dict[object_name], 10, density=True))+'\n')
       
-      if len(h_dict[object_name]) == 0: continue
+      if len(self.h_dict[object_name]) == 0: continue
 
       statistics += ('\t* ' + str(object_name) + 's {\n' 
-        + '\t\t# objects= ' + str(len(h_dict[object_name])) + ";\n"
-        + "\t\tmh= " + str(np.min(h_dict[object_name])) + " "
-                + str(np.median(h_dict[object_name])) + " "
-                + str(np.max(h_dict[object_name])) + ";\n"
-        + "\t\tmw= " + str(np.min(w_dict[object_name])) + " "
-                + str(np.median(w_dict[object_name])) + " "
-                + str(np.max(w_dict[object_name])) + ";\n"
-        + "\t\tml= " + str(np.min(l_dict[object_name])) + " "
-                + str(np.median(l_dict[object_name])) + " "
-                + str(np.max(l_dict[object_name])) + ";\n"
-        + "\t\tmx= " + str(np.min(x_dict[object_name])) + " "
-                + str(np.median(x_dict[object_name])) + " "
-                + str(np.max(x_dict[object_name])) + ";\n"
-        + "\t\tmy= " + str(np.min(y_dict[object_name])) + " "
-                + str(np.median(y_dict[object_name])) + " "
-                + str(np.max(y_dict[object_name])) + ";\n"
-        + "\t\tmz= " + str(np.min(z_dict[object_name])) + " "
-                + str(np.median(z_dict[object_name])) + " "
-                + str(np.max(z_dict[object_name])) + ";\n"
-        + "\t\tmA= " + str(np.round(np.min(view_angle_dict[object_name]),2)) + " "
-              + str(np.round(np.median(view_angle_dict[object_name]),2)) + " "
-              + str(np.round(np.max(view_angle_dict[object_name]),2)) + ";\n"
-        + "\t\tmY= " + str(np.min(yaw_dict[object_name])) + " "
-                + str(np.median(yaw_dict[object_name])) + " "
-                + str(np.max(yaw_dict[object_name])) + ";\n"
+        + '\t\t# objects= ' + str(len(self.h_dict[object_name])) + ";\n"
+        + "\t\tmh= " + str(np.min(self.h_dict[object_name])) + " "
+                + str(np.median(self.h_dict[object_name])) + " "
+                + str(np.max(self.h_dict[object_name])) + ";\n"
+        + "\t\tmw= " + str(np.min(self.w_dict[object_name])) + " "
+                + str(np.median(self.w_dict[object_name])) + " "
+                + str(np.max(self.w_dict[object_name])) + ";\n"
+        + "\t\tml= " + str(np.min(self.l_dict[object_name])) + " "
+                + str(np.median(self.l_dict[object_name])) + " "
+                + str(np.max(self.l_dict[object_name])) + ";\n"
+        + "\t\tmx= " + str(np.min(self.x_dict[object_name])) + " "
+                + str(np.median(self.x_dict[object_name])) + " "
+                + str(np.max(self.x_dict[object_name])) + ";\n"
+        + "\t\tmy= " + str(np.min(self.y_dict[object_name])) + " "
+                + str(np.median(self.y_dict[object_name])) + " "
+                + str(np.max(self.y_dict[object_name])) + ";\n"
+        + "\t\tmz= " + str(np.min(self.z_dict[object_name])) + " "
+                + str(np.median(self.z_dict[object_name])) + " "
+                + str(np.max(self.z_dict[object_name])) + ";\n"
+        + "\t\tmφ= " + str(np.round(np.min(self.view_angle_dict[object_name]),2)) + " "
+              + str(np.round(np.median(self.view_angle_dict[object_name]),2)) + " "
+              + str(np.round(np.max(self.view_angle_dict[object_name]),2)) + ";\n"
+        + "\t\tmY= " + str(np.min(self.yaw_dict[object_name])) + " "
+                + str(np.median(self.yaw_dict[object_name])) + " "
+                + str(np.max(self.yaw_dict[object_name])) + ";\n"
         + "\t\timage_height:= " + str(np.min(image_height)) + " "
         + str(np.max(image_height)) +";\n"
         + "\t\timage_width: " + str(np.min(image_width)) + " "

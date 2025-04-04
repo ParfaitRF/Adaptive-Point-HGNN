@@ -9,3 +9,4 @@ paper/*/
 *.tex
 *.log
 **/__pycache__/
+**/*.bcf-SAVE-ERROR
