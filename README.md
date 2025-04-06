@@ -1,6 +1,6 @@
 # Adaptive Point-HGNN
 
-This repository is complementary to the [thesis paper](paper/main.pdf). if you find the code useful, consider citing our work
+This repository is complementary to the [thesis paper](paper/main.pdf). If you find the code useful, consider citing our work
 
 ```plaintext
 @inproceedings{prf2025acehgpnn,
