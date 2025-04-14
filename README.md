@@ -1,6 +1,6 @@
 # Adaptive Point-HGNN
 
-This repository is complementary to the [thesis thesis](thesis/main.pdf). If you find the code useful, consider citing our work
+This repository is complementary to the [thesis paper](paper/main.pdf). If you find the code useful, consider citing our work
 
 ```plaintext
 @inproceedings{prf2025acehgpnn,
@@ -33,8 +33,8 @@ DATASET_ROOT_DIR
 ├── kitti                    	# Left color images
 │   ├── 3DOP_splits
 |   |   |
-|   |   :
-|   |
+|   |   :  
+|   |   
 │   └── testing 		# test set
 |   |   |
 |   |   |── calib		# calibration files
@@ -47,7 +47,7 @@ DATASET_ROOT_DIR
 |       |── image_2
 |       |── label_2
 |       └── velodyne
-|
+|   
 ├── kitti_dataset.py         	# Velodyne point cloud files
 ├── transformations.py		# transformation functionalities
 └── utils.py			# utilities

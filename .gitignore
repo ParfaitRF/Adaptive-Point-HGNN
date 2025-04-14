@@ -5,7 +5,7 @@
 **/3DOP_splits/
 **/cropped.json
 **/__pycache__/
-thesis/*/
+paper/*/
 *.tex
 *.log
 **/__pycache__/
