@@ -46,7 +46,7 @@ def show(device):
     for j in range(i):
       d = torch.norm(torch.tensor(bht_points[i+1],dtype=torch.float32) - torch.tensor(bht_points[j+1],dtype=torch.float32))
       d = d * (2 * pi * 0.3) / 12
-      training_examples.append((i,j,d))
+      training_examples.append((i,j,torch.Tensor(d).to(device)))
 
 
   # for i in range(n):
@@ -126,7 +126,7 @@ def show(device):
 
 
   def plot_point(x, y, z):
-    mlab.mesh(x + ball_x, y + ball_y, z + ball_z, color=to_rgb(COLORS.orange))
+    mlab.mesh(x + ball_x, y + ball_y, z + ball_z, color=to_rgb(COLORS.ORANGE))
 
 
   def update_plot(X):
@@ -141,7 +141,7 @@ def show(device):
     mlab.figure(size=(700, 500), bgcolor=(1, 1, 1))
 
     # plot torus surface
-    mlab.mesh(torus_x, torus_y, torus_z, color=to_rgb(COLORS.petrol), opacity=0.5)
+    mlab.mesh(torus_x, torus_y, torus_z, color=to_rgb(COLORS.PETROL), opacity=0.5)
 
     # plot embedding points on torus surface
     for i in range(n):
@@ -179,12 +179,12 @@ def show(device):
 
   # training loop to optimize the positions of embeddings such that the
   # distances between them become as close as possible to the true graph distances
-  for t in tqdm(range(1000)):
+  for t in tqdm(range(2000)):
     # zero-out the gradients
     riemannian_adam.zero_grad()
 
     # compute loss for next batch
-    loss = torch.tensor(0.0)
+    loss = torch.tensor(0.0).to(device)
     indices_batch = get_subset_of_examples()
     for i in indices_batch:
       v_i, v_j, target_distance = training_examples[i]
@@ -192,6 +192,7 @@ def show(device):
       # space (torus)
       current_distance = torus.dist(X[v_i,:], X[v_j,:])
       # add squared loss of current and target distance to the loss
+
       loss += (current_distance - target_distance).pow(2)
 
     # compute derivative of loss w.r.t. parameters
@@ -202,7 +203,7 @@ def show(device):
 
     # plot current embeddings
     with torch.no_grad():
-      update_plot(X.detach().numpy())
+      update_plot(X.detach().cpu().numpy())
 
 
   # CREATE ANIMATED GIF ##########################################################
