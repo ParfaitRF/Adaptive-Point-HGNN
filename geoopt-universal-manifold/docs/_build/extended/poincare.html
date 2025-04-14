@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Poincare Ball model &#8212; geoopt 0.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <script src="../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Developer Guide" href="../devguide.html" />
+    <link rel="prev" title="Extended Guide" href="../extended.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="poincare-ball-model">
+<h1>Poincare Ball model<a class="headerlink" href="#poincare-ball-model" title="Link to this heading">¶</a></h1>
+<p>Poincare ball model is a compact representation of hyperbolic space.
+To have a nice introduction into this model we should start from
+simple concepts, putting them all together to build a more complete picture.</p>
+<section id="hyperbolic-spaces">
+<h2>Hyperbolic spaces<a class="headerlink" href="#hyperbolic-spaces" title="Link to this heading">¶</a></h2>
+<p>Hyperbolic space is a constant negative curvature Riemannian manifold.
+A very simple example of Riemannian manifold with constant, but positive curvature is sphere.</p>
+<p>An (N+1)-dimensional hyperboloid spans the manifold that can be embedded into N-dimensional space via projections.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="plots/extended/poincare/hyperboloid_projection.png"><img alt="plots/extended/poincare/hyperboloid_projection.png" src="plots/extended/poincare/hyperboloid_projection.png" style="width: 300px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">img source <a class="reference external" href="https://en.wikipedia.org/wiki/Hyperboloid_model/">Wikipedia, Hyperboloid Model</a></span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Originally, the distance between points on the hyperboloid is defined as</p>
+<div class="math notranslate nohighlight">
+\[d(x, y) = \operatorname{arccosh}(x, y)\]</div>
+<p>It is difficult to work in (N+1)-dimensional space and there is a range of useful embeddings
+exist in literature</p>
+<section id="klein-model">
+<h3>Klein Model<a class="headerlink" href="#klein-model" title="Link to this heading">¶</a></h3>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="plots/extended/poincare/klein_tiling.png"><img alt="plots/extended/poincare/klein_tiling.png" src="plots/extended/poincare/klein_tiling.png" style="width: 300px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">img source <a class="reference external" href="https://en.wikipedia.org/wiki/Beltrami-Klein_model/">Wikipedia, Klein Model</a></span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="poincare-model">
+<h3>Poincare Model<a class="headerlink" href="#poincare-model" title="Link to this heading">¶</a></h3>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="plots/extended/poincare/poincare_lines.gif"><img alt="plots/extended/poincare/poincare_lines.gif" src="plots/extended/poincare/poincare_lines.gif" style="width: 300px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">img source <a class="reference external" href="http://bulatov.org/math/1001/">Bulatov, Poincare Model</a></span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Here we go.</p>
+<p>First of all we note, that Poincare ball is embedded in a Sphere of radius <span class="math notranslate nohighlight">\(r=1/\sqrt{c}\)</span>,
+where c is negative curvature. We also note, as <span class="math notranslate nohighlight">\(c\)</span> goes to <span class="math notranslate nohighlight">\(0\)</span>, we recover infinite radius ball.
+We should expect this limiting behaviour recovers Euclidean geometry.</p>
+<p>To connect Euclidean space with its embedded manifold we need to get <span class="math notranslate nohighlight">\(g_x\)</span>.
+It is done via <cite>conformal factor</cite> <span class="math notranslate nohighlight">\(\lambda^c_x\)</span>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.lambda_x">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">lambda_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#lambda_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.lambda_x" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the conformal factor <span class="math notranslate nohighlight">\(\lambda^c_x\)</span> for a point on the ball.</p>
+<div class="math notranslate nohighlight">
+\[\lambda^c_x = \frac{1}{1 - c \|x\|_2^2}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>keepdim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – retain the last dim? (default: false)</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>conformal factor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><span class="math notranslate nohighlight">\(\lambda^c_x\)</span> connects Euclidean inner product with Riemannian one</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.inner">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">inner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#inner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.inner" title="Link to this definition">¶</a></dt>
+<dd><p>Compute inner product for two vectors on the tangent space w.r.t Riemannian metric on the Poincare ball.</p>
+<div class="math notranslate nohighlight">
+\[\langle u, v\rangle_x = (\lambda^c_x)^2 \langle u, v \rangle\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>u</strong> (<em>tensor</em>) – tangent vector to <span class="math notranslate nohighlight">\(x\)</span> on Poincare ball</p></li>
+<li><p><strong>v</strong> (<em>tensor</em>) – tangent vector to <span class="math notranslate nohighlight">\(x\)</span> on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>keepdim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – retain the last dim? (default: false)</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>inner product</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.norm">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.norm" title="Link to this definition">¶</a></dt>
+<dd><p>Compute vector norm on the tangent space w.r.t Riemannian metric on the Poincare ball.</p>
+<div class="math notranslate nohighlight">
+\[\|u\|_x = \lambda^c_x \|u\|_2\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>u</strong> (<em>tensor</em>) – tangent vector to <span class="math notranslate nohighlight">\(x\)</span> on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>keepdim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – retain the last dim? (default: false)</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>norm of vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.egrad2rgrad">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">egrad2rgrad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#egrad2rgrad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.egrad2rgrad" title="Link to this definition">¶</a></dt>
+<dd><p>Translate Euclidean gradient to Riemannian gradient on tangent space of <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\nabla_x = \nabla^E_x / (\lambda_x^c)^2\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>grad</strong> (<em>tensor</em>) – Euclidean gradient for <span class="math notranslate nohighlight">\(x\)</span></p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Riemannian gradient <span class="math notranslate nohighlight">\(u\in T_x\mathbb{D}_c^n\)</span></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="math">
+<h2>Math<a class="headerlink" href="#math" title="Link to this heading">¶</a></h2>
+<p>The good thing about Poincare ball is that it forms a Gyrogroup. Minimal definition of a Gyrogroup
+assumes a binary operation <span class="math notranslate nohighlight">\(*\)</span> defined that satisfies a set of properties.</p>
+<dl class="simple">
+<dt>Left identity</dt><dd><p>For every element <span class="math notranslate nohighlight">\(a\in G\)</span> there exist <span class="math notranslate nohighlight">\(e\in G\)</span> such that <span class="math notranslate nohighlight">\(e * a = a\)</span>.</p>
+</dd>
+<dt>Left Inverse</dt><dd><p>For every element <span class="math notranslate nohighlight">\(a\in G\)</span> there exist <span class="math notranslate nohighlight">\(b\in G\)</span> such that <span class="math notranslate nohighlight">\(b * a = e\)</span></p>
+</dd>
+<dt>Gyroassociativity</dt><dd><p>For any <span class="math notranslate nohighlight">\(a,b,c\in G\)</span> there exist <span class="math notranslate nohighlight">\(gyr[a, b]c\in G\)</span> such that <span class="math notranslate nohighlight">\(a * (b * c)=(a * b) * gyr[a, b]c\)</span></p>
+</dd>
+<dt>Gyroautomorphism</dt><dd><p><span class="math notranslate nohighlight">\(gyr[a, b]\)</span> is a magma automorphism in G</p>
+</dd>
+<dt>Left loop</dt><dd><p><span class="math notranslate nohighlight">\(gyr[a, b] = gyr[a * b, b]\)</span></p>
+</dd>
+</dl>
+<p>As mentioned above, hyperbolic space forms a Gyrogroup equipped with</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_add">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_add" title="Link to this definition">¶</a></dt>
+<dd><p>Compute Mobius addition is a special operation in a hyperbolic space.</p>
+<div class="math notranslate nohighlight">
+\[x \oplus_c y = \frac{
+  (1 + 2 c \langle x, y\rangle + c \|y\|^2_2) x + (1 - c \|x\|_2^2) y
+  }{
+  1 + 2 c \langle x, y\rangle + c^2 \|x\|^2_2 \|y\|^2_2
+}\]</div>
+<p>In general this operation is not commutative:</p>
+<div class="math notranslate nohighlight">
+\[x \oplus_c y \ne y \oplus_c x\]</div>
+<p>But in some cases this property holds:</p>
+<ul class="simple">
+<li><p>zero vector case</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\mathbf{0} \oplus_c x = x \oplus_c \mathbf{0}\]</div>
+<ul class="simple">
+<li><p>zero negative curvature case that is same as Euclidean addition</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[x \oplus_0 y = y \oplus_0 x\]</div>
+<p>Another useful property is so called left-cancellation law:</p>
+<div class="math notranslate nohighlight">
+\[(-x) \oplus_c (x \oplus_c y) = y\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>y</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the result of mobius addition</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.gyration">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">gyration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#gyration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.gyration" title="Link to this definition">¶</a></dt>
+<dd><p>Apply gyration <span class="math notranslate nohighlight">\(\operatorname{gyr}[u, v]w\)</span>.</p>
+<p>Guration is a special operation in hyperbolic geometry.
+Addition operation <span class="math notranslate nohighlight">\(\oplus_c\)</span> is not associative (as mentioned in <a class="reference internal" href="#geoopt.manifolds.poincare.math.mobius_add" title="geoopt.manifolds.poincare.math.mobius_add"><code class="xref py py-func docutils literal notranslate"><span class="pre">mobius_add()</span></code></a>),
+but gyroassociative which means</p>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{gyr}[u, v]w = \ominus (u \oplus_c v) \oplus (u \oplus_c (v \oplus_c w))\]</div>
+<p>We can simplify this equation using explicit formula for Mobius addition [1]. Recall</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}A = - c^2 \langle u, w\rangle \langle v, v\rangle + c \langle v, w\rangle +
+  2 c^2 \langle u, v\rangle \langle v, w\rangle\\
+B = - c^2 \langle v, w\rangle \langle u, u\rangle - c \langle u, w\rangle\\
+D = 1 + 2 c \langle u, v\rangle + c^2 \langle u, u\rangle \langle v, v\rangle\\\end{split}\\\operatorname{gyr}[u, v]w = w + 2 \frac{A u + B v}{D}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>tensor</em>) – first point on Poincare ball</p></li>
+<li><p><strong>b</strong> (<em>tensor</em>) – second point on Poincare ball</p></li>
+<li><p><strong>u</strong> (<em>tensor</em>) – vector field for operation</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the result of automorphism</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>[1]  A. A. Ungar (2009), A Gyrovector Space Approach to Hyperbolic Geometry</p>
+</dd></dl>
+
+<p>Using this math, it is possible to define another useful operations</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_sub">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_sub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_sub" title="Link to this definition">¶</a></dt>
+<dd><p>Compute Mobius substraction.</p>
+<p>Mobius substraction can be represented via Mobius addition as follows:</p>
+<div class="math notranslate nohighlight">
+\[x \ominus_c y = x \oplus_c (-y)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>y</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the result of mobius substraction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_scalar_mul">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_scalar_mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_scalar_mul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_scalar_mul" title="Link to this definition">¶</a></dt>
+<dd><p>Compute left scalar multiplication on the Poincare ball.</p>
+<div class="math notranslate nohighlight">
+\[r \otimes_c x = (1/\sqrt{c}) \tanh(r\tanh^{-1}(\sqrt{c}\|x\|_2))\frac{x}{\|x\|_2}\]</div>
+<p>This operation has properties similar to Euclidean</p>
+<ul class="simple">
+<li><p><cite>n-addition</cite> property</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[r \otimes_c x = x \oplus_c \dots \oplus_c x\]</div>
+<ul class="simple">
+<li><p>Distributive property</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[(r_1 + r_2) \otimes_c x = r_1 \otimes_c x \oplus r_2 \otimes_c x\]</div>
+<ul class="simple">
+<li><p>Scalar associativity</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[(r_1 r_2) \otimes_c x = r_1 \otimes_c (r_2 \otimes_c x)\]</div>
+<ul class="simple">
+<li><p>Scaling property</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[|r| \otimes_c x / \|r \otimes_c x\|_2 = x/\|x\|_2\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – scalar for multiplication</p></li>
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the result of mobius scalar multiplication</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_pointwise_mul">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_pointwise_mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_pointwise_mul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_pointwise_mul" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a generalization for point-wise multiplication to hyperbolic space.</p>
+<p>Mobius pointwise multiplication is defined as follows</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{diag}(w) \otimes_c x = (1/\sqrt{c}) \tanh\left(
+  \frac{\|\operatorname{diag}(w)x\|_2}{x}\tanh^{-1}(\sqrt{c}\|x\|_2)
+\right)\frac{\|\operatorname{diag}(w)x\|_2}{\|x\|_2}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>tensor</em>) – weights for multiplication (should be broadcastable to x)</p></li>
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – negative ball curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mobius point-wise mul result</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_matvec">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_matvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_matvec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_matvec" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a generalization for matrix-vector multiplication to hyperbolic space.</p>
+<p>Mobius matrix vector operation is defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[M \otimes_c x = (1/\sqrt{c}) \tanh\left(
+  \frac{\|Mx\|_2}{\|x\|_2}\tanh^{-1}(\sqrt{c}\|x\|_2)
+\right)\frac{Mx}{\|Mx\|_2}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<em>tensor</em>) – matrix for multiplication.
+Batched matmul is performed if <code class="docutils literal notranslate"><span class="pre">m.dim()</span> <span class="pre">&gt;</span> <span class="pre">2</span></code>, but only last dim reduction is supported</p></li>
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – negative ball curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mobius matvec result</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_fn_apply">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_fn_apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_fn_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_fn_apply" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a generalization for function application in hyperbolic space.</p>
+<p>First, hyperbolic vector is mapped to a Euclidean space via
+<span class="math notranslate nohighlight">\(\operatorname{Log}^c_0\)</span> and nonlinear function is applied in this tangent space.
+The resulting vector is then mapped back with <span class="math notranslate nohighlight">\(\operatorname{Exp}^c_0\)</span></p>
+<div class="math notranslate nohighlight">
+\[f^{\otimes_c}(x) = \operatorname{Exp}^c_0(f(\operatorname{Log}^c_0(y)))\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>fn</strong> (<em>callable</em>) – function to apply</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Result of function in hyperbolic space</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.mobius_fn_apply_chain">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">mobius_fn_apply_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#mobius_fn_apply_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.mobius_fn_apply_chain" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a generalization for sequential function application in hyperbolic space.</p>
+<p>First, hyperbolic vector is mapped to a Euclidean space via
+<span class="math notranslate nohighlight">\(\operatorname{Log}^c_0\)</span> and nonlinear function is applied in this tangent space.
+The resulting vector is then mapped back with <span class="math notranslate nohighlight">\(\operatorname{Exp}^c_0\)</span></p>
+<div class="math notranslate nohighlight">
+\[f^{\otimes_c}(x) = \operatorname{Exp}^c_0(f(\operatorname{Log}^c_0(y)))\]</div>
+<p>The definition of mobius function application allows chaining as</p>
+<div class="math notranslate nohighlight">
+\[y = \operatorname{Exp}^c_0(\operatorname{Log}^c_0(y))\]</div>
+<p>Resulting in</p>
+<div class="math notranslate nohighlight">
+\[(f \circ g)^{\otimes_c}(x) = \operatorname{Exp}^c_0((f \circ g) (\operatorname{Log}^c_0(y)))\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>fns</strong> (<em>callable</em><em>[</em><em>]</em>) – functions to apply</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Apply chain result</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="manifold">
+<h2>Manifold<a class="headerlink" href="#manifold" title="Link to this heading">¶</a></h2>
+<p>Now we are ready to proceed with studying distances, geodesics, exponential maps and more</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.dist">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.dist" title="Link to this definition">¶</a></dt>
+<dd><p>Compute geodesic distance on the Poincare ball.</p>
+<div class="math notranslate nohighlight">
+\[d_c(x, y) = \frac{2}{\sqrt{c}}\tanh^{-1}(\sqrt{c}\|(-x)\oplus_c y\|_2)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>y</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>keepdim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – retain the last dim? (default: false)</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>geodesic distance between <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.dist2plane">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">dist2plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#dist2plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.dist2plane" title="Link to this definition">¶</a></dt>
+<dd><p>Compute geodesic distance from <span class="math notranslate nohighlight">\(x\)</span> to a hyperbolic hyperplane in Poincare ball.</p>
+<p>The distance is computed to a plane that is orthogonal to <span class="math notranslate nohighlight">\(a\)</span> and contains <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<p>To form an intuition what is a hyperbolic hyperplane, let’s first consider Euclidean hyperplane</p>
+<div class="math notranslate nohighlight">
+\[H_{a, b} = \left\{
+    x \in \mathbb{R}^n\;:\;\langle x, a\rangle - b = 0
+\right\},\]</div>
+<p>where <span class="math notranslate nohighlight">\(a\in \mathbb{R}^n\backslash \{\mathbf{0}\}\)</span> and <span class="math notranslate nohighlight">\(b\in \mathbb{R}^n\)</span>.</p>
+<p>This formulation of a hyperplane is hard to generalize,
+therefore we can rewrite <span class="math notranslate nohighlight">\(\langle x, a\rangle - b\)</span>
+utilizing orthogonal completion.
+Setting any <span class="math notranslate nohighlight">\(p\)</span> s.t. <span class="math notranslate nohighlight">\(b=\langle a, p\rangle\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}H_{a, b} = \left\{
+    x \in \mathbb{R}^n\;:\;\langle x, a\rangle - b = 0
+\right\}\\
+=H_{a, \langle a, p\rangle} = \tilde{H}_{a, p}\\
+= \left\{
+    x \in \mathbb{R}^n\;:\;\langle x, a\rangle - \langle a, p\rangle = 0
+\right\}\\
+=\left\{
+    x \in \mathbb{R}^n\;:\;\langle -p + x, a\rangle = 0
+\right\}\\
+= p + \{a\}^\perp\end{split}\]</div>
+<p>Naturally we have a set <span class="math notranslate nohighlight">\(\{a\}^\perp\)</span> with applied <span class="math notranslate nohighlight">\(+\)</span> operator to each element.
+Generalizing a notion of summation to the hyperbolic space we replace <span class="math notranslate nohighlight">\(+\)</span> with <span class="math notranslate nohighlight">\(\oplus_c\)</span>.</p>
+<p>Next, we should figure out what is <span class="math notranslate nohighlight">\(\{a\}^\perp\)</span> in the Poincare ball.</p>
+<p>First thing that we should acknowledge is that notion of orthogonality is defined for vectors in tangent spaces.
+Let’s consider now <span class="math notranslate nohighlight">\(p\in \mathbb{D}_c^n\)</span> and <span class="math notranslate nohighlight">\(a\in T_p\mathbb{D}_c^n\backslash \{\mathbf{0}\}\)</span>.</p>
+<p>Slightly deviating from traditional notation let’s write <span class="math notranslate nohighlight">\(\{a\}_p^\perp\)</span>
+highlighting the tight relationship of <span class="math notranslate nohighlight">\(a\in T_p\mathbb{D}_c^n\backslash \{\mathbf{0}\}\)</span>
+with <span class="math notranslate nohighlight">\(p \in \mathbb{D}_c^n\)</span>. We then define</p>
+<div class="math notranslate nohighlight">
+\[\{a\}_p^\perp := \left\{
+  z\in T_p\mathbb{D}_c^n \;:\; \langle z, a\rangle_p = 0
+\right\}\]</div>
+<p>Recalling that a tangent vector <span class="math notranslate nohighlight">\(z\)</span> for point <span class="math notranslate nohighlight">\(p\)</span> yields <span class="math notranslate nohighlight">\(x = \operatorname{Exp}^c_p(z)\)</span>
+we rewrite the above equation as</p>
+<div class="math notranslate nohighlight">
+\[\{a\}_p^\perp := \left\{
+  x\in \mathbb{D}_c^n \;:\; \langle \operatorname{Log}_p^c(x), a\rangle_p = 0
+\right\}\]</div>
+<p>This formulation is something more pleasant to work with.
+Putting all together</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\tilde{H}_{a, p}^c = p + \{a\}^\perp_p\\
+= \left\{
+  x \in \mathbb{D}_c^n\;:\;\langle\operatorname{Log}^c_p(x), a\rangle_p = 0
+\right\} \\
+= \left\{
+  x \in \mathbb{D}_c^n\;:\;\langle -p \oplus_c x, a\rangle = 0
+\right\}\end{split}\]</div>
+<p>To compute the distance <span class="math notranslate nohighlight">\(d_c(x, \tilde{H}_{a, p}^c)\)</span> we find</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}d_c(x, \tilde{H}_{a, p}^c) = \inf_{w\in \tilde{H}_{a, p}^c} d_c(x, w)\\
+= \frac{1}{\sqrt{c}} \sinh^{-1}\left\{
+  \frac{
+    2\sqrt{c} |\langle(-p)\oplus_c x, a\rangle|
+    }{
+    (1-c\|(-p)\oplus_c x\|^2_2)\|a\|_2
+  }
+\right\}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on Poincare ball</p></li>
+<li><p><strong>a</strong> (<em>tensor</em>) – vector on tangent space of <span class="math notranslate nohighlight">\(p\)</span></p></li>
+<li><p><strong>p</strong> (<em>tensor</em>) – point on Poincare ball lying on the hyperplane</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>keepdim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – retain the last dim? (default: false)</p></li>
+<li><p><strong>signed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – return signed distance</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>distance to the hyperplane</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.parallel_transport">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">parallel_transport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#parallel_transport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.parallel_transport" title="Link to this definition">¶</a></dt>
+<dd><p>Perform parallel transport on the Poincare ball.</p>
+<p>Parallel transport is essential for adaptive algorithms in Riemannian manifolds.
+For Hyperbolic spaces parallel transport is expressed via gyration.</p>
+<p>To recover parallel transport we first need to study isomorphism between gyrovectors and vectors.
+The reason is that originally, parallel transport is well defined for gyrovectors as</p>
+<div class="math notranslate nohighlight">
+\[P_{x\to y}(z) = \operatorname{gyr}[y, -x]z,\]</div>
+<p>where <span class="math notranslate nohighlight">\(x,\:y,\:z \in \mathbb{D}_c^n\)</span> and
+<span class="math notranslate nohighlight">\(\operatorname{gyr}[a, b]c = \ominus (a \oplus_c b) \oplus_c (a \oplus_c (b \oplus_c c))\)</span></p>
+<p>But we want to obtain parallel transport for vectors, not for gyrovectors.
+The blessing is isomorphism mentioned above. This mapping is given by</p>
+<div class="math notranslate nohighlight">
+\[U^c_p \: : \: T_p\mathbb{D}_c^n \to \mathbb{G} = v \mapsto \lambda^c_p v\]</div>
+<p>Finally, having points <span class="math notranslate nohighlight">\(x,\:y \in \mathbb{D}_c^n\)</span> and a tangent vector <span class="math notranslate nohighlight">\(u\in T_x\mathbb{D}_c^n\)</span> we obtain</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}P^c_{x\to y}(v) = (U^c_y)^{-1}\left(\operatorname{gyr}[y, -x] U^c_x(v)\right)\\
+= \operatorname{gyr}[y, -x] v \lambda^c_x / \lambda^c_y\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – starting point</p></li>
+<li><p><strong>y</strong> (<em>tensor</em>) – end point</p></li>
+<li><p><strong>v</strong> (<em>tensor</em>) – tangent vector to be transported</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>transported vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.geodesic">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">geodesic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#geodesic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.geodesic" title="Link to this definition">¶</a></dt>
+<dd><p>Compute geodesic at the time point <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p>Geodesic (the shortest) path connecting <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.
+The path can be treated as and extension of a line segment between
+points but in a Riemannian manifold. In Poincare ball model, the path
+is expressed using Mobius addition and scalar multiplication:</p>
+<div class="math notranslate nohighlight">
+\[\gamma_{x\to y}(t) = x \oplus_c r \otimes_c ((-x) \oplus_c y)\]</div>
+<p>The required properties of this path are the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\gamma_{x\to y}(0) = x\\
+\gamma_{x\to y}(1) = y\\
+\dot\gamma_{x\to y}(t) = v\end{split}\]</div>
+<p>Moreover, as geodesic path is not only the shortest path connecting points and Poincare ball.
+This definition also requires local distance minimization and thus another property appears:</p>
+<div class="math notranslate nohighlight">
+\[d_c(\gamma_{x\to y}(t_1), \gamma_{x\to y}(t_2)) = v|t_1-t_2|\]</div>
+<p>“Natural parametrization” of the curve ensures unit speed geodesics which yields the above formula with <span class="math notranslate nohighlight">\(v=1\)</span>.
+However, for Poincare ball we can always compute the constant speed <span class="math notranslate nohighlight">\(v\)</span> from the points
+that particular path connects:</p>
+<div class="math notranslate nohighlight">
+\[v = d_c(\gamma_{x\to y}(0), \gamma_{x\to y}(1)) = d_c(x, y)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – travelling time</p></li>
+<li><p><strong>x</strong> (<em>tensor</em>) – starting point on Poincare ball</p></li>
+<li><p><strong>y</strong> (<em>tensor</em>) – target point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>point on the Poincare ball</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.geodesic_unit">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">geodesic_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#geodesic_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.geodesic_unit" title="Link to this definition">¶</a></dt>
+<dd><p>Compute unit speed geodesic at time <span class="math notranslate nohighlight">\(t\)</span> starting from <span class="math notranslate nohighlight">\(x\)</span> with direction <span class="math notranslate nohighlight">\(u/\|u\|_x\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\gamma_{x,u}(t) = x\oplus_c \tanh(t\sqrt{c}/2) \frac{u}{\sqrt{c}\|u\|_2}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>tensor</em>) – travelling time</p></li>
+<li><p><strong>x</strong> (<em>tensor</em>) – initial point</p></li>
+<li><p><strong>u</strong> (<em>tensor</em>) – direction</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the point on geodesic line</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.expmap">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">expmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#expmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.expmap" title="Link to this definition">¶</a></dt>
+<dd><p>Compute exponential map on the Poincare ball.</p>
+<p>Exponential map for Poincare ball model. This is tightly related with <a class="reference internal" href="#geoopt.manifolds.poincare.math.geodesic" title="geoopt.manifolds.poincare.math.geodesic"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodesic()</span></code></a>.
+Intuitively Exponential map is a smooth constant travelling from starting point <span class="math notranslate nohighlight">\(x\)</span> with speed <span class="math notranslate nohighlight">\(u\)</span>.</p>
+<p>A bit more formally this is travelling along curve <span class="math notranslate nohighlight">\(\gamma_{x, u}(t)\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\gamma_{x, u}(0) = x\\
+\dot\gamma_{x, u}(0) = u\\
+\|\dot\gamma_{x, u}(t)\|_{\gamma_{x, u}(t)} = \|u\|_x\end{split}\]</div>
+<p>The existence of this curve relies on uniqueness of differential equation solution, that is local.
+For the Poincare ball model the solution is well defined globally and we have.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\operatorname{Exp}^c_x(u) = \gamma_{x, u}(1) = \\
+x\oplus_c \tanh(\sqrt{c}/2 \|u\|_x) \frac{u}{\sqrt{c}\|u\|_2}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – starting point on Poincare ball</p></li>
+<li><p><strong>u</strong> (<em>tensor</em>) – speed vector on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\gamma_{x, u}(1)\)</span> end point</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.expmap0">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">expmap0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#expmap0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.expmap0" title="Link to this definition">¶</a></dt>
+<dd><p>Compute exponential map for Poincare ball model from <span class="math notranslate nohighlight">\(0\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{Exp}^c_0(u) = \tanh(\sqrt{c}/2 \|u\|_2) \frac{u}{\sqrt{c}\|u\|_2}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>tensor</em>) – speed vector on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\gamma_{0, u}(1)\)</span> end point</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.logmap">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">logmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#logmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.logmap" title="Link to this definition">¶</a></dt>
+<dd><p>Compute logarithmic map for two points <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> on the manifold.</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{Log}^c_x(y) = \frac{2}{\sqrt{c}\lambda_x^c} \tanh^{-1}(
+    \sqrt{c} \|(-x)\oplus_c y\|_2
+) * \frac{(-x)\oplus_c y}{\|(-x)\oplus_c y\|_2}\]</div>
+<p>The result of Logarithmic map is a vector such that</p>
+<div class="math notranslate nohighlight">
+\[y = \operatorname{Exp}^c_x(\operatorname{Log}^c_x(y))\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – starting point on Poincare ball</p></li>
+<li><p><strong>y</strong> (<em>tensor</em>) – target point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tangent vector that transports <span class="math notranslate nohighlight">\(x\)</span> to <span class="math notranslate nohighlight">\(y\)</span></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.logmap0">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">logmap0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#logmap0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.logmap0" title="Link to this definition">¶</a></dt>
+<dd><p>Compute logarithmic map for <span class="math notranslate nohighlight">\(y\)</span> from <span class="math notranslate nohighlight">\(0\)</span> on the manifold.</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{Log}^c_0(y) = \tanh^{-1}(\sqrt{c}\|y\|_2) \frac{y}{\|y\|_2}\]</div>
+<p>The result is such that</p>
+<div class="math notranslate nohighlight">
+\[y = \operatorname{Exp}^c_0(\operatorname{Log}^c_0(y))\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>tensor</em>) – target point on Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension for operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tangent vector that transports <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(y\)</span></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="stability">
+<h2>Stability<a class="headerlink" href="#stability" title="Link to this heading">¶</a></h2>
+<p>Numerical stability is a pain in this model. It is strongly recommended to work in <code class="docutils literal notranslate"><span class="pre">float64</span></code>,
+so expect adventures in <code class="docutils literal notranslate"><span class="pre">float32</span></code> (but this is not certain).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geoopt.manifolds.poincare.math.project">
+<span class="sig-prename descclassname"><span class="pre">geoopt.manifolds.poincare.math.</span></span><span class="sig-name descname"><span class="pre">project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geoopt/manifolds/poincare/math.html#project"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#geoopt.manifolds.poincare.math.project" title="Link to this definition">¶</a></dt>
+<dd><p>Safe projection on the manifold for numerical stability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tensor</em>) – point on the Poincare ball</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>|</em><em>tensor</em>) – ball negative curvature</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – reduction dimension to compute norm</p></li>
+<li><p><strong>eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – stability parameter, uses default for dtype if not provided</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>projected vector on the manifold</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">geoopt</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../manifolds.html">Manifolds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optimizers.html">Optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tensors.html">Tensors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../samplers.html">Samplers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../extended.html">Extended Guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Poincare Ball model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide.html">Developer Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../extended.html">Extended Guide</a><ul>
+      <li>Previous: <a href="../extended.html" title="previous chapter">Extended Guide</a></li>
+      <li>Next: <a href="../devguide.html" title="next chapter">Developer Guide</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2018, Max Kochurov.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/extended/poincare.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -20,12 +20,9 @@ shapely==2.0.6
 scikit-learn==1.6.1
 tensorflow==2.18.0
 tensorboard==2.18.0
-torch==2.4.1
+torch==2.6.0
 torch_geometric==2.6.1
 torchvision==0.19.1
-
-# for broke people gpu support
-torch_directml==0.2.5.dev240914
 
 # for gpu support on nvidia devices
 cudatoolkit==11.2 
@@ -35,3 +32,5 @@ cudnn==8.1
 tqdm==4.67.1      # progress bar
 tf_slim==1.1.0    # tensorflow slim
 
+# matplotlib widgets support
+ipympl==0.9.7
