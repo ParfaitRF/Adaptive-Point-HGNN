@@ -35,3 +35,6 @@ cudnn==8.1
 tqdm==4.67.1      # progress bar
 tf_slim==1.1.0    # tensorflow slim
 
+# matplotlib widgets support
+ipympl==0.9.7
+
