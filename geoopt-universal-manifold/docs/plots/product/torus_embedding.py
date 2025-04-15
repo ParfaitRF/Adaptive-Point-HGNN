@@ -46,7 +46,7 @@ def show(device):
     for j in range(i):
       d = torch.norm(torch.tensor(bht_points[i+1],dtype=torch.float32) - torch.tensor(bht_points[j+1],dtype=torch.float32))
       d = d * (2 * pi * 0.3) / 12
-      training_examples.append((i,j,torch.Tensor(d).to(device)))
+      training_examples.append([i,j,d])
 
 
   # for i in range(n):
@@ -103,9 +103,7 @@ def show(device):
   # declare the embeddings as trainable manifold parameters
   X = ManifoldParameter(X)
 
-
   # PLOTTING FUNCTIONALITY #######################################################
-
 
   # array storing screenshots
   screenshots = []
@@ -170,12 +168,8 @@ def show(device):
 
   # we'll just use this as a random examples sampler to get some stochasticity
   # in our gradient descent
-  num_training_examples = len(training_examples)
-  training_example_indices = np.array(range(num_training_examples))
-  def get_subset_of_examples():
-    return list(np.random.choice(training_example_indices,
-                                 size=int(num_training_examples/4),
-                                 replace=True))
+  def get_subset_of_examples():    
+    return torch.randperm(n).to(device)[:n//3]
 
   # training loop to optimize the positions of embeddings such that the
   # distances between them become as close as possible to the true graph distances

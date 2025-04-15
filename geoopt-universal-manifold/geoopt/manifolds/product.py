@@ -33,11 +33,11 @@ class ProductManifold(Manifold):
   ndim = 1
 
   def __init__(
-      self, *manifolds_with_shape: Tuple[Manifold, Union[Tuple[int, ...], int]]
+    self, *manifolds_with_shape: Tuple[Manifold, Union[Tuple[int, ...], int]]
   ):
     if len(manifolds_with_shape) < 1:
       raise ValueError(
-          "There should be at least one manifold in a product manifold"
+        "There should be at least one manifold in a product manifold"
       )
     super().__init__()
     self.shapes = []
