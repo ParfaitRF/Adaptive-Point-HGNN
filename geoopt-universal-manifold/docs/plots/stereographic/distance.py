@@ -5,14 +5,15 @@ import torch
 import numpy as np
 from geoopt.manifolds.stereographic.utils import (
   setup_plot, get_interpolation_Ks, get_img_from_fig,
-  save_img_sequence_as_boomerang_gif, add_K_box,COLORS
+  save_img_sequence_as_boomerang_gif, add_K_box
 )
 from tqdm import tqdm
+from globals import COLORS,N_GRID_EVALS
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 def show(x:torch.Tensor,device):
-  n_grid_evals = 1000
+  n_grid_evals = N_GRID_EVALS
   imgs = []
 
   # for every K of the interpolation sequence
@@ -33,18 +34,18 @@ def show(x:torch.Tensor,device):
     # create mesh-grid
     coords = None
     if K < 0:
-      coords = np.linspace(lo, hi, n_grid_evals)
+      coords = torch.linspace(lo, hi, n_grid_evals).to(device)
     else:
-      coords = np.linspace(lo, hi, n_grid_evals)
-    xx, yy  = np.meshgrid(coords, coords)
-    grid    = np.stack([xx, yy], axis=-1)
+      coords = torch.linspace(lo, hi, n_grid_evals).to(device)
+    xx, yy  = torch.meshgrid(coords, coords,indexing='ij')
+    grid    = torch.stack([xx, yy], axis=-1)
 
     # create point on manifold
     # x = torch.tensor([-0.75, -0.2])
     x = x.to(device)
 
     # compute distances to point
-    dists = manifold.dist(torch.from_numpy(grid).float(), x)
+    dists = manifold.dist(grid.float(), x)
 
     # zero-out points outside of Poincaré ball
     if K < 0:
@@ -53,19 +54,19 @@ def show(x:torch.Tensor,device):
       dists[(~mask).nonzero()] = np.nan
 
     # add contour plot
-    plt.contourf(
-      grid[..., 0],
-      grid[..., 1],
-      dists.sqrt().numpy(),
-      levels=np.linspace(0, 5, 50),
-      cmap="inferno"
-    )
-    cbar = plt.colorbar(fraction=0.046, pad=0.04)
-    cbar.set_ticks([0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
+    # plt.contourf(
+    #   grid[..., 0].cpu(),
+    #   grid[..., 1].cpu(),
+    #   dists.sqrt().cpu(),
+    #   levels=np.linspace(0, 5, 50),
+    #   cmap="inferno"
+    # )
+    # cbar = plt.colorbar(fraction=0.046, pad=0.04)
+    # cbar.set_ticks([0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
 
     # plot x
-    plt.scatter(*x, s=3.0, color=COLORS.TEXT_COLOR)
-    plt.annotate("$x$", x + torch.tensor([-0.15, 0.05]), fontsize=15, color=COLORS.TEXT_COLOR)
+    # plt.scatter(*(x.cpu()), s=3.0, color=COLORS.TEXT_COLOR)
+    # plt.annotate("$x$", x.cpu() + torch.tensor([-0.15, 0.05]), fontsize=15, color=COLORS.TEXT_COLOR)
 
     # add plot title
     # plt.title(r"Square Root of Distance to $x$")

@@ -23,3 +23,14 @@ class COLORS:
 HEATMAP = LinearSegmentedColormap.from_list("mycmap", [
   COLORS.YELLOW,COLORS.ORANGE,COLORS.BLUE,COLORS.BLUE,COLORS.BLACK][::-1], 
   N=256)
+
+
+# GRID SETTINGS
+
+N_GRID_EVALS = 1000
+# global figure setting for pyplot and mlab
+class IMG_DIM:
+  def __init__(self,width,square=True,plt=True):
+    scale = 1 if plt else 500/7 
+    self.WIDTH  = width*scale
+    self.HEIGHT = width if square else width*5/7

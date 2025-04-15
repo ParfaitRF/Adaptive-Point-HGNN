@@ -135,7 +135,7 @@ def _project(x, K, dim: int = -1, eps: float = None):
     projected = (x / norm) * maxnorm
     return torch.where(cond, projected, x)
   else:
-      return x
+    return x
 
 
 def gamma_x(x, *, K=1.0, keepdim=False, dim=-1):
