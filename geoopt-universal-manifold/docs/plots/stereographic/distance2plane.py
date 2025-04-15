@@ -53,13 +53,12 @@ def show(x:torch.Tensor, v:torch.Tensor):
       mask  = dist2 <= R ** 2
       dists[(~mask).nonzero()] = np.nan
       # add contour plot
-    levels = np.linspace(dists[~dists.isnan()].min(),dists[~dists.isnan()].max(),256)
     
     plt.contourf(
       grid[..., 0],
       grid[..., 1],
       dists.sqrt().numpy(),
-      levels=levels,
+      levels=1000,
       cmap=HEATMAP
     )
     cbar = plt.colorbar(fraction=0.046, pad=0.04)
