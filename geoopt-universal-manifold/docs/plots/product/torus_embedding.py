@@ -46,7 +46,7 @@ def show(device):
     for j in range(i):
       d = torch.norm(torch.tensor(bht_points[i+1],dtype=torch.float32) - torch.tensor(bht_points[j+1],dtype=torch.float32))
       d = d * (2 * pi * 0.3) / 12
-      training_examples.append((i,j,d))
+      training_examples.append([i,j,d])
 
 
   # for i in range(n):
@@ -103,9 +103,7 @@ def show(device):
   # declare the embeddings as trainable manifold parameters
   X = ManifoldParameter(X)
 
-
   # PLOTTING FUNCTIONALITY #######################################################
-
 
   # array storing screenshots
   screenshots = []
@@ -126,7 +124,7 @@ def show(device):
 
 
   def plot_point(x, y, z):
-    mlab.mesh(x + ball_x, y + ball_y, z + ball_z, color=to_rgb(COLORS.orange))
+    mlab.mesh(x + ball_x, y + ball_y, z + ball_z, color=to_rgb(COLORS.ORANGE))
 
 
   def update_plot(X):
@@ -141,7 +139,7 @@ def show(device):
     mlab.figure(size=(700, 500), bgcolor=(1, 1, 1))
 
     # plot torus surface
-    mlab.mesh(torus_x, torus_y, torus_z, color=to_rgb(COLORS.petrol), opacity=0.5)
+    mlab.mesh(torus_x, torus_y, torus_z, color=to_rgb(COLORS.PETROL), opacity=0.5)
 
     # plot embedding points on torus surface
     for i in range(n):
@@ -170,16 +168,12 @@ def show(device):
 
   # we'll just use this as a random examples sampler to get some stochasticity
   # in our gradient descent
-  num_training_examples = len(training_examples)
-  training_example_indices = np.array(range(num_training_examples))
-  def get_subset_of_examples():
-    return list(np.random.choice(training_example_indices,
-                                 size=int(num_training_examples/4),
-                                 replace=True))
+  def get_subset_of_examples():    
+    return torch.randperm(n).to(device)[:n//3]
 
   # training loop to optimize the positions of embeddings such that the
   # distances between them become as close as possible to the true graph distances
-  for t in tqdm(range(1000)):
+  for t in tqdm(range(10)):
     # zero-out the gradients
     riemannian_adam.zero_grad()
 
