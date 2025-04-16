@@ -8,11 +8,11 @@ from geoopt.manifolds.stereographic.utils import (
   save_img_sequence_as_boomerang_gif, add_K_box
 )
 from tqdm import tqdm
-from globals import COLORS,N_GRID_EVALS
+from globals import COLORS,N_GRID_EVALS,HEATMAP,COLOR_RES
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
-def show(x:torch.Tensor,device):
+def show(x:torch.Tensor):
   n_grid_evals = N_GRID_EVALS
   imgs = []
 
@@ -21,7 +21,7 @@ def show(x:torch.Tensor,device):
     # create manifold for K
     manifold = StereographicExact(
       K=K,float_precision=torch.float64,keep_sign_fixed=False,min_abs_K=0.001
-    ).to(device)
+    )
 
     # set up plot
     fig, plt, (lo, hi) = setup_plot(
@@ -34,18 +34,14 @@ def show(x:torch.Tensor,device):
     # create mesh-grid
     coords = None
     if K < 0:
-      coords = torch.linspace(lo, hi, n_grid_evals).to(device)
+      coords = np.linspace(lo, hi, n_grid_evals)
     else:
-      coords = torch.linspace(lo, hi, n_grid_evals).to(device)
-    xx, yy  = torch.meshgrid(coords, coords,indexing='ij')
-    grid    = torch.stack([xx, yy], axis=-1)
-
-    # create point on manifold
-    # x = torch.tensor([-0.75, -0.2])
-    x = x.to(device)
+      coords = np.linspace(lo, hi, n_grid_evals)
+    xx, yy  = np.meshgrid(coords, coords)
+    grid    = np.stack([xx, yy], axis=-1)
 
     # compute distances to point
-    dists = manifold.dist(grid.float(), x)
+    dists = manifold.dist(torch.from_numpy(grid).float(), x)
 
     # zero-out points outside of Poincaré ball
     if K < 0:
@@ -53,23 +49,23 @@ def show(x:torch.Tensor,device):
       mask = dist2 <= R ** 2
       dists[(~mask).nonzero()] = np.nan
 
-    # add contour plot
-    # plt.contourf(
-    #   grid[..., 0].cpu(),
-    #   grid[..., 1].cpu(),
-    #   dists.sqrt().cpu(),
-    #   levels=np.linspace(0, 5, 50),
-    #   cmap="inferno"
-    # )
-    # cbar = plt.colorbar(fraction=0.046, pad=0.04)
-    # cbar.set_ticks([0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
+    #add contour plot
+    plt.contourf(
+      grid[..., 0],
+      grid[..., 1],
+      dists.sqrt(),
+      levels=np.linspace(0, 5, COLOR_RES),
+      cmap=HEATMAP
+    )
+    cbar = plt.colorbar(fraction=0.046, pad=0.04)
+    cbar.set_ticks(np.arange(0, 5, 0.5))
 
     # plot x
-    # plt.scatter(*(x.cpu()), s=3.0, color=COLORS.TEXT_COLOR)
-    # plt.annotate("$x$", x.cpu() + torch.tensor([-0.15, 0.05]), fontsize=15, color=COLORS.TEXT_COLOR)
+    plt.scatter(*x, s=3.0, color=COLORS.TEXT_COLOR)
+    plt.annotate("$x$", x + torch.tensor([-0.15, 0.05]), fontsize=15, color=COLORS.TEXT_COLOR)
 
     # add plot title
-    # plt.title(r"Square Root of Distance to $x$")
+    plt.title(r"Square Root of Distance to $x$")
 
     # add curvature box
     add_K_box(plt, K)

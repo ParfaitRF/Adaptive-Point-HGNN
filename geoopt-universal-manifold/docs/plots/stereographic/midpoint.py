@@ -4,11 +4,14 @@ import torch
 import numpy as np
 from geoopt.manifolds.stereographic.utils import \
     setup_plot, get_interpolation_Ks, get_img_from_fig, \
-    save_img_sequence_as_boomerang_gif, add_K_box, COLORS
+    save_img_sequence_as_boomerang_gif, add_K_box
 from tqdm import tqdm
+from globals import COLORS
+import os
+module_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def show_me():
+def show(x1,x2,x3,x4):
   imgs = []
 
   # for every K of the interpolation sequence
@@ -23,12 +26,6 @@ def show_me():
     # get manifold properties
     K = manifold.get_K().item()
     R = manifold.get_R().item()
-
-    # create 4 points
-    x1 = torch.tensor([ 0.25,  0.75]).to(torch.float64)
-    x2 = torch.tensor([ 0.75,  0.05]).to(torch.float64)
-    x3 = torch.tensor([-0.15, -0.55]).to(torch.float64)
-    x4 = torch.tensor([-0.20,  0.50]).to(torch.float64)
 
     # create point weights
     w = torch.tensor([1.0, 1.0, 1.0, 1.0]).to(torch.float64)
@@ -81,7 +78,7 @@ def show_me():
                      fontsize=15, color=COLORS.SHINY_GREEN, zorder=ZORDER)
 
     # add plot title
-    #plt.title(r"Midpoint $m_{\kappa}(x_1,x_2,x_3,x_4,1,1,1,1)$")
+    plt.title(r"Midpoint $m_{\kappa}(x_1,x_2,x_3,x_4,1,1,1,1)$")
 
     # add curvature box
     add_K_box(plt, K)
@@ -90,11 +87,13 @@ def show_me():
     plt.tight_layout()
 
     # convert plot to image array
-    img = get_img_from_fig(fig, 'tmp/midpoint.png')
+    tmp_file = os.path.join(module_dir, 'tmp', 'midpoint.png')
+    img = get_img_from_fig(fig, tmp_file)
     imgs.append(img)
 
     # close plot to avoid warnings
     plt.close()
 
   # save img sequence as infinite boomerang gif
-  save_img_sequence_as_boomerang_gif(imgs, 'out/midpoint.gif')
+  out_file = os.path.join(module_dir, 'out', 'midpoint.gif')
+  save_img_sequence_as_boomerang_gif(imgs, out_file)

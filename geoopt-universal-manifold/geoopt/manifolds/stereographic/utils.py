@@ -72,7 +72,7 @@ def get_maximal_numerical_distance(manifold):
 
 def add_geodesic_grid(plt, manifold, lo, hi, line_width = 0.1):
   # define geodesic grid parameters
-  N_EVALS_PER_GEODESIC = 10000
+  N_EVALS_PER_GEODESIC = 10*N_GRID_EVALS
   STYLE       = "--"
   COLOR       = COLORS.GREY
   LINE_WIDTH  = line_width

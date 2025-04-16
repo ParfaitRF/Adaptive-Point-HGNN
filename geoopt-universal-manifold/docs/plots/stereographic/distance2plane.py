@@ -1,5 +1,6 @@
 print('(distance2plane)')
 import os
+import shutil
 from geoopt.manifolds.stereographic import StereographicExact
 import torch
 import numpy as np
@@ -8,9 +9,10 @@ from geoopt.manifolds.stereographic.utils import (
   save_img_sequence_as_boomerang_gif, add_K_box
 )
 from tqdm import tqdm
-from globals import COLORS,N_GRID_EVALS,HEATMAP
+from globals import COLORS,N_GRID_EVALS,HEATMAP,COLOR_RES
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
+os.makedirs(module_dir+r'\tmp', exist_ok=True)
 
 def show(x:torch.Tensor, v:torch.Tensor):
   n_grid_evals = N_GRID_EVALS
@@ -57,12 +59,13 @@ def show(x:torch.Tensor, v:torch.Tensor):
     plt.contourf(
       grid[..., 0],
       grid[..., 1],
-      dists.sqrt().numpy(),
-      levels=1000,
-      cmap=HEATMAP
+      dists.sqrt(),
+      levels  = np.linspace(0,5,COLOR_RES),
+      cmap    = HEATMAP
     )
     cbar = plt.colorbar(fraction=0.046, pad=0.04)
-    cbar.set_ticks([0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
+    
+    cbar.set_ticks(np.arange(0, 5, 0.5))
 
     # plot x
     plt.annotate("$p$", x + torch.tensor([-0.15, 0.05]), fontsize=15,color=COLORS.TEXT_COLOR)
@@ -71,7 +74,7 @@ def show(x:torch.Tensor, v:torch.Tensor):
     # plot vector from x to v
     plt.annotate("$\\vec{w}$", x + v +torch.tensor([-0.0, 0.12]), fontsize=15,
                 color=COLORS.TEXT_COLOR)
-    plt.arrow(*x, *v, color=COLORS.TEXT_COLOR, width=0.02)
+    #plt.arrow(*x, *v, color=COLORS.TEXT_COLOR, width=0.02)
 
     # add plot title
     # plt.title(r"Square Root of Distance to $\tilde{H}_{p, w}$")

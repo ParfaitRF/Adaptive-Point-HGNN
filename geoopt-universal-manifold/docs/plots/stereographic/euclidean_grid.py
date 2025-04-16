@@ -1,11 +1,12 @@
 print('(euclidean_grid)')
-
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import rcParams
-from geoopt.manifolds.stereographic.utils import COLORS
+from globals import COLORS,N_GRID_EVALS,HEATMAP,COLOR_RES
 
+module_dir = os.path.dirname(os.path.abspath(__file__))
 # define figure parameters
 rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
 rcParams["text.usetex"] = True

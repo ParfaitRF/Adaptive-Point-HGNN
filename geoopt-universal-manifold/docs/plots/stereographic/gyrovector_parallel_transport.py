@@ -1,15 +1,18 @@
 print('(midpoint)')
-
+import os
 from geoopt.manifolds.stereographic import StereographicExact
 import torch
 import numpy as np
-from geoopt.manifolds.stereographic.utils import \
-    setup_plot, get_interpolation_Ks, get_img_from_fig, \
-    save_img_sequence_as_boomerang_gif, add_K_box, COLORS
+from geoopt.manifolds.stereographic.utils import (
+  setup_plot, get_interpolation_Ks, get_img_from_fig,
+  save_img_sequence_as_boomerang_gif, add_K_box
+)
+    
 from tqdm import tqdm
+from globals import COLORS
+module_dir = os.path.dirname(os.path.abspath(__file__))
 
-
-def show_me():
+def show(x,y,v1,v2):
   imgs = []
 
   # for every K of the interpolation sequence
@@ -25,19 +28,14 @@ def show_me():
     K = manifold.get_K().item()
     R = manifold.get_R().item()
 
-    x   = torch.tensor((-0.25, -0.75))
-    xv1 = torch.tensor((np.sin(np.pi / 3), np.cos(np.pi / 3))) / 5
-    xv2 = torch.tensor((np.sin(-np.pi / 3), np.cos(np.pi / 3))) / 5
-    t   = torch.linspace(0, 1, 200)[:, None]
-
-    y     = torch.tensor((0.65, -0.55))
+    t     = torch.linspace(0, 1, 200)[:, None]
     xy    = manifold.logmap(x, y)
     path  = manifold.geodesic(t, x, y)
-    yv1   = manifold.transp(x, y, xv1)
-    yv2   = manifold.transp(x, y, xv2)
+    yv1   = manifold.transp(x, y, v1)
+    yv2   = manifold.transp(x, y, v2)
 
-    xgv1 = manifold.geodesic_unit(t, x, xv1)
-    xgv2 = manifold.geodesic_unit(t, x, xv2)
+    xgv1 = manifold.geodesic_unit(t, x, v1)
+    xgv2 = manifold.geodesic_unit(t, x, v2)
 
     ygv1 = manifold.geodesic_unit(t, y, yv1)
     ygv2 = manifold.geodesic_unit(t, y, yv2)
@@ -58,7 +56,7 @@ def show_me():
     plt.plot(*path.t().numpy(), color=COLORS.MAT_YELLOW)
 
     # add plot title
-    #plt.title(r"Gyrovector Parallel Transport $P^\kappa_{x\to y}$")
+    plt.title(r"Gyrovector Parallel Transport $P^\kappa_{x\to y}$")
 
     # add curvature box
     add_K_box(plt, K)
@@ -67,11 +65,13 @@ def show_me():
     plt.tight_layout()
 
     # convert plot to image array
-    img = get_img_from_fig(fig, 'tmp/gyrovector-parallel-transport.png')
+    tmp_file =  os.path.join(module_dir, 'tmp', 'gyrovector-parallel-transport.png')
+    img = get_img_from_fig(fig, tmp_file)
     imgs.append(img)
 
     # close plot to avoid warnings
     plt.close()
 
   # save img sequence as infinite boomerang gif
-  save_img_sequence_as_boomerang_gif(imgs, 'out/gyrovector-parallel-transport.gif')
+  out_file =  os.path.join(module_dir, 'out', 'gyrovector-parallel-transport.gif')
+  save_img_sequence_as_boomerang_gif(imgs, out_file)
