@@ -22,7 +22,7 @@ class COLORS:
 
 HEATMAP = LinearSegmentedColormap.from_list("mycmap", [
   COLORS.YELLOW,COLORS.ORANGE,COLORS.BLUE,COLORS.BLUE,COLORS.BLACK][::-1], 
-  N=256)
+  N=4096)
 
 
 # GRID SETTINGS
