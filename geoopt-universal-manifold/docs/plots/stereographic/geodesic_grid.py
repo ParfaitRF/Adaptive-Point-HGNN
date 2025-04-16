@@ -18,5 +18,5 @@ def show():
 
     # use tight layout
     plt.tight_layout()
-    out_file = os.path.join(module_dir, 'out', f'geodesic_grid_{K:1.1f}.svg')
+    out_file = os.path.join(module_dir, 'out', f'geodesic_grid_{K:1.1f}.png')
     plt.savefig(out_file)

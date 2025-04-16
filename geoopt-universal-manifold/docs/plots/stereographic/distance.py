@@ -8,7 +8,7 @@ from geoopt.manifolds.stereographic.utils import (
   save_img_sequence_as_boomerang_gif, add_K_box
 )
 from tqdm import tqdm
-from globals import COLORS,N_GRID_EVALS,HEATMAP,COLOR_RES
+from globals import COLORS,N_GRID_EVALS,FONT_SIZE
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,6 +17,7 @@ def show(x:torch.Tensor):
   imgs = []
 
   # for every K of the interpolation sequence
+  max_dist = 0
   for K in tqdm(get_interpolation_Ks()):
     # create manifold for K
     manifold = StereographicExact(
@@ -24,8 +25,7 @@ def show(x:torch.Tensor):
     )
 
     # set up plot
-    fig, plt, (lo, hi) = setup_plot(
-      manifold, lo=-3.0, grid_line_width=0.25, with_background=False)
+    fig, plt, (lo, hi) = setup_plot(manifold, lo=-3.0, with_background=False)
 
     # get manifold properties
     K = manifold.get_K().item()
@@ -46,23 +46,29 @@ def show(x:torch.Tensor):
     # zero-out points outside of Poincaré ball
     if K < 0:
       dist2 = xx ** 2 + yy ** 2
-      mask = dist2 <= R ** 2
+      mask  = dist2 <= R ** 2
       dists[(~mask).nonzero()] = np.nan
+      dists[mask] = dists[mask].sqrt()
+      levels      = np.linspace(0, dists[mask].max(), COLORS.RESOLUTION)
+    else:
+      dists       = dists.sqrt()
+      levels      = np.linspace(0, dists.max(), COLORS.RESOLUTION)
 
+    max_dist = max(max_dist,levels[-1])
     #add contour plot
     plt.contourf(
       grid[..., 0],
       grid[..., 1],
-      dists.sqrt(),
-      levels=np.linspace(0, 5, COLOR_RES),
-      cmap=HEATMAP
+      dists,
+      levels=levels,
+      cmap=COLORS.GRADIENT
     )
     cbar = plt.colorbar(fraction=0.046, pad=0.04)
-    cbar.set_ticks(np.arange(0, 5, 0.5))
+    cbar.set_ticks(np.arange(0, levels[-1], 0.5))
 
     # plot x
-    plt.scatter(*x, s=3.0, color=COLORS.TEXT_COLOR)
-    plt.annotate("$x$", x + torch.tensor([-0.15, 0.05]), fontsize=15, color=COLORS.TEXT_COLOR)
+    plt.scatter(*x, s=3.0, color=COLORS.POINT)
+    plt.annotate("$x$", x + torch.tensor([-0.15, 0.05]), fontsize=FONT_SIZE, color=COLORS.POINT)
 
     # add plot title
     plt.title(r"Square Root of Distance to $x$")
@@ -73,14 +79,15 @@ def show(x:torch.Tensor):
     # use tight layout
     plt.tight_layout()
 
+    file_name = 'distance'
     # convert plot to image array
-    tmp_file = os.path.join(module_dir, 'tmp', 'distance.png')
+    tmp_file = os.path.join(module_dir, 'tmp', f'{file_name}.png')
     img = get_img_from_fig(fig, tmp_file)
     imgs.append(img)
 
     # close plot to avoid warnings
     plt.close()
-
+  print(max_dist)
   # save img sequence as infinite boomerang gif
-  out_file = os.path.join(module_dir, 'out', 'distance.gif')
+  out_file = os.path.join(module_dir, 'out', f'{file_name}.gif')
   save_img_sequence_as_boomerang_gif(imgs, out_file)

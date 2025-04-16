@@ -1,47 +1,52 @@
 print('parallel_transport')
-
+import os
 import geoopt.manifolds.poincare.math as pmath
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import rcParams
-from globals import HEATMAP,COLORS
+from globals import COLORS,N_GRID_EVALS,VEC_WIDTH,FONT_SIZE
 
 rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
 rcParams["text.usetex"] = True
-sns.set_style("white")
+module_dir = os.path.dirname(os.path.abspath(__file__))
+os.makedirs(module_dir+r'\out', exist_ok=True)
 
+def show(x,y,v1,v2):
+  sns.set_style("white")
 
-def show(x,y,v1,v2,device):
-  n_grid_evals = 1000
-
-  x     = x.to(device)
-  y     = y.to(device)
-  v1    = v1.to(device)
-  v2    = v2.to(device)
-  t     = torch.linspace(0, 1,n_grid_evals)
+  t     = torch.linspace(0, 1,N_GRID_EVALS)
   xy    = pmath.logmap(x, y)
   path  = pmath.geodesic(t[:, None], x, y)
   yv1   = pmath.parallel_transport(x, y, v1)
   yv2   = pmath.parallel_transport(x, y, v2)
 
+  R  = 1
+  xx = np.linspace(-R, R, N_GRID_EVALS)
+  yy = np.sqrt(1-np.pow(xx,2))
 
-  circle = plt.Circle((0, 0), 1, fill=False, color=COLORS.blue)
+  plt.fill_between(xx,yy,-yy,color=COLORS.DOMAIN)
+  circle = plt.Circle((0, 0), R, fill=False, color=COLORS.BOUNDARY)
   plt.gca().add_artist(circle)
-  plt.xlim(-1.1, 1.1)
-  plt.ylim(-1.1, 1.1)
+  lo = -1.1*R
+  hi = -lo
+  plt.xlim(lo, hi)
+  plt.ylim(lo, hi)
   plt.gca().set_aspect("equal")
   plt.gca().set_xticks([])
   plt.gca().set_yticks([])
-  plt.annotate("x", x - 0.07, fontsize=15)
-  plt.annotate("y", y - 0.07, fontsize=15)
-  plt.annotate(r"$\vec{v}$", x + torch.tensor([0.3, 0.5]), fontsize=15)
-  plt.arrow(*x, *v1, width=0.01, color=COLORS.orange)
-  plt.arrow(*x, *xy, width=0.01, color=COLORS.blue)
-  plt.arrow(*x, *v2, width=0.01, color=COLORS.petrol)
-  plt.arrow(*y, *yv1, width=0.01, color=COLORS.orange)
-  plt.arrow(*y, *yv2, width=0.01, color=COLORS.petrol)
-  plt.plot(*path.t().numpy(), color=COLORS.blue)
+  plt.annotate("x", x - 0.07, fontsize=FONT_SIZE)
+  plt.annotate("y", y - 0.07, fontsize=FONT_SIZE)
+  plt.annotate(r"$\vec{v}$", x + torch.tensor([0.3, 0.5]), fontsize=FONT_SIZE)
+  plt.arrow(*x, *v1, width=0.01, color=COLORS.VECTOR1)
+  plt.arrow(*x, *v2, width=0.01, color=COLORS.VECTOR2)
+  plt.arrow(*x, *xy, width=0.01, color=COLORS.LINE)
+  plt.arrow(*y, *yv1, width=0.01, color=COLORS.VECTOR1)
+  plt.arrow(*y, *yv2, width=0.01, color=COLORS.VECTOR2)
+  plt.plot(*path.t().numpy(), color=COLORS.LINE)
   plt.title(r"parallel transport $P^c_{x\to y}$")
-  plt.show()
+  
+  out_file = os.path.join(module_dir, 'out', f'parallel_transport.png')
+  plt.savefig(out_file)
+  plt.close()

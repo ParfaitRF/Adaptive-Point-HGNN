@@ -6,34 +6,40 @@ import seaborn as sns
 from matplotlib import rcParams
 import imageio
 from pygifsicle import optimize
-from globals import COLORS,N_GRID_EVALS
+from globals import (
+  COLORS,N_GRID_EVALS,VEC_WIDTH,FONT_SIZE,IMG_DIM,BOUND_WIDTH,GRID_LINE_WIDTH
+)
 
 
-def setup_plot(manifold, lo=None, width=7, height=7, grid_line_width=0.3, with_background=True):
+def setup_plot(manifold, lo=None, with_background=True):
   # define figure parameters
+  img_dim = IMG_DIM(7)
   rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
-  rcParams["text.usetex"] = True
-  rcParams['figure.figsize'] = width, height
+  rcParams["text.usetex"]         = True
+  rcParams['figure.figsize']      = img_dim.WIDTH, img_dim.HEIGHT
   sns.set_style("white")
-
+  
   # create figure
   fig = plt.figure()
 
   # determine manifold properties
   K = manifold.get_K()
   R = manifold.get_R()
+  o = torch.tensor([0,0])
 
   # add circle
-  circle = plt.Circle((0, 0), R.cpu(), fill=with_background, color=COLORS.BACKGROUND_BLUE)
+  circle = plt.Circle(o, R, fill=with_background, color=COLORS.DOMAIN)
   plt.gca().add_artist(circle)
   if K > 0:
-    circle_border = plt.Circle((0, 0), R.cpu(), fill=False, color=COLORS.GREY,linewidth=2.0)
+    circle_border = plt.Circle(
+      o, R, fill=False, color=COLORS.BOUNDARY,linewidth=BOUND_WIDTH
+    )
     plt.gca().add_artist(circle_border)
 
 
   # add background color
   if K > 0 and with_background:
-    plt.gca().set_facecolor(COLORS.BACKGROUND_BLUE)
+    plt.gca().set_facecolor(COLORS.DOMAIN)
 
   # set up plot axes and aspect ratio
   if lo==None:
@@ -47,7 +53,7 @@ def setup_plot(manifold, lo=None, width=7, height=7, grid_line_width=0.3, with_b
   plt.gca().set_aspect("equal")
 
   # add grid of geodesics
-  add_geodesic_grid(plt, manifold, lo, hi, line_width=grid_line_width)
+  add_geodesic_grid(plt, manifold, lo, hi)
 
   return fig, plt, (lo, hi)
 
@@ -60,7 +66,7 @@ def get_maximal_numerical_distance(manifold):
   dist0 = None
   if K < 0:
     # create point on R
-    r = torch.tensor((R, 0.0), dtype=torch.float64).to(manifold.device)
+    r = torch.tensor((R, 0.0), dtype=torch.float64)
     # project point on R into valid range (epsilon border)
     r = manifold.projx(r)
     # determine distance from origin
@@ -70,11 +76,11 @@ def get_maximal_numerical_distance(manifold):
   return dist0
 
 
-def add_geodesic_grid(plt, manifold, lo, hi, line_width = 0.1):
+def add_geodesic_grid(plt, manifold, lo, hi, line_width = GRID_LINE_WIDTH):
   # define geodesic grid parameters
   N_EVALS_PER_GEODESIC = 10*N_GRID_EVALS
-  STYLE       = "--"
-  COLOR       = COLORS.GREY
+  STYLE       = ":"
+  COLOR       = COLORS.GRID
   LINE_WIDTH  = line_width
 
   # get manifold properties
@@ -102,21 +108,21 @@ def add_geodesic_grid(plt, manifold, lo, hi, line_width = 0.1):
     min_t = -1.2*max_dist_0
   else:
     min_t = -circumference/2.0
-  t = torch.linspace(min_t, -min_t, N_EVALS_PER_GEODESIC).to(manifold.device)[:, None]
+  t = torch.linspace(min_t, -min_t, N_EVALS_PER_GEODESIC)[:, None]
 
   # define a function to plot the geodesics
   def plot_geodesic(gv, **kwargs):
     plt.plot(*gv.t().numpy(), STYLE, color=COLOR, linewidth=LINE_WIDTH)
 
   # define geodesic directions
-  u_x = torch.tensor((0.0, 1.0)).to(manifold.device)
-  u_y = torch.tensor((1.0, 0.0)).to(manifold.device)
+  u_x = torch.tensor((0.0, 1.0))
+  u_y = torch.tensor((1.0, 0.0))
 
   # add origin x/y-crosshair
-  o = torch.tensor((0.0, 0.0)).to(manifold.device)
+  o = torch.tensor((0.0, 0.0))
   if K < 0:
-    x_geodesic = manifold.geodesic_unit(t, o, u_x).cpu()
-    y_geodesic = manifold.geodesic_unit(t, o, u_y).cpu()
+    x_geodesic = manifold.geodesic_unit(t, o, u_x)
+    y_geodesic = manifold.geodesic_unit(t, o, u_y)
     plot_geodesic(x_geodesic)
     plot_geodesic(y_geodesic)
   else:
@@ -133,8 +139,8 @@ def add_geodesic_grid(plt, manifold, lo, hi, line_width = 0.1):
     y = manifold.geodesic_unit(i*grid_interval_size, o, u_x)
 
     # compute point on geodesics
-    x_geodesic = manifold.geodesic_unit(t, x, u_x).cpu()
-    y_geodesic = manifold.geodesic_unit(t, y, u_y).cpu()
+    x_geodesic = manifold.geodesic_unit(t, x, u_x)
+    y_geodesic = manifold.geodesic_unit(t, y, u_y)
 
     # plot geodesics
     plot_geodesic(x_geodesic)
@@ -145,7 +151,7 @@ def add_geodesic_grid(plt, manifold, lo, hi, line_width = 0.1):
 
 
 def add_K_box(plt, K):
-  props = dict(pad=10.0, facecolor=COLORS.WHITE, edgecolor=COLORS.BACKGROUND_BLUE, 
+  props = dict(pad=10.0, facecolor=COLORS.WHITE, edgecolor=COLORS.BOUNDARY, 
                linewidth=0.5)
   plt.gca().text(0.05, 0.95, f"$\kappa={K:1.3f}$",transform=plt.gca().transAxes,
                  verticalalignment='top', bbox=props)
