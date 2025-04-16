@@ -10,3 +10,7 @@ thesis/*/
 *.log
 **/__pycache__/
 **/*.bcf-SAVE-ERROR
+**/out/
+**/tmp/
+**/_build/
+**/_static/
