@@ -30,12 +30,11 @@ def setup_plot(manifold, lo=None, with_background=True):
   # add circle
   circle = plt.Circle(o, R, fill=with_background, color=COLORS.DOMAIN)
   plt.gca().add_artist(circle)
-  if K > 0:
+  if K < 0:
     circle_border = plt.Circle(
       o, R, fill=False, color=COLORS.BOUNDARY,linewidth=BOUND_WIDTH
     )
     plt.gca().add_artist(circle_border)
-
 
   # add background color
   if K > 0 and with_background:
@@ -79,7 +78,7 @@ def get_maximal_numerical_distance(manifold):
 def add_geodesic_grid(plt, manifold, lo, hi, line_width = GRID_LINE_WIDTH):
   # define geodesic grid parameters
   N_EVALS_PER_GEODESIC = 10*N_GRID_EVALS
-  STYLE       = ":"
+  STYLE       = "--"
   COLOR       = COLORS.GRID
   LINE_WIDTH  = line_width
 

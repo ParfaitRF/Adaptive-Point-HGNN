@@ -9,9 +9,9 @@ from geoopt.manifolds.stereographic.utils import (
   setup_plot, get_interpolation_Ks, get_img_from_fig,
   save_img_sequence_as_boomerang_gif, add_K_box
 )
-import numpy as np
 from tqdm import tqdm
-from globals import COLORS
+from globals import COLORS,N_GRID_EVALS,FONT_SIZE,VEC_WIDTH,GYRO_EVALS
+
 module_dir = os.path.dirname(os.path.abspath(__file__))
 
 rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
@@ -23,7 +23,6 @@ def show(x,y):
 
   for K in tqdm(get_interpolation_Ks()):
 
-
   # SPROJ OF SPHERE MOBIUS ADD PLOT ##############################################
 
     sproj_of_sphere = StereographicExact(
@@ -31,35 +30,16 @@ def show(x,y):
     )
     R = sproj_of_sphere.get_R()
     fig, plt, (lo, hi) = setup_plot(sproj_of_sphere, lo=-2*R-0.1)
-    x /= 1.5
-    y /= 1.5
     x_plus_y = sproj_of_sphere.mobius_add(x, y)
 
-    # get gyrovectors
-    o   = torch.tensor([0.0, 0.0],dtype=torch.float64)
-    t   = torch.linspace(0, 1, 200)[:, None]
-    xg  = sproj_of_sphere.geodesic_unit(t,o, x)
-    yg  = sproj_of_sphere.geodesic_unit(t,o, y)
-    xyg = sproj_of_sphere.geodesic_unit(t,o, x_plus_y)
-
-    circle = plt.Circle((0, 0), R, fill=False, color=COLORS.GREY)
-    plt.gca().add_artist(circle)
-    
-    def plot_gv(gv, **kwargs):
-      plt.plot(*gv.t().numpy(), **kwargs)
-      plt.arrow(*gv[-2], *(gv[-1] - gv[-2]), width=0.02, **kwargs)
-
-    annot_idx = 0
-    plt.annotate("x", xg[annot_idx]-torch.norm(xg[annot_idx])*0.1, fontsize=15, color=COLORS.TEXT_COLOR)
-    plt.annotate("y", yg[annot_idx] - torch.norm(yg[annot_idx])*0.1, fontsize=15)
-    plt.annotate(r"$x \oplus y$", xyg[annot_idx] -  torch.norm(xyg[annot_idx])*0.1 , fontsize=15)
-    lo = -R*1.1
-    hi = -lo
+    plt.annotate(r"$x$", x-0.15, fontsize=FONT_SIZE,color=COLORS.TEXT_COLOR)
+    plt.annotate(r"$y$", y-0.15, fontsize=FONT_SIZE,color=COLORS.TEXT_COLOR)
+    plt.annotate(r"$x \oplus y$", x_plus_y-0.15,fontsize=FONT_SIZE,color=COLORS.TEXT_COLOR)
     plt.xlim(lo, hi)
     plt.ylim(lo, hi)
-    plot_gv(xg, color=COLORS.MAT_RED)
-    plot_gv(yg, color=COLORS.SHINY_GREEN)
-    plot_gv(xyg, color=COLORS.MAT_YELLOW)
+    plt.arrow(0, 0, *x, width=0.01, color=COLORS.VECTOR1)
+    plt.arrow(0, 0, *y, width=0.01, color=COLORS.VECTOR2)
+    plt.arrow(0, 0, *x_plus_y, width=0.01, color=COLORS.VECTOROP)
     plt.title(r"Addition $x\oplus y$")
 
     add_K_box(plt, K)

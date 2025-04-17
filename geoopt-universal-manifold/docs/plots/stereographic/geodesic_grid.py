@@ -14,9 +14,9 @@ def show():
 
     fig, plt, (lo, hi) = setup_plot(manifold, lo=-2.0)
 
-    #plt.title(f"Grid of Geodesics at Equidistant Intervals ($\kappa={K:1.3f}$)")
+    plt.title(f"Equidistanst grid for  ($\kappa={K:1.0f}$)")
 
     # use tight layout
     plt.tight_layout()
-    out_file = os.path.join(module_dir, 'out', f'geodesic_grid_{K:1.1f}.png')
+    out_file = os.path.join(module_dir, 'out', f'geodesic_grid_{K:1.0f}.png')
     plt.savefig(out_file)

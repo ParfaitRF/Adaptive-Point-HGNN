@@ -67,8 +67,8 @@ def show(x:torch.Tensor):
     cbar.set_ticks(np.arange(0, levels[-1], 0.5))
 
     # plot x
-    plt.scatter(*x, s=3.0, color=COLORS.POINT)
-    plt.annotate("$x$", x + torch.tensor([-0.15, 0.05]), fontsize=FONT_SIZE, color=COLORS.POINT)
+    plt.scatter(*x, s=3.0, color=COLORS.POINT1)
+    plt.annotate("$x$", x + torch.tensor([-0.15, 0.05]), fontsize=FONT_SIZE, color=COLORS.POINT1)
 
     # add plot title
     plt.title(r"Square Root of Distance to $x$")

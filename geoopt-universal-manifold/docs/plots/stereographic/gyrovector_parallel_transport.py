@@ -9,8 +9,9 @@ from geoopt.manifolds.stereographic.utils import (
 )
     
 from tqdm import tqdm
-from globals import COLORS
+from globals import COLORS,FONT_SIZE,GYRO_EVALS,VEC_WIDTH
 module_dir = os.path.dirname(os.path.abspath(__file__))
+for _ in [r'\tmp',r'\out']: os.makedirs(module_dir+_, exist_ok=True)
 
 def show(x,y,v1,v2):
   imgs = []
@@ -28,7 +29,7 @@ def show(x,y,v1,v2):
     K = manifold.get_K().item()
     R = manifold.get_R().item()
 
-    t     = torch.linspace(0, 1, 200)[:, None]
+    t     = torch.linspace(0, 1, GYRO_EVALS)[:, None]
     xy    = manifold.logmap(x, y)
     path  = manifold.geodesic(t, x, y)
     yv1   = manifold.transp(x, y, v1)
@@ -44,16 +45,15 @@ def show(x,y,v1,v2):
       plt.plot(*gv.t().numpy(), **kwargs)
       plt.arrow(*gv[-2], *(gv[-1] - gv[-2]), width=0.02, **kwargs)
 
-    plt.annotate("$x$", x - 0.15, fontsize=15, color=COLORS.TEXT_COLOR)
-    plt.annotate("$y$", y + torch.tensor([0.05, -0.15]), fontsize=15, color=COLORS.TEXT_COLOR)
-    plt.annotate(r"$\vec{v}$", x + xy+ 0.05, fontsize=15, color=COLORS.TEXT_COLOR)
+    plt.annotate("$x$", x - 0.15, fontsize=FONT_SIZE, color=COLORS.POINT1)
+    plt.annotate("$y$", y - 0.15, fontsize=FONT_SIZE, color=COLORS.POINT1)
 
-    plot_gv(xgv1, color=COLORS.MAT_RED)
-    plot_gv(xgv2, color=COLORS.SHINY_BLUE)
-    plt.arrow(*x, *xy, width=0.01, color=COLORS.SHINY_GREEN)
-    plot_gv(ygv1, color=COLORS.MAT_RED)
-    plot_gv(ygv2, color=COLORS.SHINY_BLUE)
-    plt.plot(*path.t().numpy(), color=COLORS.MAT_YELLOW)
+    plot_gv(xgv1, color=COLORS.VECTOR1)
+    plot_gv(xgv2, color=COLORS.VECTOR2)
+    #plt.arrow(*x, *xy, width=0.01, color=COLORS.LINE)
+    plot_gv(ygv1, color=COLORS.VECTOR1)
+    plot_gv(ygv2, color=COLORS.VECTOR2)
+    plt.plot(*path.t().numpy(), color=COLORS.LINE)
 
     # add plot title
     plt.title(r"Gyrovector Parallel Transport $P^\kappa_{x\to y}$")

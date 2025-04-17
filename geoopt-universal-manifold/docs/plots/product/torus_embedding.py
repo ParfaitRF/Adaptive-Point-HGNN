@@ -127,7 +127,7 @@ def show(device):
 
 
   def plot_point(x, y, z):
-    mlab.mesh(x + ball_x, y + ball_y, z + ball_z, color=to_rgb(COLORS.POINT))
+    mlab.mesh(x + ball_x, y + ball_y, z + ball_z, color=to_rgb(COLORS.POINT1))
 
 
   def update_plot(X):

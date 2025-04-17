@@ -1,6 +1,5 @@
 print('(distance2plane)')
 import os
-import shutil
 from geoopt.manifolds.stereographic import StereographicExact
 import torch
 import numpy as np
@@ -12,9 +11,9 @@ from tqdm import tqdm
 from globals import COLORS,N_GRID_EVALS,FONT_SIZE
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
-os.makedirs(module_dir+r'\tmp', exist_ok=True)
+for _ in [r'\tmp',r'\out']: os.makedirs(module_dir+_, exist_ok=True)
 
-def show(x:torch.Tensor, v:torch.Tensor):
+def show(x:torch.tensor, v:torch.tensor):
   n_grid_evals = N_GRID_EVALS
   imgs = []
 
@@ -26,8 +25,7 @@ def show(x:torch.Tensor, v:torch.Tensor):
     )
 
     # set up plot
-    fig, plt, (lo, hi) = setup_plot(
-      manifold, lo=-3.0, with_background=False)
+    fig, plt, (lo, hi) = setup_plot(manifold, lo=-3.0, with_background=False)
 
     # get manifold properties
     K = manifold.get_K().item()
@@ -70,8 +68,8 @@ def show(x:torch.Tensor, v:torch.Tensor):
     cbar.set_ticks(np.arange(0, levels[-1], 0.5))
 
     # plot x
-    plt.annotate("$p$", x + torch.tensor([-0.15, 0.05]), fontsize=FONT_SIZE,color=COLORS.POINT)
-    plt.scatter(*x, s=20.0, color=COLORS.POINT)
+    plt.annotate("$p$", x + torch.tensor([-0.15, 0.05]), fontsize=FONT_SIZE,color=COLORS.POINT1)
+    plt.scatter(*x, s=20.0, color=COLORS.POINT1)
 
     # plot vector from x to v
     plt.annotate("$\\vec{w}$", x + v +torch.tensor([-0.0, 0.12]), fontsize=15,
@@ -96,6 +94,5 @@ def show(x:torch.Tensor, v:torch.Tensor):
     # close plot to avoid warnings
     plt.close()
   
-  os.remove(tmp_file)
   out_file = os.path.join(module_dir, 'out', f'{file_name}.gif')
   save_img_sequence_as_boomerang_gif(imgs, out_file)
