@@ -23,6 +23,7 @@ tensorboard==2.18.0
 torch==2.6.0
 torch_geometric==2.6.1
 torchvision==0.19.1
+geoopt==0.5.1
 
 # for gpu support on nvidia devices
 cudatoolkit==11.2 
@@ -34,3 +35,4 @@ tf_slim==1.1.0    # tensorflow slim
 
 # matplotlib widgets support
 ipympl==0.9.7
+

@@ -1,0 +1,2829 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{anyt/global//global/global/global}
+    \entry{banderaResidualQLearningApplied1999}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=43f85a48eea8be77a962cb00d6ccd496}{%
+           family={Bandera},
+           familyi={B\bibinitperiod},
+           given={Cesar},
+           giveni={C\bibinitperiod}}}%
+        {{hash=f0f77289f67812e7f08fe559870935aa}{%
+           family={Vico},
+           familyi={V\bibinitperiod},
+           given={Francisco},
+           giveni={F\bibinitperiod}}}%
+        {{hash=b3c5a2803407d0588f6aaf481e06a58f}{%
+           family={Bravo},
+           familyi={B\bibinitperiod},
+           given={Jose},
+           giveni={J\bibinitperiod}}}%
+        {{hash=8f25b8e91e2d938eeb161b5dfc7ad04f}{%
+           family={Harmon},
+           familyi={H\bibinitperiod},
+           given={Mance},
+           giveni={M\bibinitperiod}}}%
+        {{hash=19e6f59bb85bc8cc819df7c71032d339}{%
+           family={Iii},
+           familyi={I\bibinitperiod},
+           given={Leemon},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{c8681fab3a31461d33f96e079a110970}
+      \strng{fullhash}{cbc6dc66178fb4ba5af8294ce25ac3d6}
+      \strng{fullhashraw}{cbc6dc66178fb4ba5af8294ce25ac3d6}
+      \strng{bibnamehash}{c8681fab3a31461d33f96e079a110970}
+      \strng{authorbibnamehash}{c8681fab3a31461d33f96e079a110970}
+      \strng{authornamehash}{c8681fab3a31461d33f96e079a110970}
+      \strng{authorfullhash}{cbc6dc66178fb4ba5af8294ce25ac3d6}
+      \strng{authorfullhashraw}{cbc6dc66178fb4ba5af8294ce25ac3d6}
+      \field{labelalpha}{Ban+99}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Foveal vision features imagers with graded acuity coupled with context sensitive sensor gaze control, analogous to that prevalent throughout vertebrate vision. Foveal vision operates more efficiently than uniform acuity vision because resolution is treated as a dynamically allocatable resource, but requires a more refined visual attention mechanism. We demonstrate that reinforcement learning (RL) significantly improves the performance of foveal visual attention, and of the overall vision system, for the task of model based target recognition. A simulated foveal vision system is shown to classify targets with fewer fixations by learning strategies for the acquisition of visual information relevant to the task, and learning how to generalize these strategies in ambiguous and unexpected scenario conditions. 1 OVERVIEW OF FOVEAL VISION In contrast to the uniform acuity of conventional machine vision, virtually all advanced biological vision systems sample the scene in a space-variant fash...}
+      \field{day}{15}
+      \field{journaltitle}{ICML-96}
+      \field{month}{2}
+      \field{shortjournal}{ICML-96}
+      \field{title}{Residual {{Q-Learning Applied}} to {{Visual Attention}}}
+      \field{year}{1999}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\Q5RS8ATN\Bandera et al. - 1999 - Residual Q-Learning Applied to Visual Attention.pdf
+      \endverb
+    \endentry
+    \entry{bachmannConstantCurvatureGraph2020}{online}{}{}
+      \name{author}{3}{}{%
+        {{hash=98a2abed0f78f10192f88bd557f4228e}{%
+           family={Bachmann},
+           familyi={B\bibinitperiod},
+           given={Gregor},
+           giveni={G\bibinitperiod}}}%
+        {{hash=2e3cec45c0b543a836b914ef3e4b1234}{%
+           family={Bécigneul},
+           familyi={B\bibinitperiod},
+           given={Gary},
+           giveni={G\bibinitperiod}}}%
+        {{hash=0fb49604666ee53301c1f3943cafb36c}{%
+           family={Ganea},
+           familyi={G\bibinitperiod},
+           given={Octavian-Eugen},
+           giveni={O\bibinithyphendelim E\bibinitperiod}}}%
+      }
+      \strng{namehash}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{fullhash}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{fullhashraw}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{bibnamehash}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{authorbibnamehash}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{authornamehash}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{authorfullhash}{979e41cf8e1780c54dd11df0b266db8c}
+      \strng{authorfullhashraw}{979e41cf8e1780c54dd11df0b266db8c}
+      \field{labelalpha}{BBG20}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Interest has been rising lately towards methods representing data in non-Euclidean spaces, e.g. hyperbolic or spherical, that provide specific inductive biases useful for certain real-world data properties, e.g. scale-free, hierarchical or cyclical. However, the popular graph neural networks are currently limited in modeling data only via Euclidean geometry and associated vector space operations. Here, we bridge this gap by proposing mathematically grounded generalizations of graph convolutional networks (GCN) to (products of) constant curvature spaces. We do this by i) introducing a unified formalism that can interpolate smoothly between all geometries of constant curvature, ii) leveraging gyro-barycentric coordinates that generalize the classic Euclidean concept of the center of mass. Our class of models smoothly recover their Euclidean counterparts when the curvature goes to zero from either side. Empirically, we outperform Euclidean GCNs in the tasks of node classification and distortion minimization for symbolic data exhibiting non-Euclidean behavior, according to their discrete curvature.}
+      \field{day}{19}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{5}
+      \field{pubstate}{prepublished}
+      \field{title}{Constant {{Curvature Graph Convolutional Networks}}}
+      \field{urlday}{26}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1911.05076
+      \endverb
+      \verb{eprint}
+      \verb 1911.05076
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\45I6EHT3\\Bachmann et al. - 2020 - Constant Curvature Graph Convolutional Networks.pdf;C\:\\Users\\prfej\\Zotero\\storage\\YQSHTKUE\\1911.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1911.05076
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1911.05076
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence,Computer Science - Machine Learning}
+    \endentry
+    \entry{blochUniversalModelHyperbolic0100}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=2a72b559763f6deb97c23178dbd7c34e}{%
+           family={Bloch},
+           familyi={B\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Andreas Bloch}%
+      }
+      \strng{namehash}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{fullhash}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{fullhashraw}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{bibnamehash}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{authorbibnamehash}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{authornamehash}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{authorfullhash}{2a72b559763f6deb97c23178dbd7c34e}
+      \strng{authorfullhashraw}{2a72b559763f6deb97c23178dbd7c34e}
+      \field{labelalpha}{Blo00}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This blogpost presents a geometric model that harnesses the formalism gyrovector spaces in order to capture all three geometries of constant curvature at once. Furthermore, the presented model allows to smoothly interpolate between different curvatures in order to learn the curvature of spaces jointly with the embeddings.}
+      \field{title}{A {{Universal Model}} for {{Hyperbolic}}, {{Euclidean}} and {{Spherical Geometries}}}
+      \field{urlday}{7}
+      \field{urlmonth}{4}
+      \field{urlyear}{2025}
+      \field{year}{20:00:00 +0100}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\F82BWKYN\K-Stereographic-Model.html
+      \endverb
+      \verb{urlraw}
+      \verb http://andbloch.github.io/K-Stereographic-Model/
+      \endverb
+      \verb{url}
+      \verb http://andbloch.github.io/K-Stereographic-Model/
+      \endverb
+    \endentry
+    \entry{boothbyIntroductionDifferentiableManifolds1975}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=9b12f79e614e88ff6c34b2a0f614a42d}{%
+           family={Boothby},
+           familyi={B\bibinitperiod},
+           given={William\bibnamedelima M.},
+           giveni={W\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {Academic Press}%
+      }
+      \strng{namehash}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{fullhash}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{fullhashraw}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{bibnamehash}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{authorbibnamehash}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{authornamehash}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{authorfullhash}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \strng{authorfullhashraw}{9b12f79e614e88ff6c34b2a0f614a42d}
+      \field{labelalpha}{Boo75}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-08-087379-4}
+      \field{langid}{english}
+      \field{pagetotal}{424}
+      \field{series}{Pure and Applied Mathematics}
+      \field{title}{An Introduction to Differentiable Manifolds and {{Riemannian}} Geometry}
+      \field{year}{1975}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Differential Geometry\William M. Boothby - An Introduction to Differentiable Manifolds and Riemannian Geometry.pdf
+      \endverb
+    \endentry
+    \entry{carlsonKonigsbergBridgeProblem2024}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=91ca30023c671e15e49fecc92a63bd16}{%
+           family={Carlson},
+           familyi={C\bibinitperiod},
+           given={Stephan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Britannica}%
+      }
+      \strng{namehash}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{fullhash}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{fullhashraw}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{bibnamehash}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{authorbibnamehash}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{authornamehash}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{authorfullhash}{91ca30023c671e15e49fecc92a63bd16}
+      \strng{authorfullhashraw}{91ca30023c671e15e49fecc92a63bd16}
+      \field{labelalpha}{Car24}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Königsberg bridge problem, a recreational mathematical puzzle, set in the old Prussian city of Königsberg (now Kaliningrad, Russia), that led to the development of the branches of mathematics known as topology and graph theory. In the early 18th century, the citizens of Königsberg spent their days}
+      \field{day}{23}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{shorttitle}{Königsberg Bridge Problem}
+      \field{title}{Königsberg Bridge Problem | {{Mathematics}}, {{Graph Theory}} \& {{Network Theory}} | {{Britannica}}}
+      \field{type}{News articles}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\Y8I35CLJ\Konigsberg-bridge-problem.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.britannica.com/science/Konigsberg-bridge-problem
+      \endverb
+      \verb{url}
+      \verb https://www.britannica.com/science/Konigsberg-bridge-problem
+      \endverb
+    \endentry
+    \entry{chenFastExactFixedradius2024}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=058f14a832420dac69087fd1a80298b3}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Xinye},
+           giveni={X\bibinitperiod}}}%
+        {{hash=6aeade69fdd12115983307cb7165d857}{%
+           family={Güttel},
+           familyi={G\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{fullhash}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{fullhashraw}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{bibnamehash}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{authorbibnamehash}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{authornamehash}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{authorfullhash}{385ed7b9bb136adc1904cba4fac93954}
+      \strng{authorfullhashraw}{385ed7b9bb136adc1904cba4fac93954}
+      \field{labelalpha}{CG24}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Fixed-radius near neighbor search is a fundamental data operation that retrieves all data points within a user-specified distance to a query point. There are efficient algorithms that can provide fast approximate query responses, but they often have a very compute-intensive indexing phase and require careful parameter tuning. Therefore, exact brute force and tree-based search methods are still widely used. Here we propose a new fixed-radius near neighbor search method, called SNN, that significantly improves over brute force and tree-based methods in terms of index and query time, provably returns exact results, and requires no parameter tuning. SNN exploits a sorting of the data points by their first principal component to prune the query search space. Further speedup is gained from an efficient implementation using high-level Basic Linear Algebra Subprograms (BLAS). We provide theoretical analysis of our method and demonstrate its practical performance when used stand-alone and when applied within the DBSCAN clustering algorithm.}
+      \field{day}{29}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{1}
+      \field{pubstate}{prepublished}
+      \field{title}{Fast and Exact Fixed-Radius Neighbor Search Based on Sorting}
+      \field{urlday}{11}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2212.07679
+      \endverb
+      \verb{eprint}
+      \verb 2212.07679
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\ZUEW2YLF\\Chen and Güttel - 2024 - Fast and exact fixed-radius neighbor search based on sorting.pdf;C\:\\Users\\prfej\\Zotero\\storage\\YHE8MLYE\\2212.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2212.07679
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2212.07679
+      \endverb
+      \keyw{Computer Science - Data Structures and Algorithms,Computer Science - Information Retrieval}
+    \endentry
+    \entry{charlesPointNetDeepLearning2017}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=1d86e06a45d853e7174169eac7e2b053}{%
+           family={Charles},
+           familyi={C\bibinitperiod},
+           given={R.\bibnamedelimi Qi},
+           giveni={R\bibinitperiod\bibinitdelim Q\bibinitperiod}}}%
+        {{hash=18c26ddba8b9dd77f278213fd4e93ce4}{%
+           family={Su},
+           familyi={S\bibinitperiod},
+           given={Hao},
+           giveni={H\bibinitperiod}}}%
+        {{hash=f8fadb82f6dfc29abd8e0b3a07830452}{%
+           family={Kaichun},
+           familyi={K\bibinitperiod},
+           given={Mo},
+           giveni={M\bibinitperiod}}}%
+        {{hash=03578abbf51650fbfaf563c532898f30}{%
+           family={Guibas},
+           familyi={G\bibinitperiod},
+           given={Leonidas\bibnamedelima J.},
+           giveni={L\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Honolulu, HI}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{05e6288167dc5d92081d7b43ed4221f4}
+      \strng{fullhash}{9de01586add91ce1c79df5ac73fcf516}
+      \strng{fullhashraw}{9de01586add91ce1c79df5ac73fcf516}
+      \strng{bibnamehash}{05e6288167dc5d92081d7b43ed4221f4}
+      \strng{authorbibnamehash}{05e6288167dc5d92081d7b43ed4221f4}
+      \strng{authornamehash}{05e6288167dc5d92081d7b43ed4221f4}
+      \strng{authorfullhash}{9de01586add91ce1c79df5ac73fcf516}
+      \strng{authorfullhashraw}{9de01586add91ce1c79df5ac73fcf516}
+      \field{labelalpha}{Cha+17}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{booktitle}{2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})}
+      \field{eventtitle}{2017 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})}
+      \field{isbn}{978-1-5386-0457-1}
+      \field{month}{7}
+      \field{shorttitle}{{{PointNet}}}
+      \field{title}{{{PointNet}}: {{Deep Learning}} on {{Point Sets}} for {{3D Classification}} and {{Segmentation}}}
+      \field{urlday}{13}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{77\bibrangedash 85}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1109/CVPR.2017.16
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\5IEND2MF\Charles et al. - 2017 - PointNet Deep Learning on Point Sets for 3D Classification and Segmentation.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://ieeexplore.ieee.org/document/8099499/
+      \endverb
+      \verb{url}
+      \verb http://ieeexplore.ieee.org/document/8099499/
+      \endverb
+    \endentry
+    \entry{chungSpectralGraphTheory2009}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=3230d94fe963f3e1f04c35ce847ee0c2}{%
+           family={Chung},
+           familyi={C\bibinitperiod},
+           given={Fan\bibnamedelima R.},
+           giveni={F\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Providence, RI}%
+      }
+      \list{publisher}{1}{%
+        {American Mathematical Society}%
+      }
+      \strng{namehash}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{fullhash}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{fullhashraw}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{bibnamehash}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{authorbibnamehash}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{authornamehash}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{authorfullhash}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \strng{authorfullhashraw}{3230d94fe963f3e1f04c35ce847ee0c2}
+      \field{extraname}{1}
+      \field{labelalpha}{Chu09}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{edition}{reprint}
+      \field{eventtitle}{Conference on {{Recent Advances}} in {{Spectral Graph Theory}}}
+      \field{isbn}{978-0-8218-0315-8}
+      \field{langid}{english}
+      \field{number}{92}
+      \field{pagetotal}{212}
+      \field{series}{Regional Conference Series in Mathematics}
+      \field{shorttitle}{Spectral Graph Theory}
+      \field{title}{Spectral Graph Theory: {{CBMS Conference}} on {{Recent Advances}} in {{Spectral Graph Theory}}, Held at ... {{Fresno}}, {{June}} 6 - 10, 1994}
+      \field{year}{2009}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C\:\\Users\\prfej\\OneDrive\\Library\\Mathematics\\Graph Theory\\papers\\Fan R. K. Chung - Spectral Graph Theory.pdf;C\:\\Users\\prfej\\Zotero\\storage\\8GWHBUCB\\Chung and Chung - 2009 - Spectral graph theory CBMS Conference on Recent Advances in Spectral Graph Theory, held at ... Fres.pdf
+      \endverb
+    \endentry
+    \entry{chungSpectralGraphTheory1997}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=bce8ef5dd65e7cfd397e8c28f06065f1}{%
+           family={Chung},
+           familyi={C\bibinitperiod},
+           given={Fan\bibnamedelimb Rong\bibnamedelima K.},
+           giveni={F\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Providence (R. I.)}%
+      }
+      \list{publisher}{1}{%
+        {American mathematical society}%
+      }
+      \strng{namehash}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{fullhash}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{fullhashraw}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{bibnamehash}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{authorbibnamehash}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{authornamehash}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{authorfullhash}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \strng{authorfullhashraw}{bce8ef5dd65e7cfd397e8c28f06065f1}
+      \field{extraname}{2}
+      \field{labelalpha}{Chu97}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-8218-0315-8}
+      \field{langid}{english}
+      \field{number}{92}
+      \field{series}{{{CBMS}} Regional Conference Series in Mathematics}
+      \field{title}{Spectral Graph Theory}
+      \field{year}{1997}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Graph Theory\Chung, Fan R_ K_ - Spectral Graph Theory.pdf
+      \endverb
+    \endentry
+    \entry{caiComprehensiveSurveyGraph2018}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=42a4d7393c617ca949c06eac26e2a6c7}{%
+           family={Cai},
+           familyi={C\bibinitperiod},
+           given={HongYun},
+           giveni={H\bibinitperiod}}}%
+        {{hash=8716b97e121d92a2cb1060b0126c9839}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Vincent\bibnamedelima W.},
+           giveni={V\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=2b17355b815c9790ad364fa8a3ba287c}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Kevin\bibnamedelima Chen-Chuan},
+           giveni={K\bibinitperiod\bibinitdelim C\bibinithyphendelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{fullhash}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{fullhashraw}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{bibnamehash}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{authorbibnamehash}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{authornamehash}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{authorfullhash}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \strng{authorfullhashraw}{3c772ce9ef11411eeb7e4a743646f7f4}
+      \field{labelalpha}{CZC18}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Graph is an important data representation which appears in a wide diversity of real-world scenarios. Effective graph analytics provides users a deeper understanding of what is behind the data, and thus can benefit a lot of useful applications such as node classification, node recommendation, link prediction, etc. However, most graph analytics methods suffer the high computation and space cost. Graph embedding is an effective yet efficient way to solve the graph analytics problem. It converts the graph data into a low dimensional space in which the graph structural information and graph properties are maximumly preserved. In this survey, we conduct a comprehensive review of the literature in graph embedding. We first introduce the formal definition of graph embedding as well as the related concepts. After that, we propose two taxonomies of graph embedding which correspond to what challenges exist in different graph embedding problem settings and how the existing work addresses these challenges in their solutions. Finally, we summarize the applications that graph embedding enables and suggest four promising future research directions in terms of computation efficiency, problem settings, techniques, and application scenarios.}
+      \field{eventtitle}{{{IEEE Transactions}} on {{Knowledge}} and {{Data Engineering}}}
+      \field{issn}{1558-2191}
+      \field{journaltitle}{IEEE Transactions on Knowledge and Data Engineering}
+      \field{month}{9}
+      \field{number}{9}
+      \field{shorttitle}{A {{Comprehensive Survey}} of {{Graph Embedding}}}
+      \field{title}{A {{Comprehensive Survey}} of {{Graph Embedding}}: {{Problems}}, {{Techniques}}, and {{Applications}}}
+      \field{urlday}{4}
+      \field{urlmonth}{4}
+      \field{urlyear}{2025}
+      \field{volume}{30}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1616\bibrangedash 1637}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1109/TKDE.2018.2807452
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\YBG59T8M\\Cai et al. - 2018 - A Comprehensive Survey of Graph Embedding Problems, Techniques, and Applications.pdf;C\:\\Users\\prfej\\Zotero\\storage\\ERNQWVQR\\8294302.html
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/8294302
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/8294302
+      \endverb
+      \keyw{Electronic mail,graph analytics,Graph embedding,graph embedding survey,Machine learning,network embedding,Social network services,Task analysis,Taxonomy,Toy manufacturing industry,Two dimensional displays}
+    \endentry
+    \entry{diestelGraphTheory2017}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=d7750765c1eb004bdcdce07ed2272ba7}{%
+           family={Diestel},
+           familyi={D\bibinitperiod},
+           given={Reinhard},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer Berlin Heidelberg}%
+      }
+      \strng{namehash}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{fullhash}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{fullhashraw}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{bibnamehash}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{authorbibnamehash}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{authornamehash}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{authorfullhash}{d7750765c1eb004bdcdce07ed2272ba7}
+      \strng{authorfullhashraw}{d7750765c1eb004bdcdce07ed2272ba7}
+      \field{labelalpha}{Die17}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-3-662-53621-6 978-3-662-53622-3}
+      \field{langid}{english}
+      \field{series}{Graduate {{Texts}} in {{Mathematics}}}
+      \field{title}{Graph {{Theory}}}
+      \field{urlday}{9}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{173}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-662-53622-3
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Graph Theory\Reinhard Diestel - Graph Theory.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.springer.com/10.1007/978-3-662-53622-3
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/10.1007/978-3-662-53622-3
+      \endverb
+    \endentry
+    \entry{douglasWeisfeilerLehmanMethodGraph2011}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0002e710373c5eae27ffbce8dd725a2c}{%
+           family={Douglas},
+           familyi={D\bibinitperiod},
+           given={B.\bibnamedelimi L.},
+           giveni={B\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{fullhash}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{fullhashraw}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{bibnamehash}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{authorbibnamehash}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{authornamehash}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{authorfullhash}{0002e710373c5eae27ffbce8dd725a2c}
+      \strng{authorfullhashraw}{0002e710373c5eae27ffbce8dd725a2c}
+      \field{labelalpha}{Dou11}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Properties of the `\$k\$-equivalent' graph families constructed in Cai, F\textbackslash "\{u\}rer and Immerman, and Evdokimov and Ponomarenko are analysed relative the the recursive \$k\$-dim WL method. An extension to the recursive \$k\$-dim WL method is presented that is shown to efficiently characterise all such types of `counterexample' graphs, under certain assumptions. These assumptions are shown to hold in all known cases.}
+      \field{day}{27}
+      \field{eprintclass}{math}
+      \field{eprinttype}{arXiv}
+      \field{month}{1}
+      \field{pubstate}{prepublished}
+      \field{title}{The {{Weisfeiler-Lehman Method}} and {{Graph Isomorphism Testing}}}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2011}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1101.5211
+      \endverb
+      \verb{eprint}
+      \verb 1101.5211
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\KRFNBWPW\\Douglas - 2011 - The Weisfeiler-Lehman Method and Graph Isomorphism Testing.pdf;C\:\\Users\\prfej\\Zotero\\storage\\FMIFRQSJ\\1101.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1101.5211
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1101.5211
+      \endverb
+      \keyw{Mathematics - Combinatorics}
+    \endentry
+    \entry{duchiVCDimensionCoveringPacking2017}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=b8fbef1897da5bf46822ced31bc865c6}{%
+           family={Duchi},
+           familyi={D\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{fullhash}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{fullhashraw}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{bibnamehash}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{authorbibnamehash}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{authornamehash}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{authorfullhash}{b8fbef1897da5bf46822ced31bc865c6}
+      \strng{authorfullhashraw}{b8fbef1897da5bf46822ced31bc865c6}
+      \field{labelalpha}{Duc17}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{day}{2}
+      \field{journaltitle}{Stanford University}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{shorttitle}{{{VC Dimension}}}
+      \field{title}{{{VC-Dimension}}, {{Covering}}, and {{Packing}}}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2024}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{4}
+      \range{pages}{1}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\2KVUM95J\Duchi - VC-Dimension, Covering, and Packing.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://web.stanford.edu/class/stats300b/
+      \endverb
+      \verb{url}
+      \verb https://web.stanford.edu/class/stats300b/
+      \endverb
+    \endentry
+    \entry{finkEquilibriumStochastic$n$person1964}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=7e84eb9a17efc0aaff92c62c69e7d8c6}{%
+           family={Fink},
+           familyi={F\bibinitperiod},
+           given={A.\bibnamedelimi M.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{fullhash}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{fullhashraw}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{bibnamehash}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{authorbibnamehash}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{authornamehash}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{authorfullhash}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \strng{authorfullhashraw}{7e84eb9a17efc0aaff92c62c69e7d8c6}
+      \field{labelalpha}{Fin64}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{1}
+      \field{issn}{0018-2079}
+      \field{journaltitle}{Hiroshima Mathematical Journal}
+      \field{month}{1}
+      \field{number}{1}
+      \field{shortjournal}{Hiroshima Math. J.}
+      \field{title}{Equilibrium in a Stochastic \$n\$-Person Game}
+      \field{urlday}{18}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{28}
+      \field{year}{1964}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.32917/hmj/1206139508
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\E7BALJ89\Fink - 1964 - Equilibrium in a stochastic $n$-person game.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://projecteuclid.org/journals/hiroshima-mathematical-journal/volume-28/issue-1/Equilibrium-in-a-stochastic-n-person-game/10.32917/hmj/1206139508.full
+      \endverb
+      \verb{url}
+      \verb https://projecteuclid.org/journals/hiroshima-mathematical-journal/volume-28/issue-1/Equilibrium-in-a-stochastic-n-person-game/10.32917/hmj/1206139508.full
+      \endverb
+    \endentry
+    \entry{fudenbergGameTheory1991}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=590edd5dea58f11155a2e574136ff683}{%
+           family={Fudenberg},
+           familyi={F\bibinitperiod},
+           given={Drew},
+           giveni={D\bibinitperiod}}}%
+        {{hash=00e537376470e49a45c05eab98111caa}{%
+           family={Tirole},
+           familyi={T\bibinitperiod},
+           given={Jean},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambridge (Mass.)}%
+      }
+      \list{publisher}{1}{%
+        {the MIT press}%
+      }
+      \strng{namehash}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{fullhash}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{fullhashraw}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{bibnamehash}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{authorbibnamehash}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{authornamehash}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{authorfullhash}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \strng{authorfullhashraw}{13b2de8a5a2f3daffc85eba8dbd0910d}
+      \field{labelalpha}{FT91}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-262-06141-4}
+      \field{langid}{english}
+      \field{title}{Game Theory}
+      \field{year}{1991}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Game Theory\Drew Fudenberg - Game Theory.pdf
+      \endverb
+    \endentry
+    \entry{fuAdaptiveCurvatureExploration2023}{article}{}{}
+      \name{author}{9}{}{%
+        {{hash=75254afffdf5055c87fc6172470f9b50}{%
+           family={Fu},
+           familyi={F\bibinitperiod},
+           given={Xingcheng},
+           giveni={X\bibinitperiod}}}%
+        {{hash=221d23a1cc1702c31044af688c0b7c39}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jianxin},
+           giveni={J\bibinitperiod}}}%
+        {{hash=9cecf65b3c7f3407db3d54a3f9966210}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Jia},
+           giveni={J\bibinitperiod}}}%
+        {{hash=009382c1bdd45d4a314bbee0b928c665}{%
+           family={Qin},
+           familyi={Q\bibinitperiod},
+           given={Jiawen},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ebf67c2ace740b179d02ee73f4a57a96}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Qingyun},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=3004cb6c2779bd6516c4f23dfd55d275}{%
+           family={Ji},
+           familyi={J\bibinitperiod},
+           given={Cheng},
+           giveni={C\bibinitperiod}}}%
+        {{hash=14ef069f26ff09873656720065fa05d9}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Senzhang},
+           giveni={S\bibinitperiod}}}%
+        {{hash=a7a55881cb261787fefdc7f2311dab03}{%
+           family={Peng},
+           familyi={P\bibinitperiod},
+           given={Hao},
+           giveni={H\bibinitperiod}}}%
+        {{hash=ed7b2de2f08bfa6638d5d174d55d839b}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Philip\bibnamedelima S.},
+           giveni={P\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9647e402d97a229f0a009d39c65fcb08}
+      \strng{fullhash}{7e6d3e01564b522c9bf4ac60317add4d}
+      \strng{fullhashraw}{7e6d3e01564b522c9bf4ac60317add4d}
+      \strng{bibnamehash}{9647e402d97a229f0a009d39c65fcb08}
+      \strng{authorbibnamehash}{9647e402d97a229f0a009d39c65fcb08}
+      \strng{authornamehash}{9647e402d97a229f0a009d39c65fcb08}
+      \strng{authorfullhash}{7e6d3e01564b522c9bf4ac60317add4d}
+      \strng{authorfullhashraw}{7e6d3e01564b522c9bf4ac60317add4d}
+      \field{labelalpha}{Fu+23}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0219-1377, 0219-3116}
+      \field{journaltitle}{Knowledge and Information Systems}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{5}
+      \field{shortjournal}{Knowl Inf Syst}
+      \field{title}{Adaptive Curvature Exploration Geometric Graph Neural Network}
+      \field{urlday}{24}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{volume}{65}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2281\bibrangedash 2304}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1007/s10115-022-01811-4
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Computer-Science\Machine Learning\Papers\Xingcheng Fu - Adaptive curvature exploration geometric graph neural.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.springer.com/10.1007/s10115-022-01811-4
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/10.1007/s10115-022-01811-4
+      \endverb
+    \endentry
+    \entry{ganeaHyperbolicNeuralNetworks2018}{online}{}{}
+      \name{author}{3}{}{%
+        {{hash=0fb49604666ee53301c1f3943cafb36c}{%
+           family={Ganea},
+           familyi={G\bibinitperiod},
+           given={Octavian-Eugen},
+           giveni={O\bibinithyphendelim E\bibinitperiod}}}%
+        {{hash=2e3cec45c0b543a836b914ef3e4b1234}{%
+           family={Bécigneul},
+           familyi={B\bibinitperiod},
+           given={Gary},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ee42cfed2ff3020233d2de97c356eaee}{%
+           family={Hofmann},
+           familyi={H\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{fullhash}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{fullhashraw}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{bibnamehash}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{authorbibnamehash}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{authornamehash}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{authorfullhash}{0cd8f64246c4372a5b72169ebe31ca84}
+      \strng{authorfullhashraw}{0cd8f64246c4372a5b72169ebe31ca84}
+      \field{labelalpha}{GBH18}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Hyperbolic spaces have recently gained momentum in the context of machine learning due to their high capacity and tree-likeliness properties. However, the representational power of hyperbolic geometry is not yet on par with Euclidean geometry, mostly because of the absence of corresponding hyperbolic neural network layers. This makes it hard to use hyperbolic embeddings in downstream tasks. Here, we bridge this gap in a principled manner by combining the formalism of M\textbackslash "obius gyrovector spaces with the Riemannian geometry of the Poincar\textbackslash 'e model of hyperbolic spaces. As a result, we derive hyperbolic versions of important deep learning tools: multinomial logistic regression, feed-forward and recurrent neural networks such as gated recurrent units. This allows to embed sequential data and perform classification in the hyperbolic space. Empirically, we show that, even if hyperbolic optimization tools are limited, hyperbolic sentence embeddings either outperform or are on par with their Euclidean variants on textual entailment and noisy-prefix recognition tasks.}
+      \field{day}{28}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{6}
+      \field{pubstate}{prepublished}
+      \field{title}{Hyperbolic {{Neural Networks}}}
+      \field{urlday}{4}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1805.09112
+      \endverb
+      \verb{eprint}
+      \verb 1805.09112
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\XWZSNPDJ\\Ganea et al. - 2018 - Hyperbolic Neural Networks.pdf;C\:\\Users\\prfej\\Zotero\\storage\\R2GKL2R6\\1805.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1805.09112
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1805.09112
+      \endverb
+      \keyw{Computer Science - Machine Learning,Statistics - Machine Learning}
+    \endentry
+    \entry{glynatsiPropertiesWinningIterated2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=a89e6986c6152c44db01b729757924a3}{%
+           family={Glynatsi},
+           familyi={G\bibinitperiod},
+           given={Nikoleta\bibnamedelima E.},
+           giveni={N\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=283a403c6ad7ec862a8eccd1aa1b9135}{%
+           family={Knight},
+           familyi={K\bibinitperiod},
+           given={Vincent},
+           giveni={V\bibinitperiod}}}%
+        {{hash=7171ed4ebe3e8eb0df4d7c58eb0f4b74}{%
+           family={Harper},
+           familyi={H\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=52a1c2c29a4f6a674f9ad9b5bd981a0f}{%
+           family={Morozov},
+           familyi={M\bibinitperiod},
+           given={Alexandre\bibnamedelima V.},
+           giveni={A\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+      }
+      \strng{namehash}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{fullhash}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{fullhashraw}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{bibnamehash}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{authorbibnamehash}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{authornamehash}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{authorfullhash}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{authorfullhashraw}{3fc62fe14b085013852b161f70e9bd53}
+      \strng{editorbibnamehash}{52a1c2c29a4f6a674f9ad9b5bd981a0f}
+      \strng{editornamehash}{52a1c2c29a4f6a674f9ad9b5bd981a0f}
+      \strng{editorfullhash}{52a1c2c29a4f6a674f9ad9b5bd981a0f}
+      \strng{editorfullhashraw}{52a1c2c29a4f6a674f9ad9b5bd981a0f}
+      \field{labelalpha}{GKH24}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Researchers have explored the performance of Iterated Prisoner’s Dilemma strategies for decades, from the celebrated performance of Tit for Tat to the introduction of the zero-determinant strategies and the use of sophisticated learning structures such as neural networks. Many new strategies have been introduced and tested in a variety of tournaments and population dynamics. Typical results in the literature, however, rely on performance against a small number of somewhat arbitrarily selected strategies, casting doubt on the generalizability of conclusions. In this work, we analyze a large collection of 195 strategies in thousands of computer tournaments, present the top performing strategies across multiple tournament types, and distill their salient features. The results show that there is not yet a single strategy that performs well in diverse Iterated Prisoner’s Dilemma scenarios, nevertheless there are several properties that heavily influence the best performing strategies. This refines the properties described by Axelrod in light of recent and more diverse opponent populations to: be nice, be provocable and generous, be a little envious, be clever, and adapt to the environment. More precisely, we find that strategies perform best when their probability of cooperation matches the total tournament population’s aggregate cooperation probabilities. The features of high performing strategies help cast some light on why strategies such as Tit For Tat performed historically well in tournaments and why zero-determinant strategies typically do not fare well in tournament settings.}
+      \field{day}{26}
+      \field{issn}{1553-7358}
+      \field{journaltitle}{PLOS Computational Biology}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{12}
+      \field{shortjournal}{PLoS Comput Biol}
+      \field{title}{Properties of Winning {{Iterated Prisoner}}’s {{Dilemma}} Strategies}
+      \field{urlday}{17}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{20}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{e1012644}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1371/journal.pcbi.1012644
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\YCUTVY3K\Glynatsi et al. - 2024 - Properties of winning Iterated Prisoner’s Dilemma strategies.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://dx.plos.org/10.1371/journal.pcbi.1012644
+      \endverb
+      \verb{url}
+      \verb https://dx.plos.org/10.1371/journal.pcbi.1012644
+      \endverb
+    \endentry
+    \entry{Geiger2012CVPR}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=06133052ac3c14a188601b82783cd4f7}{%
+           family={Geiger},
+           familyi={G\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+        {{hash=f594289a77a4b801a7156edc29235ad8}{%
+           family={Lenz},
+           familyi={L\bibinitperiod},
+           given={Philip},
+           giveni={P\bibinitperiod}}}%
+        {{hash=bc58c1e920023b071a4d0695299cf804}{%
+           family={Urtasun},
+           familyi={U\bibinitperiod},
+           given={Raquel},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{627edf12ee4004074265a942326edc30}
+      \strng{fullhash}{627edf12ee4004074265a942326edc30}
+      \strng{fullhashraw}{627edf12ee4004074265a942326edc30}
+      \strng{bibnamehash}{627edf12ee4004074265a942326edc30}
+      \strng{authorbibnamehash}{627edf12ee4004074265a942326edc30}
+      \strng{authornamehash}{627edf12ee4004074265a942326edc30}
+      \strng{authorfullhash}{627edf12ee4004074265a942326edc30}
+      \strng{authorfullhashraw}{627edf12ee4004074265a942326edc30}
+      \field{labelalpha}{GLU12}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{booktitle}{Conference on Computer Vision and Pattern Recognition ({{CVPR}})}
+      \field{eventtitle}{{{CVPR}}}
+      \field{langid}{english}
+      \field{shorttitle}{{{KITTI DATASET}}}
+      \field{title}{Are We Ready for Autonomous Driving? {{The KITTI}} Vision Benchmark Suite}
+      \field{year}{2012}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://www.cvlibs.net/datasets/kitti/
+      \endverb
+      \verb{url}
+      \verb https://www.cvlibs.net/datasets/kitti/
+      \endverb
+    \endentry
+    \entry{geigerKITTIVisionBenchmark2012}{online}{}{}
+      \name{author}{3}{}{%
+        {{hash=5c6a4b22e3a0cebab390212ffb7c3cff}{%
+           family={{geiger}},
+           familyi={g\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+        {{hash=f594289a77a4b801a7156edc29235ad8}{%
+           family={Lenz},
+           familyi={L\bibinitperiod},
+           given={Philip},
+           giveni={P\bibinitperiod}}}%
+        {{hash=bc58c1e920023b071a4d0695299cf804}{%
+           family={Urtasun},
+           familyi={U\bibinitperiod},
+           given={Raquel},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {The KITTI Vision Benchmark Suite}%
+      }
+      \strng{namehash}{163515c942e1de37b1386b1307206a33}
+      \strng{fullhash}{163515c942e1de37b1386b1307206a33}
+      \strng{fullhashraw}{163515c942e1de37b1386b1307206a33}
+      \strng{bibnamehash}{163515c942e1de37b1386b1307206a33}
+      \strng{authorbibnamehash}{163515c942e1de37b1386b1307206a33}
+      \strng{authornamehash}{163515c942e1de37b1386b1307206a33}
+      \strng{authorfullhash}{163515c942e1de37b1386b1307206a33}
+      \strng{authorfullhashraw}{163515c942e1de37b1386b1307206a33}
+      \field{labelalpha}{gLU12}
+      \field{sortinit}{g}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{20}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{title}{The {{KITTI Vision Benchmark Suite}}}
+      \field{type}{Homepage}
+      \field{urlday}{28}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2012}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.cvlibs.net/datasets/kitti/setup.php
+      \endverb
+      \verb{url}
+      \verb https://www.cvlibs.net/datasets/kitti/setup.php
+      \endverb
+    \endentry
+    \entry{hartshorneFoundationsProjectiveGeometry2009}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=ee65baaab88f9233fbad3d51c399ee25}{%
+           family={Hartshorne},
+           familyi={H\bibinitperiod},
+           given={Robin},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Bronx, NY}%
+      }
+      \list{publisher}{1}{%
+        {Ishi Press International}%
+      }
+      \strng{namehash}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{fullhash}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{fullhashraw}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{bibnamehash}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{authorbibnamehash}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{authornamehash}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{authorfullhash}{ee65baaab88f9233fbad3d51c399ee25}
+      \strng{authorfullhashraw}{ee65baaab88f9233fbad3d51c399ee25}
+      \field{labelalpha}{Har09}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{edition}{New edition with an added appendix}
+      \field{isbn}{978-4-87187-837-1}
+      \field{langid}{english}
+      \field{pagetotal}{177}
+      \field{shorttitle}{Foundations of Projective Geometry}
+      \field{title}{Foundations of Projective Geometry: By {{Robin Hartshorne}}}
+      \field{year}{2009}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Geometry\Robin Hartshorne - Foundations of projective geometry.pdf
+      \endverb
+    \endentry
+    \entry{harveyGeometryIlluminatedIllustrated2015}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=1ddcaf88210dee28137265cd9856e5fc}{%
+           family={Harvey},
+           familyi={H\bibinitperiod},
+           given={Matthew},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Washington, D.C}%
+      }
+      \list{publisher}{1}{%
+        {Mathematical Association of America}%
+      }
+      \strng{namehash}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{fullhash}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{fullhashraw}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{bibnamehash}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{authorbibnamehash}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{authornamehash}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{authorfullhash}{1ddcaf88210dee28137265cd9856e5fc}
+      \strng{authorfullhashraw}{1ddcaf88210dee28137265cd9856e5fc}
+      \field{labelalpha}{Har15}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{isbn}{978-1-61444-618-7}
+      \field{langid}{english}
+      \field{number}{v. 30}
+      \field{pagetotal}{1}
+      \field{series}{{{AMS}}/{{MAA Textbooks}}}
+      \field{shorttitle}{Geometry Illuminated}
+      \field{title}{Geometry Illuminated: An Illustrated Introduction to {{Euclidean}} and Hyperbolic Plane Geometry}
+      \field{year}{2015}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Geometry\Matthew Harvey - Geometry Illuminated_ An Illustrated Introduction to Euclidean and hyperbolic Geometry.pdf
+      \endverb
+    \endentry
+    \entry{hosangLearningNonmaximumSuppression2017}{online}{}{}
+      \name{author}{3}{}{%
+        {{hash=8192e2123af03bcb274c2e9444e0a153}{%
+           family={Hosang},
+           familyi={H\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b85b9efefe92bdad29985847fb978d46}{%
+           family={Benenson},
+           familyi={B\bibinitperiod},
+           given={Rodrigo},
+           giveni={R\bibinitperiod}}}%
+        {{hash=457dd3049a60059cf69e775a47f0c154}{%
+           family={Schiele},
+           familyi={S\bibinitperiod},
+           given={Bernt},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{fullhash}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{fullhashraw}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{bibnamehash}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{authorbibnamehash}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{authornamehash}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{authorfullhash}{a5b31c01e0efdee6397e46311b720a59}
+      \strng{authorfullhashraw}{a5b31c01e0efdee6397e46311b720a59}
+      \field{labelalpha}{HBS17}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Object detectors have hugely profited from moving towards an end-to-end learning paradigm: proposals, features, and the classifier becoming one neural network improved results two-fold on general object detection. One indispensable component is non-maximum suppression (NMS), a post-processing algorithm responsible for merging all detections that belong to the same object. The de facto standard NMS algorithm is still fully hand-crafted, suspiciously simple, and -- being based on greedy clustering with a fixed distance threshold -- forces a trade-off between recall and precision. We propose a new network architecture designed to perform NMS, using only boxes and their score. We report experiments for person detection on PETS and for general object categories on the COCO dataset. Our approach shows promise providing improved localization and occlusion handling.}
+      \field{day}{9}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{5}
+      \field{pubstate}{prepublished}
+      \field{title}{Learning Non-Maximum Suppression}
+      \field{urlday}{13}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1705.02950
+      \endverb
+      \verb{eprint}
+      \verb 1705.02950
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\HXV7JN9F\\Hosang et al. - 2017 - Learning non-maximum suppression.pdf;C\:\\Users\\prfej\\Zotero\\storage\\YC8SEPBW\\1705.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1705.02950
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1705.02950
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+    \entry{hilbertGrundlagenGeometrie1922}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=75b05ce956b23032ea66e4c981e8f28a}{%
+           family={Hilbert},
+           familyi={H\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Wiesbaden}%
+      }
+      \list{publisher}{1}{%
+        {Springer Vieweg. in Springer Fachmedien Wiesbaden GmbH}%
+      }
+      \strng{namehash}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{fullhash}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{fullhashraw}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{bibnamehash}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{authorbibnamehash}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{authornamehash}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{authorfullhash}{75b05ce956b23032ea66e4c981e8f28a}
+      \strng{authorfullhashraw}{75b05ce956b23032ea66e4c981e8f28a}
+      \field{labelalpha}{Hil22}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{5th ed}
+      \field{isbn}{978-3-663-15383-2 978-3-663-15954-4}
+      \field{langid}{german}
+      \field{pagetotal}{1}
+      \field{series}{Wissenschaft und Hypothese Ser}
+      \field{title}{Grundlagen der Geometrie}
+      \field{year}{1922}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Geometry\Dr_ David Hilbert - Grundlagen der Geometrie.pdf
+      \endverb
+    \endentry
+    \entry{hosmerAppliedLogisticRegression2013}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=c5d69e28c3787fb088bba39b98f2e16e}{%
+           family={Hosmer},
+           familyi={H\bibinitperiod},
+           given={David\bibnamedelima W.},
+           giveni={D\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=8cc8d044dfc89abe88de140d014c99fd}{%
+           family={Lemeshow},
+           familyi={L\bibinitperiod},
+           given={Stanley},
+           giveni={S\bibinitperiod}}}%
+        {{hash=0feba8187e3000f7fb1b5c0e58c8a42a}{%
+           family={Sturdivant},
+           familyi={S\bibinitperiod},
+           given={Rodney\bibnamedelima X.},
+           giveni={R\bibinitperiod\bibinitdelim X\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley}%
+      }
+      \strng{namehash}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{fullhash}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{fullhashraw}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{bibnamehash}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{authorbibnamehash}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{authornamehash}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{authorfullhash}{15c2f61df8eec462a7b1bd81b66dd944}
+      \strng{authorfullhashraw}{15c2f61df8eec462a7b1bd81b66dd944}
+      \field{labelalpha}{HLS13}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{22}
+      \field{edition}{1}
+      \field{isbn}{978-0-470-58247-3 978-1-118-54838-7}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{series}{Wiley {{Series}} in {{Probability}} and {{Statistics}}}
+      \field{title}{Applied {{Logistic Regression}}}
+      \field{urlday}{19}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2013}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1002/9781118548387
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\SSI24PPQ\Hosmer et al. - 2013 - Applied Logistic Regression.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/book/10.1002/9781118548387
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/book/10.1002/9781118548387
+      \endverb
+    \endentry
+    \entry{huberRobustEstimationLocation1992}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{hash=2e7489c001c33b64b64d65458065bd5c}{%
+           family={Huber},
+           familyi={H\bibinitperiod},
+           given={Peter\bibnamedelima J.},
+           giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=3e3c22dfe3b36ff075adfaa64ce7661a}{%
+           family={Kotz},
+           familyi={K\bibinitperiod},
+           given={Samuel},
+           giveni={S\bibinitperiod}}}%
+        {{hash=42134aac82ec7ee488d5679523870362}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Norman\bibnamedelima L.},
+           giveni={N\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York, NY}%
+      }
+      \list{publisher}{1}{%
+        {Springer New York}%
+      }
+      \strng{namehash}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{fullhash}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{fullhashraw}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{bibnamehash}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{authorbibnamehash}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{authornamehash}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{authorfullhash}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{authorfullhashraw}{2e7489c001c33b64b64d65458065bd5c}
+      \strng{editorbibnamehash}{09392c8ca2f5970b74b6cec44c645f3a}
+      \strng{editornamehash}{09392c8ca2f5970b74b6cec44c645f3a}
+      \strng{editorfullhash}{09392c8ca2f5970b74b6cec44c645f3a}
+      \strng{editorfullhashraw}{09392c8ca2f5970b74b6cec44c645f3a}
+      \field{labelalpha}{Hub92}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Breakthroughs in {{Statistics}}}
+      \field{isbn}{978-0-387-94039-7 978-1-4612-4380-9}
+      \field{title}{Robust {{Estimation}} of a {{Location Parameter}}}
+      \field{urlday}{13}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{1992}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{492\bibrangedash 518}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1007/978-1-4612-4380-9_35
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Statistics\papers\Peter J. Huber - Robust estimation of a location parameter.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://link.springer.com/10.1007/978-1-4612-4380-9_35
+      \endverb
+      \verb{url}
+      \verb http://link.springer.com/10.1007/978-1-4612-4380-9_35
+      \endverb
+    \endentry
+    \entry{huNashQLearningGeneralSum2003}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=c5f4a4c1da53612b0a2fe4697d481e44}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Junling},
+           giveni={J\bibinitperiod}}}%
+        {{hash=1b765f5dca25c61f99b31403087f0586}{%
+           family={Wellman},
+           familyi={W\bibinitperiod},
+           given={Michael\bibnamedelima P.},
+           giveni={M\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{fullhash}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{fullhashraw}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{bibnamehash}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{authorbibnamehash}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{authornamehash}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{authorfullhash}{5f2f563049ce1a46f56233fcf091d767}
+      \strng{authorfullhashraw}{5f2f563049ce1a46f56233fcf091d767}
+      \field{labelalpha}{HW03}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We extend Q-learning to a noncooperative multiagent context, using the framework of general-sum stochastic games. A learning agent maintains Q-functions over joint actions, and performs updates based on assuming Nash equilibrium behavior over the current Q-values. This learning protocol provably converges given certain restrictions on the stage games (defined by Q-values) that arise during learning. Experiments with a pair of two-player grid games suggest that such restrictions on the game structure are not necessarily required. Stage games encountered during learning in both grid environments violate the conditions. However, learning consistently converges in the first grid game, which has a unique equilibrium Q-function, but sometimes fails to converge in the second, which has three different equilibrium Q-functions. In a comparison of offline learning performance in both games, we find agents are more likely to reach a joint optimal path with Nash Q-learning than with a single-agent Q-learning method. When at least one agent adopts Nash Q-learning, the performance of both agents is better than using single-agent Q-learning. We have also implemented an online version of Nash Q-learning that balances exploration with exploitation, yielding improved performance.}
+      \field{issn}{ISSN 1533-7928}
+      \field{issue}{Nov}
+      \field{journaltitle}{Journal of Machine Learning Research}
+      \field{title}{Nash {{Q-Learning}} for {{General-Sum Stochastic Games}}}
+      \field{urlday}{8}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{4}
+      \field{year}{2003}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1039\bibrangedash 1069}
+      \range{pages}{31}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\TVL8WJSR\Hu and Wellman - 2003 - Nash Q-Learning for General-Sum Stochastic Games.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://jmlr.csail.mit.edu/papers/v4/hu03a
+      \endverb
+      \verb{url}
+      \verb https://jmlr.csail.mit.edu/papers/v4/hu03a
+      \endverb
+    \endentry
+    \entry{hamiltonInductiveRepresentationLearning2018}{online}{}{}
+      \name{author}{3}{}{%
+        {{hash=2abce6c40b4cc1a3d89f175883b24536}{%
+           family={Hamilton},
+           familyi={H\bibinitperiod},
+           given={William\bibnamedelima L.},
+           giveni={W\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=6b37c8aefa150635663b2a6525952a7a}{%
+           family={Ying},
+           familyi={Y\bibinitperiod},
+           given={Rex},
+           giveni={R\bibinitperiod}}}%
+        {{hash=900d107125ff0ca84698cb909e4f6c51}{%
+           family={Leskovec},
+           familyi={L\bibinitperiod},
+           given={Jure},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{fullhash}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{fullhashraw}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{bibnamehash}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{authorbibnamehash}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{authornamehash}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{authorfullhash}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \strng{authorfullhashraw}{f818fe3ba25dc2399831a69d9b62c7f0}
+      \field{labelalpha}{HYL18}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Low-dimensional embeddings of nodes in large graphs have proved extremely useful in a variety of prediction tasks, from content recommendation to identifying protein functions. However, most existing approaches require that all nodes in the graph are present during training of the embeddings; these previous approaches are inherently transductive and do not naturally generalize to unseen nodes. Here we present GraphSAGE, a general, inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data. Instead of training individual embeddings for each node, we learn a function that generates embeddings by sampling and aggregating features from a node's local neighborhood. Our algorithm outperforms strong baselines on three inductive node-classification benchmarks: we classify the category of unseen nodes in evolving information graphs based on citation and Reddit post data, and we show that our algorithm generalizes to completely unseen graphs using a multi-graph dataset of protein-protein interactions.}
+      \field{day}{10}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{9}
+      \field{pubstate}{prepublished}
+      \field{title}{Inductive {{Representation Learning}} on {{Large Graphs}}}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1706.02216
+      \endverb
+      \verb{eprint}
+      \verb 1706.02216
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\HKQNY7AA\\Hamilton et al. - 2018 - Inductive Representation Learning on Large Graphs.pdf;C\:\\Users\\prfej\\Zotero\\storage\\U9FZP3KT\\1706.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1706.02216
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1706.02216
+      \endverb
+      \keyw{Computer Science - Machine Learning,Computer Science - Social and Information Networks,Statistics - Machine Learning}
+    \endentry
+    \entry{katariyaUsingHyperboloidsEmbed2021}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=9688ea161423132ed94597a9ba2ac985}{%
+           family={Katariya},
+           familyi={K\bibinitperiod},
+           given={Sumeet},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Amazon Science}%
+      }
+      \strng{namehash}{9688ea161423132ed94597a9ba2ac985}
+      \strng{fullhash}{9688ea161423132ed94597a9ba2ac985}
+      \strng{fullhashraw}{9688ea161423132ed94597a9ba2ac985}
+      \strng{bibnamehash}{9688ea161423132ed94597a9ba2ac985}
+      \strng{authorbibnamehash}{9688ea161423132ed94597a9ba2ac985}
+      \strng{authornamehash}{9688ea161423132ed94597a9ba2ac985}
+      \strng{authorfullhash}{9688ea161423132ed94597a9ba2ac985}
+      \strng{authorfullhashraw}{9688ea161423132ed94597a9ba2ac985}
+      \field{labelalpha}{Kat21}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Novel embedding scheme enables a 7\% to 33\% improvement over its best-performing predecessors in handling graph queries.}
+      \field{day}{7}
+      \field{hour}{13}
+      \field{langid}{english}
+      \field{minute}{36}
+      \field{month}{5}
+      \field{second}{2}
+      \field{title}{Using Hyperboloids to Embed Knowledge Graphs}
+      \field{urlday}{21}
+      \field{urlmonth}{4}
+      \field{urlyear}{2025}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\RJNTPYJ9\using-hyperboloids-to-embed-knowledge-graphs.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.amazon.science/blog/using-hyperboloids-to-embed-knowledge-graphs
+      \endverb
+      \verb{url}
+      \verb https://www.amazon.science/blog/using-hyperboloids-to-embed-knowledge-graphs
+      \endverb
+    \endentry
+    \entry{kipfSemiSupervisedClassificationGraph2017}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=26d8bcbda6afaf96334bf47c8fb88a75}{%
+           family={Kipf},
+           familyi={K\bibinitperiod},
+           given={Thomas\bibnamedelima N.},
+           giveni={T\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=53d2880ad8047b61cdae2c6b2803e763}{%
+           family={Welling},
+           familyi={W\bibinitperiod},
+           given={Max},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{fullhash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{fullhashraw}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{bibnamehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authorbibnamehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authornamehash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authorfullhash}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \strng{authorfullhashraw}{e04e5808dc0d0ec733212b81e1f8c78a}
+      \field{labelalpha}{KW17}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We present a scalable approach for semi-supervised learning on graph-structured data that is based on an efficient variant of convolutional neural networks which operate directly on graphs. We motivate the choice of our convolutional architecture via a localized first-order approximation of spectral graph convolutions. Our model scales linearly in the number of graph edges and learns hidden layer representations that encode both local graph structure and features of nodes. In a number of experiments on citation networks and on a knowledge graph dataset we demonstrate that our approach outperforms related methods by a significant margin.}
+      \field{day}{22}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{2}
+      \field{pubstate}{prepublished}
+      \field{title}{Semi-{{Supervised Classification}} with {{Graph Convolutional Networks}}}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1609.02907
+      \endverb
+      \verb{eprint}
+      \verb 1609.02907
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\SQ6GJIZ7\\Kipf and Welling - 2017 - Semi-Supervised Classification with Graph Convolutional Networks.pdf;C\:\\Users\\prfej\\Zotero\\storage\\ME555BM8\\1609.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1609.02907
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1609.02907
+      \endverb
+      \keyw{Computer Science - Machine Learning,Statistics - Machine Learning}
+    \endentry
+    \entry{leranEverythingSpectralGraph2019}{unpublished}{}{}
+      \name{author}{1}{}{%
+        {{hash=54d350241396cc4d4c126d0709d08971}{%
+           family={Leran},
+           familyi={L\bibinitperiod},
+           given={Cai},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambrigde Univerity}%
+      }
+      \strng{namehash}{54d350241396cc4d4c126d0709d08971}
+      \strng{fullhash}{54d350241396cc4d4c126d0709d08971}
+      \strng{fullhashraw}{54d350241396cc4d4c126d0709d08971}
+      \strng{bibnamehash}{54d350241396cc4d4c126d0709d08971}
+      \strng{authorbibnamehash}{54d350241396cc4d4c126d0709d08971}
+      \strng{authornamehash}{54d350241396cc4d4c126d0709d08971}
+      \strng{authorfullhash}{54d350241396cc4d4c126d0709d08971}
+      \strng{authorfullhashraw}{54d350241396cc4d4c126d0709d08971}
+      \field{labelalpha}{Ler19}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{4}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{pagetotal}{27}
+      \field{title}{Everything about {{Spectral Graph Theory}}}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\GAVGA99H\Cai - Everything about Spectral Graph Theory.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.cl.cam.ac.uk/~lc647/drafts/
+      \endverb
+      \verb{url}
+      \verb https://www.cl.cam.ac.uk/~lc647/drafts/
+      \endverb
+    \endentry
+    \entry{maeharaCirclesSpheresSpherical2024}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=c3877582191f80f63d9d1ca8619587d8}{%
+           family={Maehara},
+           familyi={M\bibinitperiod},
+           given={Hiroshi},
+           giveni={H\bibinitperiod}}}%
+        {{hash=c39e7e1ea7b1e7b52a07e5490b1b3aae}{%
+           family={Martini},
+           familyi={M\bibinitperiod},
+           given={Horst},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer Nature Switzerland}%
+      }
+      \strng{namehash}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{fullhash}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{fullhashraw}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{bibnamehash}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{authorbibnamehash}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{authornamehash}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{authorfullhash}{4400dea8fefb0405e317fb172cb1b325}
+      \strng{authorfullhashraw}{4400dea8fefb0405e317fb172cb1b325}
+      \field{labelalpha}{MM24}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-3-031-62775-0 978-3-031-62776-7}
+      \field{langid}{english}
+      \field{pagetotal}{342}
+      \field{series}{Birkhäuser {{Advanced Texts Basler Lehrbücher}}}
+      \field{title}{Circles, {{Spheres}} and {{Spherical Geometry}}}
+      \field{urlday}{19}
+      \field{urlmonth}{4}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-031-62776-7
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Geometry\Hiroshi Maehara; Horst Martini - Circles, Spheres and Spherical Geometry.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.springer.com/10.1007/978-3-031-62776-7
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/10.1007/978-3-031-62776-7
+      \endverb
+    \endentry
+    \entry{mccullochLogicalCalculusIdeas1943}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=1ccb147b2b2165266e6ce5900193e687}{%
+           family={McCulloch},
+           familyi={M\bibinitperiod},
+           given={Warren\bibnamedelima S.},
+           giveni={W\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=c5a56e799cdf785e814246c091d36e73}{%
+           family={Pitts},
+           familyi={P\bibinitperiod},
+           given={Walter},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{816477c5724040789c6fe02e3968dc62}
+      \strng{fullhash}{816477c5724040789c6fe02e3968dc62}
+      \strng{fullhashraw}{816477c5724040789c6fe02e3968dc62}
+      \strng{bibnamehash}{816477c5724040789c6fe02e3968dc62}
+      \strng{authorbibnamehash}{816477c5724040789c6fe02e3968dc62}
+      \strng{authornamehash}{816477c5724040789c6fe02e3968dc62}
+      \strng{authorfullhash}{816477c5724040789c6fe02e3968dc62}
+      \strng{authorfullhashraw}{816477c5724040789c6fe02e3968dc62}
+      \field{labelalpha}{MP43}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0007-4985, 1522-9602}
+      \field{journaltitle}{The Bulletin of Mathematical Biophysics}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{4}
+      \field{shortjournal}{Bulletin of Mathematical Biophysics}
+      \field{title}{A Logical Calculus of the Ideas Immanent in Nervous Activity}
+      \field{urlday}{14}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{5}
+      \field{year}{1943}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{115\bibrangedash 133}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1007/BF02478259
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\SL72L2Z6\McCulloch and Pitts - 1943 - A logical calculus of the ideas immanent in nervous activity.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://link.springer.com/10.1007/BF02478259
+      \endverb
+      \verb{url}
+      \verb http://link.springer.com/10.1007/BF02478259
+      \endverb
+    \endentry
+    \entry{munkresTopology2000}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=429635b6b1c6fa6f9b3253b90f49143b}{%
+           family={Munkres},
+           familyi={M\bibinitperiod},
+           given={James\bibnamedelima Raymond},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Upper Saddle River (N. J.)}%
+      }
+      \list{publisher}{1}{%
+        {Prentice Hall}%
+      }
+      \strng{namehash}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{fullhash}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{fullhashraw}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{bibnamehash}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{authorbibnamehash}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{authornamehash}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{authorfullhash}{429635b6b1c6fa6f9b3253b90f49143b}
+      \strng{authorfullhashraw}{429635b6b1c6fa6f9b3253b90f49143b}
+      \field{labelalpha}{Mun00}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2nd ed}
+      \field{isbn}{978-0-13-181629-9}
+      \field{langid}{english}
+      \field{title}{Topology}
+      \field{year}{2000}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Differential Geometry\James R_ Munkre - Topologys.pdf
+      \endverb
+    \endentry
+    \entry{noordmanEvolvingNoveltyStrategies2019}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=7e70ee2c31f4183681cfb00d750f6849}{%
+           family={Noordman},
+           familyi={N\bibinitperiod},
+           given={C.R.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=3d3e1c6f87f25bb830871ef66b4d7ebb}{%
+           family={Vreeswijk},
+           familyi={V\bibinitperiod},
+           given={G.A.W.},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{fullhash}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{fullhashraw}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{bibnamehash}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{authorbibnamehash}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{authornamehash}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{authorfullhash}{1f65966005d7abb1577c33215cb4d5f6}
+      \strng{authorfullhashraw}{1f65966005d7abb1577c33215cb4d5f6}
+      \field{labelalpha}{NV19}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{03043975}
+      \field{journaltitle}{Theoretical Computer Science}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{shortjournal}{Theoretical Computer Science}
+      \field{title}{Evolving Novelty Strategies for the {{Iterated Prisoner}}'s {{Dilemma}} in Deceptive Tournaments}
+      \field{urlday}{17}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{785}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1\bibrangedash 16}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1016/j.tcs.2018.10.026
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\C89SJ2YZ\Noordman and Vreeswijk - 2019 - Evolving novelty strategies for the Iterated Prisoner's Dilemma in deceptive tournaments.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0304397518306479
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0304397518306479
+      \endverb
+    \endentry
+    \entry{petersenRiemannianGeometry2016}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=aef9c87b6e9f9fae9d0b1075e1077d00}{%
+           family={Petersen},
+           familyi={P\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer International Publishing : Imprint: Springer}%
+      }
+      \strng{namehash}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{fullhash}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{fullhashraw}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{bibnamehash}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{authorbibnamehash}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{authornamehash}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{authorfullhash}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \strng{authorfullhashraw}{aef9c87b6e9f9fae9d0b1075e1077d00}
+      \field{labelalpha}{Pet16}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Intended for a one year course, this text serves as a single source, introducing readers to the important techniques and theorems, while also containing enough background on advanced topics to appeal to those students wishing to specialize in Riemannian geometry. This is one of the few Works to combine both the geometric parts of Riemannian geometry and the analytic aspects of the theory. The book will appeal to a readership that have a basic knowledge of standard manifold theory, including tensors, forms, and Lie groups. Important revisions to the third edition include: a substantial addition of unique and enriching exercises scattered throughout the text; inclusion of an increased number of coordinate calculations of connection and curvature; addition of general formulas for curvature on Lie Groups and submersions; integration of variational calculus into the text allowing for an early treatment of the Sphere theorem using a proof by Berger; incorporation of several recent results about manifolds with positive curvature; presentation of a new simplifying approach to the Bochner technique for tensors with application to bound topological quantities with general lower curvature bounds. From reviews of the first edition: "The book can be highly recommended to all mathematicians who want to get a more profound idea about the most interesting achievements in Riemannian geometry. It is one of the few comprehensive sources of this type." -Bernd Wegner, ZbMATH}
+      \field{edition}{3rd ed. 2016}
+      \field{isbn}{978-3-319-26654-1}
+      \field{number}{171}
+      \field{pagetotal}{1}
+      \field{series}{Graduate {{Texts}} in {{Mathematics}}}
+      \field{title}{Riemannian {{Geometry}}}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-319-26654-1
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Differential Geometry\Peter Petersen - Riemannian Geometry.pdf
+      \endverb
+      \keyw{Differential geometry,Differential Geometry}
+    \endentry
+    \entry{prakashNonMaximumSuppression2021}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=035a56243e7d031cde3a710422017190}{%
+           family={Prakash},
+           familyi={P\bibinitperiod},
+           given={Jatin},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{035a56243e7d031cde3a710422017190}
+      \strng{fullhash}{035a56243e7d031cde3a710422017190}
+      \strng{fullhashraw}{035a56243e7d031cde3a710422017190}
+      \strng{bibnamehash}{035a56243e7d031cde3a710422017190}
+      \strng{authorbibnamehash}{035a56243e7d031cde3a710422017190}
+      \strng{authornamehash}{035a56243e7d031cde3a710422017190}
+      \strng{authorfullhash}{035a56243e7d031cde3a710422017190}
+      \strng{authorfullhashraw}{035a56243e7d031cde3a710422017190}
+      \field{labelalpha}{Pra21}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Non Maximum Suppression (NMS) is a technique used in numerous computer vision tasks. It is a class of algorithms to select one entity (e.g., bounding boxes) out of many overlapping entities. We will discuss how to implement NMS using PyTorch}
+      \field{day}{2}
+      \field{hour}{16}
+      \field{langid}{american}
+      \field{minute}{42}
+      \field{month}{6}
+      \field{second}{26}
+      \field{shorttitle}{Non {{Maximum Suppression}}}
+      \field{timezone}{Z}
+      \field{title}{Non {{Maximum Suppression}}: {{Theory}} and {{Implementation}} in {{PyTorch}}}
+      \field{urlday}{14}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\K2QBT7K4\non-maximum-suppression-theory-and-implementation-in-pytorch.html
+      \endverb
+      \verb{urlraw}
+      \verb https://learnopencv.com/non-maximum-suppression-theory-and-implementation-in-pytorch/
+      \endverb
+      \verb{url}
+      \verb https://learnopencv.com/non-maximum-suppression-theory-and-implementation-in-pytorch/
+      \endverb
+    \endentry
+    \entry{priesGeometry2019}{unpublished}{}{}
+      \name{author}{1}{}{%
+        {{hash=d7f0af18281d2a978d55331e20a404d1}{%
+           family={Pries},
+           familyi={P\bibinitperiod},
+           given={Margitta},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin University of Applied Sciences}%
+      }
+      \strng{namehash}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{fullhash}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{fullhashraw}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{bibnamehash}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{authorbibnamehash}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{authornamehash}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{authorfullhash}{d7f0af18281d2a978d55331e20a404d1}
+      \strng{authorfullhashraw}{d7f0af18281d2a978d55331e20a404d1}
+      \field{labelalpha}{Pri19}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{1}
+      \field{howpublished}{manuscript}
+      \field{langid}{german}
+      \field{month}{10}
+      \field{pagetotal}{16}
+      \field{title}{Geometry}
+      \field{urlday}{1}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\Geometry\Geometry.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.bht-berlin.de/people/detail/617
+      \endverb
+      \verb{url}
+      \verb https://www.bht-berlin.de/people/detail/617
+      \endverb
+    \endentry
+    \entry{ranjanReinforcementLearningDynamic2008}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=140e25d17ce48313394210a238edfc73}{%
+           family={Ranjan},
+           familyi={R\bibinitperiod},
+           given={Rajeev},
+           giveni={R\bibinitperiod}}}%
+        {{hash=5ae094882fd39a37cc22a198b8eb66ba}{%
+           family={Phophalia},
+           familyi={P\bibinitperiod},
+           given={Anukriti},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Jaipur, Rajasthan, India}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{fullhash}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{fullhashraw}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{bibnamehash}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{authorbibnamehash}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{authornamehash}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{authorfullhash}{c015c392dd0a1816d45c7da28df5caaa}
+      \strng{authorfullhashraw}{c015c392dd0a1816d45c7da28df5caaa}
+      \field{labelalpha}{RP08}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2008 {{International Conference}} on {{Recent Advances}} in {{Microwave Theory}} and {{Applications}}}
+      \field{eventtitle}{2008 {{International Conference}} on {{Recent Advances}} in {{Microwave Theory}} and {{Applications}} ({{MICROWAVE}})}
+      \field{isbn}{978-1-4244-2690-4}
+      \field{month}{11}
+      \field{title}{Reinforcement Learning for Dynamic Channel Allocation in Mobile Cellular Systems}
+      \field{urlday}{17}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2008}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{924\bibrangedash 927}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/AMTA.2008.4763228
+      \endverb
+      \verb{urlraw}
+      \verb http://ieeexplore.ieee.org/document/4763228/
+      \endverb
+      \verb{url}
+      \verb http://ieeexplore.ieee.org/document/4763228/
+      \endverb
+    \endentry
+    \entry{roweisNonlinearDimensionalityReduction2000}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=c89a3b977a0617edc15b2d82b36929f3}{%
+           family={Roweis},
+           familyi={R\bibinitperiod},
+           given={Sam\bibnamedelima T.},
+           giveni={S\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=cd2d8ad2373696effc18491288917dd1}{%
+           family={Saul},
+           familyi={S\bibinitperiod},
+           given={Lawrence\bibnamedelima K.},
+           giveni={L\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \strng{namehash}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{fullhash}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{fullhashraw}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{bibnamehash}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{authorbibnamehash}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{authornamehash}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{authorfullhash}{91a4781c6ebe461831ea3f4c50e3294d}
+      \strng{authorfullhashraw}{91a4781c6ebe461831ea3f4c50e3294d}
+      \field{labelalpha}{RS00}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Many areas of science depend on exploratory data analysis and visualization. The need to analyze large amounts of multivariate data raises the fundamental problem of dimensionality reduction: how to discover compact representations of high-dimensional data. Here, we introduce locally linear embedding (LLE), an unsupervised learning algorithm that computes low-dimensional, neighborhood-preserving embeddings of high-dimensional inputs. Unlike clustering methods for local dimensionality reduction, LLE maps its inputs into a single global coordinate system of lower dimensionality, and its optimizations do not involve local minima. By exploiting the local symmetries of linear reconstructions, LLE is able to learn the global structure of nonlinear manifolds, such as those generated by images of faces or documents of text.}
+      \field{day}{22}
+      \field{issn}{0036-8075, 1095-9203}
+      \field{journaltitle}{Science}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{5500}
+      \field{shortjournal}{Science}
+      \field{title}{Nonlinear {{Dimensionality Reduction}} by {{Locally Linear Embedding}}}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{290}
+      \field{year}{2000}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2323\bibrangedash 2326}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1126/science.290.5500.2323
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\6NIHCUVE\Roweis and Saul - 2000 - Nonlinear Dimensionality Reduction by Locally Linear Embedding.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.science.org/doi/10.1126/science.290.5500.2323
+      \endverb
+      \verb{url}
+      \verb https://www.science.org/doi/10.1126/science.290.5500.2323
+      \endverb
+    \endentry
+    \entry{shalev-shwartzUnderstandingMachineLearning2014}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=a6c5827676b0a2058e5b904c3dd7f878}{%
+           family={Shalev-Shwartz},
+           familyi={S\bibinithyphendelim S\bibinitperiod},
+           given={Shai},
+           giveni={S\bibinitperiod}}}%
+        {{hash=509866d90ae18bfca30c6f4cdc846529}{%
+           family={Ben-David},
+           familyi={B\bibinithyphendelim D\bibinitperiod},
+           given={Shai},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge university press}%
+      }
+      \strng{namehash}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{fullhash}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{fullhashraw}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{bibnamehash}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{authorbibnamehash}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{authornamehash}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{authorfullhash}{38fabf8438a7aae182a9d192e7aa2d98}
+      \strng{authorfullhashraw}{38fabf8438a7aae182a9d192e7aa2d98}
+      \field{labelalpha}{SB14}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{"Machine learning is one of the fastest growing areas of computer science, with far-reaching applications. The aim of this textbook is to introduce machine learning, and the algorithmic paradigms it offers, in a principled way. The book provides an extensive theoretical account of the fundamental ideas underlying machine learning and the mathematical derivations that transform these principles into practical algorithms. Following a presentation of the basics of the field, the book covers a wide array of central topics that have not been addressed by previous textbooks. These include a discussion of the computational complexity of learning and the concepts of convexity and stability; important algorithmic paradigms including stochastic gradient descent, neural networks, and structured output learning; and emerging theoretical concepts such as the PAC-Bayes approach and compression-based bounds. Designed for an advanced undergraduate or beginning graduate course, the text makes the fundamentals and algorithms of machine learning accessible to students and non-expert readers in statistics, computer science, mathematics, and engineering"}
+      \field{isbn}{978-1-107-05713-5}
+      \field{langid}{english}
+      \field{shorttitle}{Understanding Machine Learning}
+      \field{title}{Understanding Machine Learning: From Theory to Algorithms}
+      \field{year}{2014}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Computer-Science\Machine Learning\Shai Shalev-Shwartz - Understanding Machine Learning_ From Theory to Algorithms.pdf
+      \endverb
+    \endentry
+    \entry{sipserIntroductionTheoryComputation2010}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=13b9c16a9de2bb891eb8aa2a768eb2a8}{%
+           family={Sipser},
+           familyi={S\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Boston}%
+      }
+      \list{publisher}{1}{%
+        {Course Technology}%
+      }
+      \strng{namehash}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{fullhash}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{fullhashraw}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{bibnamehash}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{authorbibnamehash}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{authornamehash}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{authorfullhash}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \strng{authorfullhashraw}{13b9c16a9de2bb891eb8aa2a768eb2a8}
+      \field{labelalpha}{Sip10}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2. ed., internat. ed., [Nachdr.]}
+      \field{isbn}{978-0-619-21764-8}
+      \field{langid}{english}
+      \field{pagetotal}{437}
+      \field{title}{Introduction to the Theory of Computation}
+      \field{year}{2010}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\ZPYW2AHV\Sipser - 2010 - Introduction to the theory of computation.pdf
+      \endverb
+    \endentry
+    \entry{spivakComprehensiveIntroductionDifferential1999}{mvbook}{}{}
+      \name{author}{1}{}{%
+        {{hash=ee3293a9c2577bc8e7bb84e4d67e85c5}{%
+           family={Spivak},
+           familyi={S\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Houston, Tex}%
+      }
+      \list{publisher}{1}{%
+        {Publish or Perish, Inc}%
+      }
+      \strng{namehash}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{fullhash}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{fullhashraw}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{bibnamehash}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{authorbibnamehash}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{authornamehash}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{authorfullhash}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \strng{authorfullhashraw}{ee3293a9c2577bc8e7bb84e4d67e85c5}
+      \field{labelalpha}{Spi99}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{annotation}{OCLC: ocm42962004}
+      \field{edition}{3rd ed}
+      \field{isbn}{978-0-914098-70-6 978-0-914098-71-3 978-0-914098-72-0 978-0-914098-73-7 978-0-914098-74-4}
+      \field{langid}{english}
+      \field{pagetotal}{5}
+      \field{shorttitle}{A Comprehensive Introduction to Differential Geometry}
+      \field{title}{A Comprehensive Introduction to Differential Geometry, {{Volume}} 3}
+      \field{volume}{3}
+      \field{volumes}{5}
+      \field{year}{1999}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Differential Geometry\Michael Spivak - A Comprehensive Introduction to Differential Geometry, Vol 3.pdf
+      \endverb
+      \keyw{Geometry Differential}
+    \endentry
+    \entry{shiPointGNNGraphNeural2020}{online}{}{}
+      \name{author}{3}{}{%
+        {{hash=50b966333dd96610589633a2b1d71802}{%
+           family={Shi},
+           familyi={S\bibinitperiod},
+           given={Weijing},
+           giveni={W\bibinitperiod}}}%
+        {{hash=ccc0be1227d16e0a9a2c66de4b1ee244}{%
+           family={Ragunathan},
+           familyi={R\bibinitperiod}}}%
+        {{hash=3148b6b35c6ad179693fef93167170e5}{%
+           family={Rajkumar},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{fullhash}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{fullhashraw}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{bibnamehash}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{authorbibnamehash}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{authornamehash}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{authorfullhash}{64bc2cb45a0836dd77daebd076139b5d}
+      \strng{authorfullhashraw}{64bc2cb45a0836dd77daebd076139b5d}
+      \field{labelalpha}{SRR20}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{In this paper, we propose a graph neural network to detect objects from a LiDAR point cloud. Towards this end, we encode the point cloud efficiently in a fixed radius near-neighbors graph. We design a graph neural network, named Point-GNN, to predict the category and shape of the object that each vertex in the graph belongs to. In Point-GNN, we propose an auto-registration mechanism to reduce translation variance, and also design a box merging and scoring operation to combine detections from multiple vertices accurately. Our experiments on the KITTI benchmark show the proposed approach achieves leading accuracy using the point cloud alone and can even surpass fusion-based algorithms. Our results demonstrate the potential of using the graph neural network as a new approach for 3D object detection. The code is available https://github.com/WeijingShi/Point-GNN.}
+      \field{day}{2}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{3}
+      \field{pubstate}{prepublished}
+      \field{shorttitle}{Point-{{GNN}}}
+      \field{title}{Point-{{GNN}}: {{Graph Neural Network}} for {{3D Object Detection}} in a {{Point Cloud}}}
+      \field{urlday}{10}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2003.01251
+      \endverb
+      \verb{eprint}
+      \verb 2003.01251
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\5PVQ6R85\\Shi et al. - 2020 - Point-GNN Graph Neural Network for 3D Object Detection in a Point Cloud.pdf;C\:\\Users\\prfej\\Zotero\\storage\\CN34B2CD\\2003.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2003.01251
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2003.01251
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+    \entry{tenenbaumGlobalGeometricFramework2000}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=5c7ff02e1f8b4c4aa7bfddece14f23d2}{%
+           family={Tenenbaum},
+           familyi={T\bibinitperiod},
+           given={Joshua\bibnamedelima B.},
+           giveni={J\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=166decea71d4a387906cfc056e5f2aeb}{%
+           family={Silva},
+           familyi={S\bibinitperiod},
+           given={Vin\bibnamedelima De},
+           giveni={V\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=98c8721f0693b159457b9b2d6fa05362}{%
+           family={Langford},
+           familyi={L\bibinitperiod},
+           given={John\bibnamedelima C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{878bcbd6617184cd259122e186400225}
+      \strng{fullhash}{878bcbd6617184cd259122e186400225}
+      \strng{fullhashraw}{878bcbd6617184cd259122e186400225}
+      \strng{bibnamehash}{878bcbd6617184cd259122e186400225}
+      \strng{authorbibnamehash}{878bcbd6617184cd259122e186400225}
+      \strng{authornamehash}{878bcbd6617184cd259122e186400225}
+      \strng{authorfullhash}{878bcbd6617184cd259122e186400225}
+      \strng{authorfullhashraw}{878bcbd6617184cd259122e186400225}
+      \field{extraname}{1}
+      \field{labelalpha}{TSL00}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Scientists working with large volumes of high-dimensional data, such as global climate patterns, stellar spectra, or human gene distributions, regularly confront the problem of dimensionality reduction: finding meaningful low-dimensional structures hidden in their high-dimensional observations. The human brain confronts the same problem in everyday perception, extracting from its high-dimensional sensory inputs—30,000 auditory nerve fibers or 10 6 optic nerve fibers—a manageably small number of perceptually relevant features. Here we describe an approach to solving dimensionality reduction problems that uses easily measured local metric information to learn the underlying global geometry of a data set. Unlike classical techniques such as principal component analysis (PCA) and multidimensional scaling (MDS), our approach is capable of discovering the nonlinear degrees of freedom that underlie complex natural observations, such as human handwriting or images of a face under different viewing conditions. In contrast to previous algorithms for nonlinear dimensionality reduction, ours efficiently computes a globally optimal solution, and, for an important class of data manifolds, is guaranteed to converge asymptotically to the true structure.}
+      \field{day}{22}
+      \field{issn}{0036-8075, 1095-9203}
+      \field{journaltitle}{Science}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{5500}
+      \field{shortjournal}{Science}
+      \field{title}{A {{Global Geometric Framework}} for {{Nonlinear Dimensionality Reduction}}}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{290}
+      \field{year}{2000}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2319\bibrangedash 2323}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1126/science.290.5500.2319
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\AppData\Local\Microsoft\Windows\INetCache\IE\ZU78O3PY\tenenbaum2000a[1].pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.science.org/doi/10.1126/science.290.5500.2319
+      \endverb
+      \verb{url}
+      \verb https://www.science.org/doi/10.1126/science.290.5500.2319
+      \endverb
+    \endentry
+    \entry{tenenbaumGlobalGeometricFramework2000a}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=5c7ff02e1f8b4c4aa7bfddece14f23d2}{%
+           family={Tenenbaum},
+           familyi={T\bibinitperiod},
+           given={Joshua\bibnamedelima B.},
+           giveni={J\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=166decea71d4a387906cfc056e5f2aeb}{%
+           family={Silva},
+           familyi={S\bibinitperiod},
+           given={Vin\bibnamedelima De},
+           giveni={V\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=98c8721f0693b159457b9b2d6fa05362}{%
+           family={Langford},
+           familyi={L\bibinitperiod},
+           given={John\bibnamedelima C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{878bcbd6617184cd259122e186400225}
+      \strng{fullhash}{878bcbd6617184cd259122e186400225}
+      \strng{fullhashraw}{878bcbd6617184cd259122e186400225}
+      \strng{bibnamehash}{878bcbd6617184cd259122e186400225}
+      \strng{authorbibnamehash}{878bcbd6617184cd259122e186400225}
+      \strng{authornamehash}{878bcbd6617184cd259122e186400225}
+      \strng{authorfullhash}{878bcbd6617184cd259122e186400225}
+      \strng{authorfullhashraw}{878bcbd6617184cd259122e186400225}
+      \field{extraname}{2}
+      \field{labelalpha}{TSL00}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Scientists working with large volumes of high-dimensional data, such as global climate patterns, stellar spectra, or human gene distributions, regularly confront the problem of dimensionality reduction: finding meaningful low-dimensional structures hidden in their high-dimensional observations. The human brain confronts the same problem in everyday perception, extracting from its high-dimensional sensory inputs—30,000 auditory nerve fibers or 10 6 optic nerve fibers—a manageably small number of perceptually relevant features. Here we describe an approach to solving dimensionality reduction problems that uses easily measured local metric information to learn the underlying global geometry of a data set. Unlike classical techniques such as principal component analysis (PCA) and multidimensional scaling (MDS), our approach is capable of discovering the nonlinear degrees of freedom that underlie complex natural observations, such as human handwriting or images of a face under different viewing conditions. In contrast to previous algorithms for nonlinear dimensionality reduction, ours efficiently computes a globally optimal solution, and, for an important class of data manifolds, is guaranteed to converge asymptotically to the true structure.}
+      \field{day}{22}
+      \field{issn}{0036-8075, 1095-9203}
+      \field{journaltitle}{Science}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{5500}
+      \field{shortjournal}{Science}
+      \field{title}{A {{Global Geometric Framework}} for {{Nonlinear Dimensionality Reduction}}}
+      \field{urlday}{11}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{290}
+      \field{year}{2000}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2319\bibrangedash 2323}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1126/science.290.5500.2319
+      \endverb
+      \verb{urlraw}
+      \verb https://www.science.org/doi/10.1126/science.290.5500.2319
+      \endverb
+      \verb{url}
+      \verb https://www.science.org/doi/10.1126/science.290.5500.2319
+      \endverb
+    \endentry
+    \entry{ungarEinsteinAdditionLaw2002}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=bdb9ec0dbb9e65a03dffa2b2be9e3bd2}{%
+           family={Ungar},
+           familyi={U\bibinitperiod},
+           given={Abraham\bibnamedelima A.},
+           giveni={A\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Dordrecht}%
+      }
+      \list{publisher}{1}{%
+        {Imprint: Springer}%
+      }
+      \strng{namehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{fullhash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{fullhashraw}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{bibnamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorbibnamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authornamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorfullhash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorfullhashraw}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \field{extraname}{1}
+      \field{labelalpha}{Ung02}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{edition}{1st ed. 2002}
+      \field{isbn}{978-0-306-47134-6}
+      \field{langid}{english}
+      \field{number}{117}
+      \field{pagetotal}{449}
+      \field{series}{Fundamental {{Theories}} of {{Physics}}}
+      \field{shorttitle}{Beyond the {{Einstein Addition Law}} and Its {{Gyroscopic Thomas Precession}}}
+      \field{title}{Beyond the {{Einstein Addition Law}} and Its {{Gyroscopic Thomas Precession}}: {{The Theory}} of {{Gyrogroups}} and {{Gyrovector Spaces}}}
+      \field{year}{2002}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/0-306-47134-5
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Geometry\Abraham A. Ungar - Beyond the Einstein Addition Law and its Gyroscopic Thomas Precession.pdf
+      \endverb
+    \endentry
+    \entry{ungarAnalyticHyperbolicGeometry2005}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=bdb9ec0dbb9e65a03dffa2b2be9e3bd2}{%
+           family={Ungar},
+           familyi={U\bibinitperiod},
+           given={Abraham\bibnamedelima A},
+           giveni={A\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {WORLD SCIENTIFIC}%
+      }
+      \strng{namehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{fullhash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{fullhashraw}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{bibnamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorbibnamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authornamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorfullhash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorfullhashraw}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \field{extraname}{2}
+      \field{labelalpha}{Ung05}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{isbn}{978-981-256-457-3 978-981-270-327-9}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{shorttitle}{Analytic {{Hyperbolic Geometry}}}
+      \field{title}{Analytic {{Hyperbolic Geometry}}: {{Mathematical Foundations}} and {{Applications}}}
+      \field{urlday}{17}
+      \field{urlmonth}{4}
+      \field{urlyear}{2025}
+      \field{year}{2005}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1142/5914
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Mathematics\Geometry\Abraham A. Ungar - Analytic Hyperbolic Geometry_ Mathematical Foundations and Applications.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.worldscientific.com/worldscibooks/10.1142/5914
+      \endverb
+      \verb{url}
+      \verb https://www.worldscientific.com/worldscibooks/10.1142/5914
+      \endverb
+    \endentry
+    \entry{ungarAnalyticHyperbolicGeometry2008}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=bdb9ec0dbb9e65a03dffa2b2be9e3bd2}{%
+           family={Ungar},
+           familyi={U\bibinitperiod},
+           given={Abraham\bibnamedelima A.},
+           giveni={A\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New Jersey}%
+      }
+      \list{publisher}{1}{%
+        {World Scientific}%
+      }
+      \strng{namehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{fullhash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{fullhashraw}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{bibnamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorbibnamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authornamehash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorfullhash}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \strng{authorfullhashraw}{bdb9ec0dbb9e65a03dffa2b2be9e3bd2}
+      \field{extraname}{3}
+      \field{labelalpha}{Ung08}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{OCLC: ocn185032778}
+      \field{isbn}{978-981-277-229-9}
+      \field{pagetotal}{628}
+      \field{title}{Analytic Hyperbolic Geometry and {{Albert Einstein}}'s Special Theory of Relativity}
+      \field{year}{2008}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Physics\Abraham Albert Ungar - Analytic Hyperbolic Geometry And Albert Einstein's Special.pdf
+      \endverb
+      \keyw{Geometry Hyperbolic,Special relativity (Physics)}
+    \endentry
+    \entry{walkerApplicationReinforcementLearning2000}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=e8f5c90edaf8933b2c35a024ae7ff170}{%
+           family={Walker},
+           familyi={W\bibinitperiod},
+           given={M.\bibnamedelimi A.},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{fullhash}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{fullhashraw}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{bibnamehash}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{authorbibnamehash}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{authornamehash}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{authorfullhash}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \strng{authorfullhashraw}{e8f5c90edaf8933b2c35a024ae7ff170}
+      \field{labelalpha}{Wal00}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper describes a novel method by which a spoken dialogue system can learn to choose an optimal dialogue strategy from its experience interacting with human users. The method is based on a combination of reinforcement learning and performance modeling of spoken dialogue systems. The reinforcement learning component applies Q-learning (Watkins, 1989), while the performance modeling component applies the PARADISE evaluation framework (Walker et al., 1997) to learn the performance function (reward) used in reinforcement learning. We illustrate the method with a spoken dialogue system named ELVIS (EmaiL Voice Interactive System), that supports access to email over the phone. We conduct a set of experiments for training an optimal dialogue strategy on a corpus of 219 dialogues in which human users interact with ELVIS over the phone. We then test that strategy on a corpus of 18 dialogues. We show that ELVIS can learn to optimize its strategy selection for agent initiative, for reading messages, and for summarizing email folders.}
+      \field{day}{1}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{issn}{1076-9757}
+      \field{journaltitle}{Journal of Artificial Intelligence Research}
+      \field{month}{6}
+      \field{shortjournal}{jair}
+      \field{title}{An {{Application}} of {{Reinforcement Learning}} to {{Dialogue Strategy Selection}} in a {{Spoken Dialogue System}} for {{Email}}}
+      \field{urlday}{17}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{12}
+      \field{year}{2000}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{387\bibrangedash 416}
+      \range{pages}{30}
+      \verb{doi}
+      \verb 10.1613/jair.713
+      \endverb
+      \verb{eprint}
+      \verb 1106.0241
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\4X63F77J\\Walker - 2000 - An Application of Reinforcement Learning to Dialogue Strategy Selection in a Spoken Dialogue System.pdf;C\:\\Users\\prfej\\Zotero\\storage\\SCZP62P9\\1106.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1106.0241
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1106.0241
+      \endverb
+      \keyw{Computer Science - Artificial Intelligence}
+    \endentry
+    \entry{watkinsQlearning1992}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=6522b6087fe013d303faca6da91596ca}{%
+           family={Watkins},
+           familyi={W\bibinitperiod},
+           given={Christopher\bibnamedelimb J.\bibnamedelimi C.\bibnamedelimi H.},
+           giveni={C\bibinitperiod\bibinitdelim J\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=ef0afbe0b4e15059c963e026fe213c34}{%
+           family={Dayan},
+           familyi={D\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{fullhash}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{fullhashraw}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{bibnamehash}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{authorbibnamehash}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{authornamehash}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{authorfullhash}{1f776b9a46cb729efd9599e3af8beeef}
+      \strng{authorfullhashraw}{1f776b9a46cb729efd9599e3af8beeef}
+      \field{labelalpha}{WD92}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0885-6125, 1573-0565}
+      \field{journaltitle}{Machine Learning}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{3--4}
+      \field{shortjournal}{Mach Learn}
+      \field{title}{Q-Learning}
+      \field{urlday}{9}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{8}
+      \field{year}{1992}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{279\bibrangedash 292}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1007/BF00992698
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\JQ2IAUCT\Watkins and Dayan - 1992 - Q-learning.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://link.springer.com/10.1007/BF00992698
+      \endverb
+      \verb{url}
+      \verb http://link.springer.com/10.1007/BF00992698
+      \endverb
+    \endentry
+    \entry{weissteinParallelogramLaw}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=819197bfeff32a3f58d49b2a3eb0a580}{%
+           family={Weisstein},
+           familyi={W\bibinitperiod},
+           given={Eric\bibnamedelima W.},
+           giveni={E\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wolfram Research, Inc.}%
+      }
+      \strng{namehash}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{fullhash}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{fullhashraw}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{bibnamehash}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{authorbibnamehash}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{authornamehash}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{authorfullhash}{819197bfeff32a3f58d49b2a3eb0a580}
+      \strng{authorfullhashraw}{819197bfeff32a3f58d49b2a3eb0a580}
+      \field{labelalpha}{Wei}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The parallelogram law gives the rule for vector addition of vectors A and B. The sum A+B of the vectors is obtained by placing them head to tail and drawing the vector from the free tail to the free head. Let |·| denote the norm of a quantity. Then the quantities x and y are said to satisfy the parallelogram law if |x+y|\textasciicircum 2+|x-y|\textasciicircum 2=2|x|\textasciicircum 2+2|y|\textasciicircum 2. If the norm is defined as |f|=sqrt({$<$}f|f{$>$}) (the so-called L2-norm), then the law will always hold.}
+      \field{langid}{english}
+      \field{title}{Parallelogram {{Law}}}
+      \field{type}{Text}
+      \field{urlday}{8}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\prfej\Zotero\storage\NC8MHY49\ParallelogramLaw.html
+      \endverb
+      \verb{urlraw}
+      \verb https://mathworld.wolfram.com/ParallelogramLaw.html
+      \endverb
+      \verb{url}
+      \verb https://mathworld.wolfram.com/ParallelogramLaw.html
+      \endverb
+    \endentry
+    \entry{wuGraphNeuralNetworks2022}{book}{}{}
+      \name{editor}{4}{}{%
+        {{hash=bfb9e94811d001921a32bfdc17524596}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Lingfei},
+           giveni={L\bibinitperiod}}}%
+        {{hash=a79e6a0454388fc3ede42ca69f997534}{%
+           family={Cui},
+           familyi={C\bibinitperiod},
+           given={Peng},
+           giveni={P\bibinitperiod}}}%
+        {{hash=56af930e1f5e2c9a791b71e7b347c0ba}{%
+           family={Pei},
+           familyi={P\bibinitperiod},
+           given={Jian},
+           giveni={J\bibinitperiod}}}%
+        {{hash=1f1b5a611871b013dd18b84a54bbb23f}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Liang},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Singapore}%
+      }
+      \list{publisher}{1}{%
+        {Springer Nature Singapore}%
+      }
+      \strng{namehash}{cbbdc049dc98c57296297d636de04629}
+      \strng{fullhash}{6b0f7d88001740508f489228f327258a}
+      \strng{fullhashraw}{6b0f7d88001740508f489228f327258a}
+      \strng{bibnamehash}{cbbdc049dc98c57296297d636de04629}
+      \strng{editorbibnamehash}{cbbdc049dc98c57296297d636de04629}
+      \strng{editornamehash}{cbbdc049dc98c57296297d636de04629}
+      \strng{editorfullhash}{6b0f7d88001740508f489228f327258a}
+      \strng{editorfullhashraw}{6b0f7d88001740508f489228f327258a}
+      \field{labelalpha}{Wu+22}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{shorttitle}
+      \field{isbn}{978-981-16-6053-5 978-981-16-6054-2}
+      \field{langid}{english}
+      \field{pagetotal}{701}
+      \field{shorttitle}{Graph {{Neural Networks}}}
+      \field{title}{Graph {{Neural Networks}}: {{Foundations}}, {{Frontiers}}, and {{Applications}}}
+      \field{urlday}{11}
+      \field{urlmonth}{1}
+      \field{urlyear}{2025}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-981-16-6054-2
+      \endverb
+      \verb{file}
+      \verb C:\Users\prfej\OneDrive\Library\Computer-Science\Machine Learning\Lingfei Wu - Graph Neural Networks_ Foundations, Frontiers, and Applications.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://link.springer.com/10.1007/978-981-16-6054-2
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/10.1007/978-981-16-6054-2
+      \endverb
+    \endentry
+    \entry{xuHowPowerfulAre2019a}{online}{}{}
+      \name{author}{4}{}{%
+        {{hash=29a3a6bf823a641230b0258e0a8a0214}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Keyulu},
+           giveni={K\bibinitperiod}}}%
+        {{hash=164c7f22cde069c57bf9b80f76441fa9}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Weihua},
+           giveni={W\bibinitperiod}}}%
+        {{hash=900d107125ff0ca84698cb909e4f6c51}{%
+           family={Leskovec},
+           familyi={L\bibinitperiod},
+           given={Jure},
+           giveni={J\bibinitperiod}}}%
+        {{hash=83a44c18acfaa38fa9f6ba76cfdc0132}{%
+           family={Jegelka},
+           familyi={J\bibinitperiod},
+           given={Stefanie},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{344f5b90b6e6e45d86fe86fd8fdca38c}
+      \strng{fullhash}{3fe1c2e12a449ac359ab2737dfe4ce17}
+      \strng{fullhashraw}{3fe1c2e12a449ac359ab2737dfe4ce17}
+      \strng{bibnamehash}{344f5b90b6e6e45d86fe86fd8fdca38c}
+      \strng{authorbibnamehash}{344f5b90b6e6e45d86fe86fd8fdca38c}
+      \strng{authornamehash}{344f5b90b6e6e45d86fe86fd8fdca38c}
+      \strng{authorfullhash}{3fe1c2e12a449ac359ab2737dfe4ce17}
+      \strng{authorfullhashraw}{3fe1c2e12a449ac359ab2737dfe4ce17}
+      \field{labelalpha}{Xu+19}
+      \field{sortinit}{X}
+      \field{sortinithash}{1965c258adceecf23ce3d67b05113442}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Graph Neural Networks (GNNs) are an effective framework for representation learning of graphs. GNNs follow a neighborhood aggregation scheme, where the representation vector of a node is computed by recursively aggregating and transforming representation vectors of its neighboring nodes. Many GNN variants have been proposed and have achieved state-of-the-art results on both node and graph classification tasks. However, despite GNNs revolutionizing graph representation learning, there is limited understanding of their representational properties and limitations. Here, we present a theoretical framework for analyzing the expressive power of GNNs to capture different graph structures. Our results characterize the discriminative power of popular GNN variants, such as Graph Convolutional Networks and GraphSAGE, and show that they cannot learn to distinguish certain simple graph structures. We then develop a simple architecture that is provably the most expressive among the class of GNNs and is as powerful as the Weisfeiler-Lehman graph isomorphism test. We empirically validate our theoretical findings on a number of graph classification benchmarks, and demonstrate that our model achieves state-of-the-art performance.}
+      \field{day}{22}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{2}
+      \field{pubstate}{prepublished}
+      \field{title}{How {{Powerful}} Are {{Graph Neural Networks}}?}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1810.00826
+      \endverb
+      \verb{eprint}
+      \verb 1810.00826
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\prfej\\Zotero\\storage\\S8NLUWJ6\\Xu et al. - 2019 - How Powerful are Graph Neural Networks.pdf;C\:\\Users\\prfej\\Zotero\\storage\\GW43RFKT\\1810.html
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1810.00826
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1810.00826
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning,Statistics - Machine Learning}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

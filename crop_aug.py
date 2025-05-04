@@ -9,6 +9,7 @@ from copy import deepcopy
 from tqdm import tqdm
 
 from data.kitti_dataset import KittiDataset
+from data import preprocess
 from globals import M_ROT
 from data.transformations import boxes_3d_to_corners
 from utils.nms import overlapped_boxes_3d_fast_poly
@@ -17,8 +18,9 @@ from data.utils import Points,sel_points_in_box2d,sel_points_in_box3d
 #from models import preprocess
 
 def save_cropped_boxes(
-        dataset:KittiDataset, filename:str, expand_factor:tuple=[1.1, 1.1, 1.1],
-        minimum_points:int=10,backlist:list=[]):
+  dataset:KittiDataset, filename:str, expand_factor:tuple=[1.1, 1.1, 1.1],
+  minimum_points:int=10,backlist:list=[]
+):
   """ creates a json file containing filtered labels and points within them
 
   @param dataset:         KittiDataset object

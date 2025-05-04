@@ -9,12 +9,14 @@ import open3d as o3d
 from collections import defaultdict
 from tqdm import tqdm
 import json
+from typing import Optional, Tuple, Union
+from concurrent.futures import ThreadPoolExecutor,as_completed
 
 from globals import (
   M_ROT,BOX_OFFSET,Points,
   IMG_WIDTH, IMG_HEIGHT,                                                        # image dimensions
   OBJECT_HEIGHT_THRESHOLDS,TRUNCATION_THRESHOLDS,OCCULUSION_THRESHOLDS,         # thresholds
-  OCCLUSION_COLORS,OBJECT_COLORS                                                # colors
+  OCCLUSION_COLORS,COLOR_MAP                                                # colors
 )
 from .transformations import (
   boxes_3d_to_corners,box3d_to_cam_points,cam_points_to_image,velo_to_cam,
@@ -54,17 +56,16 @@ class KittiDataset(object):
     self._image_dir = join(kitti_root_dir,subfolder,'image_2')
     self._point_dir = join(kitti_root_dir,subfolder,'velodyne')
     self._crop_file = join(data_root_dir,'cropped_boxes\\cropped.json')
+
     if is_training: 
       self._label_dir = join(kitti_root_dir,subfolder,'label_2')
 
     self._file_list = self._get_file_list(self._image_dir)
-
-    self._verify_file_list()
-    
-    # set the maximum image height and width
     self._max_image_height  = IMG_HEIGHT
     self._max_image_width   = IMG_WIDTH
 
+    self._verify_file_list()
+    self.init_stats()
     self._cropped_labels, self._cropped_cam_points = self.load_cropped_boxes()
 
   # ===========================================================================#
@@ -74,7 +75,7 @@ class KittiDataset(object):
   def __str__(self):
     """ Generate a string summary of the dataset """
 
-    summary_string = ('Dataset Summary:\n'
+    summary_string = ('\nDataset Summary:\n'
       + '* Paths{\n'
       + '\timage_dir=%s\n' % self._image_dir
       + '\tpoint_dir=%s\n' % self._point_dir
@@ -86,9 +87,72 @@ class KittiDataset(object):
 
     return summary_string + statics
   
+  def process_frame_stats(self,frame_idx):
+    stats = {
+      'x': defaultdict(list), 'y': defaultdict(list), 'z': defaultdict(list),
+      'w': defaultdict(list), 'h': defaultdict(list), 'l': defaultdict(list),
+      'view_angle': defaultdict(list), 'yaw': defaultdict(list),
+      'trunc_rates': [], 'no_trunc_rates': [], 'img_height': 0, 'img_width': 0,
+      'occlusion': defaultdict(list), 'truncation': defaultdict(list),
+      'height': defaultdict(list)
+    }
 
-  def get_statics(self):
-    """ Get statistics of objects in the dataset """
+    labels  = self.get_label(frame_idx)
+    calib   = self.get_calib(frame_idx)
+    image   = self.get_image(frame_idx)
+    stats['img_height']   = image.shape[0]
+    stats['img_width']    = image.shape[1]
+
+    for label in labels:                                                        # get all label information in frame
+      if label['ymin'] > 0:
+        object_name = label['name']  
+        if label['name'] == 'Car':
+          if label['ymax'] - label['ymin'] <= OBJECT_HEIGHT_THRESHOLDS[self.difficulty]:                
+            object_name = 'ignored_by_height'
+          elif label['truncation'] > TRUNCATION_THRESHOLDS[self.difficulty]:                        # too much truncation
+            object_name = 'ignored_by_truncation'
+          elif label['occlusion'] > OCCULUSION_THRESHOLDS[self.difficulty]:     # check occlusion rate
+            object_name = 'ignored_by_occlusion'
+      else: continue
+
+      stats['w'][object_name].append(label['width'])                            # object width
+      stats['h'][object_name].append(label['height'])                           # object height
+      stats['l'][object_name].append(label['length'])                           # object length
+      stats['x'][object_name].append(label['x3d'])                              # x coordinate
+      stats['y'][object_name].append(label['y3d'])                             # y coordinate
+      stats['z'][object_name].append(label['z3d'])                              # z coordinate
+      stats['view_angle'][object_name].append(                                  # compute view angle  
+        np.arctan(label['x3d']/label['z3d']))
+      stats['yaw'][object_name].append(label['yaw'])
+
+      detection_boxes_3d = np.array(                                            # get label 3D boxes
+        [[label['x3d'], label['y3d'], label['z3d'], label['length'], 
+          label['height'], label['width'], label['yaw']]])
+      detection_boxes_3d_corners = boxes_3d_to_corners(detection_boxes_3d)      # translate from origin
+      corners_cam_points = Points(                                              # convert to Points object  
+        xyz=detection_boxes_3d_corners[0], attr=None)
+      corners_img_points = cam_points_to_image(corners_cam_points, calib)       # convert velodyne into image points
+      corners_xy  = corners_img_points.xyz[:, :2]                               # get x and y coordinates         
+      xmin, ymin  = np.amin(corners_xy, axis=0)                                 # get min and max coordinates
+      xmax, ymax  = np.amax(corners_xy, axis=0)
+      clip_xmin   = max(xmin, 0.0)                                              # define clip off points
+      clip_ymin   = max(ymin, 0.0)
+      clip_xmax   = min(xmax, IMG_WIDTH)
+      clip_ymax   = min(ymax, IMG_HEIGHT)
+      truncation_rate = 1.0 - \
+        (clip_ymax - clip_ymin)*(clip_xmax - clip_xmin)/\
+          ((ymax - ymin)*(xmax - xmin))                                         # compute truncation rate
+      
+      if label['truncation'] > TRUNCATION_THRESHOLDS[self.difficulty]:          # check truncation rate
+        stats['trunc_rates'].append(truncation_rate)
+      else:
+        stats['no_trunc_rates'].append(truncation_rate)
+      
+    return stats
+  
+
+  def init_stats(self):
+    """ compute stats once for all objects in the dataset """
 
     # coordinates lists
     self.x_dict = defaultdict(list)
@@ -101,97 +165,50 @@ class KittiDataset(object):
     self.view_angle_dict = defaultdict(list) # view angle list
     self.yaw_dict        = defaultdict(list) # yaw list
 
+    self.truncation_rates     = []
+    self.no_truncation_rates  = []
+    self.image_heights        = []
+    self.image_widths         = []
+
     # get all relevant values in easy format
-    for frame_idx in range(self.num_files):
-      labels = self.get_label(frame_idx)                                        # get labels for in frame
-      for label in labels:                                                      # get all label information in frame                    
-        if label['ymin'] > 0:
-          if label['ymax'] - label['ymin'] > \
-            OBJECT_HEIGHT_THRESHOLDS[self.difficulty]:                          # large enough
-            object_name = label['name']
-            self.w_dict[object_name].append(label['width'])                     # object width
-            self.h_dict[object_name].append(label['height'])                    # object height
-            self.l_dict[object_name].append(label['length'])                    # object length
-            self.x_dict[object_name].append(label['x3d'])                       # x coordinate
-            self.y_dict[object_name].append(label['y3d'])                       # y coordinate
-            self.z_dict[object_name].append(label['z3d'])                       # z coordinate
-            self.view_angle_dict[object_name].append(                           # compute view angle  
-              np.arctan(label['x3d']/label['z3d']))
-            self.yaw_dict[object_name].append(label['yaw'])
+    with ThreadPoolExecutor() as executor:
+      results = list(executor.map(self.process_frame_stats, range(self.num_files)))
+    
+    # Merge results
+    for stats in results:
+      for k, v in stats['x'].items():
+        self.x_dict[k].extend(v)
 
-    # compute ingore statics
-    truncation_rates    = []
-    no_truncation_rates = []
-    image_height        = []
-    image_width         = []
+      for k, v in stats['y'].items():
+        self.y_dict[k].extend(v)
 
-    for frame_idx in range(self.num_files):
-      labels  = self.get_label(frame_idx)                                       # get image frame sizes
-      calib   = self.get_calib(frame_idx)
-      image   = self.get_image(frame_idx)
-      image_height.append(image.shape[0])
-      image_width.append(image.shape[1])
+      for k, v in stats['z'].items():
+        self.z_dict[k].extend(v)
 
-      for label in labels:
-        object_name = label['name']
+      for k, v in stats['w'].items():
+        self.w_dict[k].extend(v)
 
-        if label['name'] == 'Car':
-          # too small
-          if label['ymax'] - label['ymin'] < OBJECT_HEIGHT_THRESHOLDS[self.difficulty]:      
-            self.h_dict['ignored_by_height'].append(label['height'])
-            self.w_dict['ignored_by_height'].append(label['width'])
-            self.l_dict['ignored_by_height'].append(label['length'])
-            self.x_dict['ignored_by_height'].append(label['x3d'])
-            self.y_dict['ignored_by_height'].append(label['y3d'])
-            self.z_dict['ignored_by_height'].append(label['z3d'])
-            self.view_angle_dict['ignored_by_height'].append(
-               np.arctan(label['x3d']/label['z3d']))
-            self.yaw_dict['ignored_by_height'].append(label['yaw'])
+      for k, v in stats['h'].items():
+        self.h_dict[k].extend(v)
 
-          if label['truncation'] > TRUNCATION_THRESHOLDS[self.difficulty]:      # too much truncation
-            self.h_dict['ignored_by_truncation'].append(label['height'])
-            self.w_dict['ignored_by_truncation'].append(label['width'])
-            self.l_dict['ignored_by_truncation'].append(label['length'])
-            self.x_dict['ignored_by_truncation'].append(label['x3d'])
-            self.y_dict['ignored_by_truncation'].append(label['y3d'])
-            self.z_dict['ignored_by_truncation'].append(label['z3d'])
-            self.view_angle_dict['ignored_by_truncation'].append(
-              np.arctan(label['x3d']/label['z3d']))
-            self.yaw_dict['ignored_by_truncation'].append(label['yaw'])
+      for k, v in stats['l'].items():
+        self.l_dict[k].extend(v)
 
-          detection_boxes_3d = np.array(                                        # get label 3D boxes
-            [[label['x3d'], label['y3d'], label['z3d'], label['length'], 
-              label['height'], label['width'], label['yaw']]])
-          detection_boxes_3d_corners = boxes_3d_to_corners(detection_boxes_3d)  # translate from origin
-          corners_cam_points = Points(                                          # convert to Points object  
-            xyz=detection_boxes_3d_corners[0], attr=None)
-          corners_img_points = cam_points_to_image(corners_cam_points, calib)   # convert velodyne into image points
-          corners_xy  = corners_img_points.xyz[:, :2]                           # get x and y coordinates         
-          xmin, ymin  = np.amin(corners_xy, axis=0)                             # get min and max coordinates
-          xmax, ymax  = np.amax(corners_xy, axis=0)
-          clip_xmin   = max(xmin, 0.0)                                          # define clip off points
-          clip_ymin   = max(ymin, 0.0)
-          clip_xmax   = min(xmax, IMG_WIDTH)
-          clip_ymax   = min(ymax, IMG_HEIGHT)
-          truncation_rate = 1.0 - \
-            (clip_ymax - clip_ymin)*(clip_xmax - clip_xmin)/\
-              ((ymax - ymin)*(xmax - xmin))                                     # compute truncation rate
-          
-          if label['truncation'] > TRUNCATION_THRESHOLDS[self.difficulty]:      # check truncation rate
-            truncation_rates.append(truncation_rate)
-          else:
-            no_truncation_rates.append(truncation_rate)
+      for k, v in stats['view_angle'].items():
+        self.view_angle_dict[k].extend(v)
 
-          if label['occlusion'] > OCCULUSION_THRESHOLDS[self.difficulty]:       # check occlusion rate
-            self.h_dict['ignored_by_occlusion'].append(label['height'])
-            self.w_dict['ignored_by_occlusion'].append(label['width'])
-            self.l_dict['ignored_by_occlusion'].append(label['length'])
-            self.x_dict['ignored_by_occlusion'].append(label['x3d'])
-            self.y_dict['ignored_by_occlusion'].append(label['y3d'])
-            self.z_dict['ignored_by_occlusion'].append(label['z3d'])
-            self.view_angle_dict['ignored_by_occlusion'].append(
-              np.arctan(label['x3d']/label['z3d']))
-            self.yaw_dict['ignored_by_occlusion'].append(label['yaw'])
+      for k, v in stats['yaw'].items():
+        self.yaw_dict[k].extend(v)
+
+
+      self.truncation_rates.extend(stats['trunc_rates'])
+      self.no_truncation_rates.extend(stats['no_trunc_rates'])
+      self.image_heights.append(stats['img_height'])
+      self.image_widths.append(stats['img_width'])
+
+
+  def get_statics(self):
+    """ Get statistics of objects in the dataset """
 
     statistics = ""
     for object_name in self.h_dict:
@@ -226,10 +243,10 @@ class KittiDataset(object):
         + "\t\tmY= " + str(np.min(self.yaw_dict[object_name])) + " "
                 + str(np.median(self.yaw_dict[object_name])) + " "
                 + str(np.max(self.yaw_dict[object_name])) + ";\n"
-        + "\t\timage_height:= " + str(np.min(image_height)) + " "
-        + str(np.max(image_height)) +";\n"
-        + "\t\timage_width: " + str(np.min(image_width)) + " "
-        + str(np.max(image_width)) + ";\n"
+        + "\t\timage_height:= " + str(np.min(self.image_heights)) + " "
+        + str(np.max(self.image_heights)) +";\n"
+        + "\t\timage_width: " + str(np.min(self.image_widths)) + " "
+        + str(np.max(self.image_widths)) + ";\n"
         "\t}\n")
       
     return statistics
@@ -242,21 +259,34 @@ class KittiDataset(object):
   def num_files(self):  return len(self._file_list)                             # get number of files in dataset
 
 
-  def get_filename(self, frame_idx):
+  def get_filename(self, frame_idx) -> str:
     """ Get the filename based on frame_idx.
 
-    @param frame_idx: the index of the frame to get.
-    @return: a string containing the filename.
+    Parameters
+    ----------
+    frame_idx: int
+      the index of the frame to get.
+
+    Returns
+    -------
+    str
+      a string containing the filename.
     """
     return self._file_list[frame_idx]
   
 
-  def _get_file_list(self, image_dir:str):
+  def _get_file_list(self, image_dir:str) -> Tuple[str]:
     """Load all filenames from image_dir.
 
-    @param image_dir: path to the image directory
+    Parameters
+    __________
+    image_dir: str
+      path to the image directory
 
-    Returns: a list of all filenames in image directory
+    Returns
+    -------
+    list 
+      a list of all filenames in image directory
     """
 
     file_list = [f.split('.')[0] 
@@ -266,13 +296,15 @@ class KittiDataset(object):
     return file_list
   
 
-  def _verify_file_list(self):
+  def _verify_file_list(self) -> Optional[ValueError]:
     """ Verify the files in file_list exist
 
-    @raise: assertion error when file in file_list is not complete.
+    Raises
+    ------
+    assertion error when file in file_list is not complete.
     """
 
-    for f in self._file_list:
+    def _(f):
       image_file = join(self._image_dir, f)+'.png'
       point_file = join(self._point_dir, f)+'.bin'
       label_file = join(self._label_dir, f)+'.txt'
@@ -285,13 +317,24 @@ class KittiDataset(object):
         assert isfile(label_file), "Label %s does not exist" % label_file
       if not self._is_raw:
         assert isfile(calib_file), "Calib %s does not exist" % calib_file
-      
 
-  def get_calib(self, frame_idx:int):
+
+    with ThreadPoolExecutor() as executor:
+      executor.map(_, self._file_list)
+        
+
+  def get_calib(self, frame_idx:int) -> dict[np.array]:
     """Load calibration matrices and compute calibrations.
 
-    @param frame_idx: the index of the frame to read.
-    @return: a dictionary of calibrations.
+    Parameters
+    ----------
+    frame_idx: int
+      the index of the frame to read.
+
+    Returns
+    -------
+    dict[np.array]
+      dictionary of calibration matrices.
     """
 
     calib_file = join(self._calib_dir, self._file_list[frame_idx])+'.txt'       # defuine calibaration files
@@ -326,11 +369,18 @@ class KittiDataset(object):
     return calib
   
 
-  def get_velo_points(self, frame_idx:int, xyz_range:np.array=None):
+  def get_velo_points(self, frame_idx:int, xyz_range:np.array=None) -> Points:
     """Load velo points from frame_idx
 
-    @param frame_idx: the index of the frame to read.
-    @return: Points object containing the velo points.
+    Parameters
+    ----------
+    frame_idx: int
+      the index of the frame to read.
+
+    Returns
+    -------
+    Points
+      velo points.
     """
 
     point_file  = join(self._point_dir, self._file_list[frame_idx])+'.bin'      # define point file
@@ -352,22 +402,36 @@ class KittiDataset(object):
     return Points(xyz = velo_points[mask], attr = reflections[mask])
   
 
-  def get_image(self, frame_idx:int):
+  def get_image(self, frame_idx:int) -> np.array:
     """ Load the image from frame_idx.
 
-    @param frame_idx: the index of the frame to read.
-    @return: cv2.matrix
+    Parameters
+    ----------
+    frame_idx: int 
+      the index of the frame to read.
+    
+    Returns
+    -------
+    np.array
+      image as numpy array
     """
 
     image_file = join(self._image_dir, self._file_list[frame_idx])+'.png'
     return cv2.imread(image_file)
   
 
-  def get_label(self, frame_idx:int):
+  def get_label(self, frame_idx:int) -> Tuple[dict]:
     """Load bbox labels from frame_idx frame
 
-    @param frame_idx: the index of the frame to read.
-    @return: a list of object label dictionaries.
+    Parameters
+    ----------
+    frame_idx: int 
+      the index of the frame to read.
+    
+    Returns
+    -------
+    list[dict]
+      a list of object label dictionaries.
     """
 
     label_file = join(self._label_dir, self._file_list[frame_idx])+'.txt'       # define label file
@@ -414,13 +478,22 @@ class KittiDataset(object):
       
 
   def get_cam_points(self, frame_idx:int,downsample_voxel_size:float=None, 
-                     calib:dict=None, xyz_range=None):
+                     calib:dict=None, xyz_range=None) -> Points:
     """Load velo points and convert them to (downsampled) camera coordinates
+    
+    Parameters
+    ----------
+    frame_idx: int
+      the index of the frame to read.
+    downsample_voxel_size:  float
+      the size of voxel cells used for downsampling.
+    calib: dict[np.ndarray]
+      the calibration matrices.
 
-    @param frame_idx: the index of the frame to read.
-    @param downsample_voxel_size: the size of voxel cells used for downsampling.
-    @param calib: the calibration matrices.
-    @return: Points object containing the camera points.
+    Returns
+    -------
+    Points
+      camera points.
     """
 
     if calib is None: calib = self.get_calib(frame_idx)                         # get calibration matrices
@@ -434,24 +507,46 @@ class KittiDataset(object):
     return cam_points
   
 
-  def sqdistance(self,p0:np.array,points:np.array):
+  def sqdistance(self,p0:np.array,points:np.array) -> Tuple[float]:
     """ returns the squared distance between a point and a set of points 
-    @param p0: a point
-    @param points: a set of points
+    
+    Paramters
+    ---------
+    p0: np.array
+      a point
+    
+    points: np.array
+      a set of points
+
+    Returns
+    -------
+    float
+      the squared distance between p0 and points.
     """
 
     return ((p0-points)**2).sum(axis=1)
   
 
-  def get_cam_points_in_image(self, frame_idx:int, downsample_voxel_size:float=None,
-    calib:dict=None, xyz_range:np.array=None):
+  def get_cam_points_in_image(
+    self, frame_idx:int, downsample_voxel_size:float=None,
+    calib:dict=None, xyz_range:np.array=None
+  ) -> Points:
     """ Load velo points and remove points that are not observed by camera.
 
-    @param frame_idx: the index of the frame to read.
-    @param downsample_voxel_size: the size of voxel cells used for downsampling.
-    @param calib: the calibration matrices.
-    @param xyz_range: the range of xyz coordinates to filter.
-    @return: Points object containing the image_points.
+    Parameters
+    ----------
+    frame_idx: int 
+      index of the frame to read.
+    downsample_voxel_size: float
+      size of voxel cells used for downsampling.
+    calib: dict[np.array]
+      calibration matrices.
+    xyz_range: np.ndarray
+      range of xyz coordinates to filter.
+    
+    Returms
+    -------
+    image_points.
     """
     if calib is None: calib = self.get_calib(frame_idx)                         # load calibration matrices
 
@@ -484,16 +579,27 @@ class KittiDataset(object):
     return cam_points_in_img
   
 
-  def get_cam_points_in_image_with_rgb(self, frame_idx:int,
-    downsample_voxel_size:float=None, calib:dict=None, xyz_range:np.array=None):
+  def get_cam_points_in_image_with_rgb(
+    self, frame_idx:int,downsample_voxel_size:float=None, calib:dict=None, 
+    xyz_range:np.array=None
+  ) -> Points:
     """Get camera points that are visible in image and append image color
     to the points as attributes
     
-    @param frame_idx: the index of the frame to read.
-    @param downsample_voxel_size: the size of voxel cells used for downsampling.
-    @param calib: the calibration matrices.
-    @param xyz_range: the range of xyz coordinates to filter.
-    @return: Points object containing the camera points.
+    Parameters
+    ----------
+    frame_idx: int
+      index of the frame to read.
+    downsample_voxel_size: float
+      size of voxel cells used for downsampling.
+    calib: dict[np.array]
+      calibration matrices.
+    xyz_range: np.array
+      range of xyz coordinates to filter.
+
+    Returns
+    -------
+    color encoded camera points.
     """
 
     if calib is None: calib = self.get_calib(frame_idx)                         # load calibration matrices
@@ -506,65 +612,28 @@ class KittiDataset(object):
     
     return cam_points_in_img_with_rgb
   
-  
-  # def boxes_3d_to_line_set(self, boxes_3d:list, boxes_color:list=None):
-  #   """ takes in boxes_3d and returns corner points, lines and colors
-    
-  #   @param boxes_3d:    a list of 3D boxes
-  #   @param boxes_color: a list of colors for the boxes
-  #   """
-  #   points  = []
-  #   edges   = []
-  #   colors  = []
-
-  #   for i, box_3d in enumerate(boxes_3d):
-  #     x3d, y3d, z3d, l, h, w, yaw = box_3d                                      # get box information
-      
-  #     corners = np.array([                                                      # get corners of 3D box
-  #       [ l/2,  0.0,  w/2], # front up right
-  #       [ l/2,  0.0, -w/2], # front up left
-  #       [-l/2,  0.0, -w/2], # back up left
-  #       [-l/2,  0.0,  w/2], # back up right
-  #       [ l/2, -h,  w/2],   # front down right
-  #       [ l/2, -h, -w/2],   # front down left
-  #       [-l/2, -h, -w/2],   # back down left
-  #       [-l/2, -h,  w/2]]   # back down right
-  #     ) 
-  #     R = M_ROT(yaw)
-  #     r_corners       = corners.dot(np.transpose(R))                            # rotate corners              
-  #     cam_points_xyz  = r_corners+np.array([x3d, y3d, z3d])                     # translate from origin
-  #     points.append(cam_points_xyz)                                             
-  #     edges.append(                                                             # define edges
-  #       np.array([
-  #         [0, 1], [0, 4], [0, 3],
-  #         [1, 2], [1, 5], [2, 3],
-  #         [2, 6], [3, 7], [4, 5],
-  #         [4, 7], [5, 6], [6, 7]
-  #       ])+i*8
-  #     )
-      
-  #     if boxes_color is None:                                                   # define edges color
-  #       colors.append(np.tile([[1.0, 0.0, 0.0]], [12, 1]))
-  #     else:
-  #       colors.append(np.tile(boxes_color[[i], :], [12, 1]))
-
-  #   if len(points) == 0:  return None, None, None                               # empty set
-
-  #   return np.vstack(points), np.vstack(edges), np.vstack(colors)
-
 
   def boxes_3d_to_line_set(self, boxes_3d:list, boxes_color:list=None):
     """ takes in boxes_3d and returns corner points, lines and colors
     
-    @param boxes_3d:    a list of 3D boxes
-    @param boxes_color: a list of colors for the boxes
+    Parameters
+    ----------
+    boxes_3d:           Tuple[np.array] 
+      list of 3D boxes
+    boxes_color:        Tuple[np.array]
+      list of colors for the boxes
+
+    Returns
+    -------
+    Tuple[np.array]
+      points, edges and colors of the boxes.
     """
     points  = []
     edges   = []
     colors  = []
 
-    points = boxes_3d_to_corners(boxes_3d)
-    edges = [
+    points  = boxes_3d_to_corners(boxes_3d)
+    edges   = [
       np.array([
         [0, 1], [0, 4], [0, 3],
         [1, 2], [1, 5], [2, 3],
@@ -582,13 +651,23 @@ class KittiDataset(object):
     return np.vstack(points), np.vstack(edges), np.vstack(colors)
     
     
-  def get_open3D_box(self, label:dict, expend_factor:tuple=(1.0, 1.0, 1.0)):
+  def get_open3D_box(
+    self, label:dict, expend_factor:tuple=(1.0, 1.0, 1.0)
+  ) -> Tuple[o3d.geometry.TriangleMesh]:
     """ creates o3d representation of bounding box
 
-    @param label: a dictionary containing "x3d", "y3d", "z3d", "yaw",
+    Parameters
+    ----------
+    label: dict[float]
+      dictionary containing "x3d", "y3d", "z3d", "yaw",
                   "height", "width", "lenth"
-    @param expend_factor: a tuple of (h, w, l) to expand the box.
-    @return: a o3d mesh object.
+    expend_factor: Tuple[float]:
+      tuple of (h, w, l) to expand the box.
+
+    Returns
+    -------
+    Tuple[o3d.geometry.TriangleMesh]
+      list of cylinders representing bounding box as a o3d mesh object.
     """
     yaw = label['yaw']                                                          # get label information
     h   = label['height']
@@ -618,8 +697,8 @@ class KittiDataset(object):
     hrotation = np.vstack((R.dot(Rh), np.zeros((1,3))))
     lrotation = np.vstack((R.dot(Rl), np.zeros((1,3))))
     wrotation = np.vstack((R, np.zeros((1,3))))
-    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]               # get box color
-    box_color = [_/255 for _ in OBJECT_COLORS[label['name']][-1]]               # get box color
+    box_color = [_/255 for _ in COLOR_MAP[label['name']][-1]]               # get box color
+    box_color = [_/255 for _ in COLOR_MAP[label['name']][-1]]               # get box color
 
     h1_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=h/100, height=h)
     h1_cylinder.paint_uniform_color(box_color)
@@ -677,12 +756,12 @@ class KittiDataset(object):
   
 
   def sel_points_in_box3d(self, label:dict, points_xyz:np.array,
-                          expend_factor:tuple=(1.0, 1.0, 1.0)):
+                          expend_factor:tuple=(1.0, 1.0, 1.0)) -> np.array:
     return sel_points_in_box3d(label, points_xyz, expend_factor)
   
 
   def sel_points_in_box2d(self, label:dict, points_xyz,
-                          expend_factor:tuple=(1.0, 1.0)):
+                          expend_factor:tuple=(1.0, 1.0)) -> np.array:
     return sel_points_in_box2d(label, points_xyz, expend_factor)
   
 
@@ -690,11 +769,18 @@ class KittiDataset(object):
                      expend_factor=(1.0, 1.0, 1.0), no_orientation=False):
     """ Visualize points in image 
     
-    @param frame_idx: the index of the frame to read.
-    @param downsample_voxel_size: the size of voxel cells used for downsampling.
-    @param calib: the calibration matrices.
-    @param expend_factor: a tuple of (h, w, l) to expand the box.
-    @param no_orientation: if True, draw 3D bounding boxes without orientation.
+    Paramters
+    ---------
+    frame_idx: int
+      index of the frame to read.
+    downsample_voxel_size: float
+      size of voxel cells used for downsampling.
+    calib: dict[np.array]
+      calibration matrices.
+    expend_factor: Tuple[float]
+      tuple of (h, w, l) to expand the box.
+    no_orientation: bool
+      if True, draw 3D bounding boxes without orientation.
     """
     cam_points_in_img_with_rgb = self.get_cam_points_in_image_with_rgb(
       frame_idx, downsample_voxel_size=downsample_voxel_size, calib=calib)
@@ -704,8 +790,21 @@ class KittiDataset(object):
                     expend_factor=expend_factor)
     
 
-  def vis_points(self, cam_points_in_img_with_rgb,
-    label_list  = None, expend_factor=(1.0, 1.0, 1.0)):
+  def vis_points(
+    self, cam_points_in_img_with_rgb,label_list  = None, 
+    expend_factor=(1.0, 1.0, 1.0)):
+
+    """ Visualize points in image with 3D bounding boxes
+
+    Parameters
+    ----------
+    cam_points_in_img_with_rgb: Points
+      Points object containing points and attributes.
+    label_list: Tuple[dict]
+      list of label dictionaries.
+    expend_factor: Tuple[float]
+      tuple of (h, w, l) to expand the box.
+    """
     mesh_list   = []
 
     if label_list is not None:
@@ -714,7 +813,7 @@ class KittiDataset(object):
         point_mask = self.sel_points_in_box3d(
           label,cam_points_in_img_with_rgb.xyz,expend_factor=expend_factor)     # select points in bounding box 
         color = np.array(                                                       # get object color
-          OBJECT_COLORS.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
+          COLOR_MAP.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
         cam_points_in_img_with_rgb.attr[point_mask, 1:] = color                 # add colors to point attributes  
         mesh_list += self.get_open3D_box(label, expend_factor=expend_factor)    # add 3D bounding box to mesh list
 
@@ -742,17 +841,26 @@ class KittiDataset(object):
 
 
   def downsample_by_voxel(self, points:Points, voxel_size:float, 
-                          method:str='AVERAGE'):
+                          method:str='AVERAGE') -> Points:
     return downsample_by_voxel(points,voxel_size,method)
   
 
-  def rgb_to_cam_points(self, points:Points, image:np.array, calib:dict):
+  def rgb_to_cam_points(
+    self, points:Points, image:np.array, calib:dict) -> Points:
     """Append rgb colors to camera points attributes
-    
-    @param points:  a Points namedtuple containing "xyz" and "attr".
-    @param image:   a numpy array containing the image.
-    @param calib:   a dictionary containing calibration matrices.
-    @return points: a Points namedtuple containing "xyz" and "attr".
+
+    Parameters
+    ----------
+    points:   Points
+      namedtuple containing "xyz" and "attr".
+    image:    np.array
+      numpy array containing image.
+    calib:    dict[np.array] 
+      dictionary containing calibration matrices.
+
+    Returns
+    -------
+    Points namedtuple containing "xyz" and "attr" with color coding.
     """
 
     if calib is None: raise Exception('Calibration matrices are required')      # check calibration matrices
@@ -771,13 +879,17 @@ class KittiDataset(object):
     """ Draw 2D (min/max values) bounding boxes on the image with colors 
         indicating occlusion.
 
-    @param image:       a numpy array containing the image.
-    @param label_list:  a list of label dictionaries.
+    Parameters
+    ----------
+    image:  np.array 
+      image as np array.
+    label_list:  Tuple[np.array]
+      list of label dictionaries.
     """
 
     for label in label_list:
       if label['name'] == 'DontCare':                                           # set object color
-        color = OBJECT_COLORS.get(label['name'])[1]      
+        color = COLOR_MAP.get(label['name'])[1]      
       else: color = OCCLUSION_COLORS[label['occlusion']]
 
       xmin = int(label['xmin'])                                                 # get rectangle coordinates
@@ -790,14 +902,20 @@ class KittiDataset(object):
                   (xmin, ymin), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color,2)
       
 
-  def velo_points_to_image(self, points:Points, calib:dict):
+  def velo_points_to_image(self, points:Points, calib:dict) -> np.array:
     """Convert points from velodyne coordinates to image coordinates. Points
     that behind the camera is removed.
 
-    @param points:  a [N, 3] float32 numpy array.
-    @param calib:   a dictionary containing calibration matrices.
-    @return points on image plane: a [M, 2] float32 numpy array,
-            a mask indicating points: a [N, 1] boolean numpy array.
+    Parameters
+    ----------
+    points:  np.array
+      [N, 3] float32 numpy array.
+    calib:   dict[np.array]
+      dictionary containing calibration matrices.
+
+    Returns
+    -------
+      points on image plane: a [M, 2] float32 numpy array
     """
 
     cam_points = velo_to_cam(points, calib)
@@ -808,10 +926,16 @@ class KittiDataset(object):
   def vis_draw_3d_box(self, image, label_list, calib, color_map):
     """Draw 3D bounding boxes on the image.
 
-    @param image:       a numpy array containing the image.
-    @param label_list:  a list of label dictionaries.
-    @param calib:       a dictionary containing calibration matrices.
-    @param color_map:   a dictionary containing color for each object.
+    Parameters
+    ----------
+    image: np.array
+      array containing the image.
+    label_list:  Tuple[dict]
+      list of label dictionaries.
+    calib: dict[np.array]
+      dictionary containing calibration matrices.
+    color_map:  Tuple[np.array]
+      dictionary containing color for each object.
     """
     for label in label_list:
       cam_points = box3d_to_cam_points(label)
@@ -851,23 +975,29 @@ class KittiDataset(object):
 
   def save_cropped_boxes(
     self, expand_factor:tuple=(1.1, 1.1, 1.1),minimum_points:int=10,
-    blacklist:list=['Van', 'Truck', 'Misc', 'Tram', 'Person_sitting','DonCare']):
+    blacklist:list=['Van', 'Truck', 'Misc', 'Tram', 'Person_sitting','DonCare']
+  ):
     """ creates a json file containing filtered labels and points within them
 
-    @param filename:        str, the file to save the cropped boxes
-    @param expand_factor:   list of float, the expand factor for cropping
-    @param minimum_points:  int, the minimum number of points in a cropped box
-    @param backlist:        list of str, the list of object names to be ignored
+    Paramters
+    ---------
+    filename: str
+      file to save the cropped boxes in
+    expand_factor:  Tuple[float] 
+      the expand factor for cropping
+    minimum_points: int  
+      minimum number of points in a cropped box
+    backlist:  Tuple[str]
+      list of str, the list of object names to be ignored
     """
 
     print('Cropping boxes and saving to %s' % self._crop_file)                  # print message
 
-    cropped_labels      = defaultdict(list)
-    cropped_cam_points  = defaultdict(list)
-
-    for frame_idx in tqdm(range(self.num_files)):
+    def _(frame_idx):
       labels      = self.get_label(frame_idx)
       cam_points  = self.get_cam_points_in_image_with_rgb(frame_idx)
+      ret_labels      = defaultdict(list) 
+      ret_cam_points  = defaultdict(list)
 
       for label in labels:                                                      # iterate all labels                
         if label['name'] not in  blacklist:                                     # check if we care                                                         
@@ -875,19 +1005,49 @@ class KittiDataset(object):
             label, cam_points.xyz,expand_factor)                                # get mask of points in box
 
           if np.sum(mask) > minimum_points:                                     # sufficiently many points in bbox
-            cropped_labels[label['name']].append(label)
-            cropped_cam_points[label['name']].append(
-              [cam_points.xyz[mask].tolist(),cam_points.attr[mask].tolist()])
+            ret_labels[label['name']].append(label)                             # add label to dictionary
+            ret_cam_points[label['name']].append(
+              [cam_points.xyz[mask].tolist(),cam_points.attr[mask].tolist()]
+            )
+            return (ret_labels,ret_cam_points)
+            
+    cropped_labels      = defaultdict(list)
+    cropped_cam_points  = defaultdict(list)
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+      futures = [executor.submit(_, item) for item in range(self.num_files)]
+      results = []
+
+      for future in tqdm(as_completed(futures), total=len(futures)):
+        results.append(future.result())
+
+      for result in results:
+        if result is not None:
+          for key in result[0]:
+            cropped_labels[key].extend(result[0][key])
+            cropped_cam_points[key].extend(result[1][key])
+    # for frame_idx in tqdm(range(self.num_files)):
+    #   cropped_labels[label['name']].append(label)
+
+    #   cropped_cam_points[label['name']].append(
+    #     [cam_points.xyz[mask].tolist(),cam_points.attr[mask].tolist()])
+      
 
     with open(self._crop_file, 'w') as outfile:                                 # save cropped data to file
       json.dump((cropped_labels,cropped_cam_points), outfile)
 
   
-  def load_cropped_boxes(self):
+  def load_cropped_boxes(self) -> Tuple[Tuple[dict],Points]:
     """ load cropped boxes from json file
 
-    @param filename:  str, the file to load
-    @return:          dict, dict, the labels and points in the cropped boxes
+    Paramters
+    ---------
+    filename: str 
+      file to load
+
+    Returns
+    -------
+      labels and points in the cropped boxes
     """
     try:                                                                        # load cropped data from file if exists else create it
       with open(self._crop_file, 'r') as infile:                                
@@ -907,13 +1067,19 @@ class KittiDataset(object):
     return cropped_labels, cropped_cam_points
   
 
-  def vis_cropped_boxes(self,cropped_labels:dict, cropped_cam_points:dict, 
-                        object_class:str='Pedestrian'):
+  def vis_cropped_boxes(
+    self,cropped_labels:dict, cropped_cam_points:dict, 
+    object_class:str='Pedestrian'):
     """ Visualizes cropped boxes
 
-    @param cropped_labels:      dict, the labels in the cropped boxes
-    @param cropped_cam_points:  dict, the points in the cropped boxes
-    @param dataset:             KittiDataset object 
+    Paramters
+    ---------
+    cropped_labels: Tuple[dict]
+      labels in the cropped boxes
+    cropped_cam_points:  Points
+      points in the cropped boxes
+    object_class: str
+      the object class to visualize
     """
 
     for key in cropped_cam_points:                                              # iteratte over unique object names
@@ -944,33 +1110,45 @@ class KittiDataset(object):
     max_overlap_rate:float=0.01,appr_factor:int=100,max_overlap_num_allowed:int=1, 
     max_trails:int=1,method_name:str='normal',yaw_std:float=0.3, 
     expand_factor:tuple=(1.1, 1.1, 1.1),must_have_ground:bool=False
-  ):
+  ) -> Points:
     """ Parse cropped boxes to a frame without collision
 
-    @param cam_rgb_points:	    Existing scene point cloud, a Points object 
-                                (xyz coordinates + attributes).
-    @param labels:  	          List of dictionaries describing existing objects 
-                                (3D boxes) already in the scene.
-    @param sample_cam_points:	  Point clouds associated with new objects to be 
-                                inserted.
-    @param sample_labels: 	    Labels (box definitions) for the new objects to be 
-                                inserted.
-    @param overlap_mode:	      How overlap is checked (box, point, or both).
-    @param auto_box_height:	    Whether to auto-adjust box height to ground level.
-    @param max_overlap_rate>	  Maximum allowed overlap between boxes 
-                                (for box mode).
-    @param appr_factor:	        Scaling factor applied to boxes when checking 
-                                overlap.
-    @param max_overlap_num_allowed:	
-                                Maximum allowed number of overlapping points.
-    @param max_trails:	        Max retries per box to find a valid, 
-                                non-overlapping position.
-    @param method_name:	        How rotation is sampled (normal or uniform).
-    @param yaw_std:	            Standard deviation for random yaw sampling.
-    @param expand_factor:	      Expansion factor for boxes (for height adjustment 
-                                and overlap checks).
-    @param must_have_ground:	  If True, box is only valid if some ground points 
-                                exist under it.
+    Paramters
+    ---------
+    cam_rgb_points:     Points	    
+      Existing scene point cloud, a Points object (xyz coordinates + attributes).
+    labels:  	          Tuple[np.array] 
+      list of dictionaries describing existing objects 
+      (3D boxes) already in the scene.
+    sample_cam_points:	Points  
+      Point clouds associated with new objects to be inserted.
+    sample_labels: 	    Tuple[np.array] 
+      Labels (box definitions) for the new objects to be inserted.
+    overlap_mode:	      str
+      How overlap is checked ("box", "point", or "both").
+    auto_box_height:	  bool  
+      Whether to auto-adjust box height to ground level.
+    max_overlap_rate:	  float
+      Maximum allowed overlap between boxes (for box mode).
+    appr_factor:	      float
+      Scaling factor applied to boxes when checking overlap.
+    max_overlap_num_allowed:	int
+      Maximum allowed number of overlapping points.
+    max_trails:	        unsigned int
+      Max retries per box to find a valid, non-overlapping position.
+    method_name:	      str:
+      How rotation is sampled (normal or uniform).
+    yaw_std:	          float
+      Standard deviation for random yaw sampling.
+    expend_factor:	    Tuple[flaot]
+      Expansion factor for boxes (for height adjustment and overlap checks).
+    must_have_ground:	  bool
+      If True, box is only valid if some ground points exist under it.
+
+    Returns
+    -------
+    Points
+      New scene point cloud with the new objects inserted.
     """
     xyz   = cam_rgb_points.xyz                                                  # extract points and attributes
     attr  = cam_rgb_points.attr
@@ -1076,14 +1254,25 @@ class KittiDataset(object):
 
   def crop_aug(
     self, cam_rgb_points:Points, labels:dict,
-    sample_rate:dict={"Car":1, "Pedestrian":1, "Cyclist":1},parser_kwargs:dict={}):
+    sample_rate:dict={"Car":1, "Pedestrian":1, "Cyclist":1},parser_kwargs:dict={}
+  ) -> Points:
     """ uses cropped boxes to augment the scene
 
-    @param cam_rgb_points:  Points, the point cloud in the frame
-    @param labels:          dict, the labels in the frame
-    @param sample_rate:     dict, the number of samples to take from each class
-    @param parser_kwargs:   dict, the arguments for the parser
-    @return: Points, cropped pointcloud
+    Parameters
+    ----------
+    cam_rgb_points: Points
+      point cloud in the frame
+    labels:         Tuple[np.array] 
+      list of labels in frame
+    sample_rate:    dict 
+      number of samples to take from each class
+    parser_kwargs:  dict 
+      arguments for the parser
+
+    Returns
+    -------
+    Points
+      points, cropped pointcloud
     """
     sample_labels     = []
     sample_cam_points = []
@@ -1105,6 +1294,7 @@ class KittiDataset(object):
 
 
   def vis_crop_aug_sampler(self):
+    """ Visualize the crop augmentation sampler """
 
     parser_kwargs = {
     'overlap_mode':     'box_and_point',

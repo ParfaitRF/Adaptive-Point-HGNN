@@ -45,18 +45,29 @@ BOX_OFFSET = lambda l,w,h,delta_h: np.array([                                   
 
 # COLORS
 COLOR1 = 1
+COLORS = [
+  ["White",(255,255,255)],
+  ["DeepPurple",(205, 0, 255)],
+  ["DeepPink",(255,255,147)],
+  ["Salmon",(250,128,114)],
+  ['Red', (255, 0, 0)],
+  ['Yellow', (255, 255, 0)],
+  ['Orange', (255, 150, 0)],
+  ['Cyan', (0, 255, 255)],
+  ["Blue",(0,0,255)],
+  ["ForestGreen", (34, 139, 34)]
+]
 
-OBJECT_COLORS = {
-  'NMS': ["White",(255,255,255)],
-  'NMS': ["White",(255,255,255)],
-  'Pedestrian': ["DeepPink",(255,20,147)],
-  'Person_sitting': ["DeepPink",(255,255,147)],
-  'Car': ['Red', (255, 0, 0)],
-  'Van': ['Yellow', (255, 255, 0)],
-  'Cyclist': ["Salmon",(250,128,114)],
-  'DontCare': ["Blue",(0,0,255)],
-  'Misc': ['Cyan', (0, 255, 255)],
-  'Truck': ['Orange', (255, 150, 0)],
+OBJECTS_DICT = {
+  obj : 2*i+1 for i, obj in enumerate([
+  'Background','Pedestrian','Person_sitting','Cyclist',
+  'Car', 'Van', 'Truck', 'Misc','DontCare'
+  ])
+}
+
+COLOR_MAP = {
+  k:v for k,v in zip(
+  OBJECTS_DICT.keys(), COLORS)
 }
 OCCLUSION_COLORS = [(0, 128, 0), (0, 255, 255), (0, 0, 128), (255, 255, 255)]
 
