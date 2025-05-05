@@ -5,9 +5,7 @@ import random
 from copy import deepcopy
 
 from globals import M_ROT,Points
-from data.utils import (
-  sel_points_in_box3d,downsample_by_voxel
-)
+from data.utils import (sel_points_in_box3d,downsample_by_voxel)
 from data.transformations import boxes_3d_to_corners
 from utils.nms import overlapped_boxes_3d_fast_poly
 
@@ -545,19 +543,26 @@ AUG_METHOD_MAP = {
 
 def get_data_aug(aug_configs=[]):
   """ Get data augmentation function based on the configuration.
-  @param aug_configs: a list of dictionaries containing the augmentation
-                      configurations. 
-  @return a function that applies the augmentation.
+  
+  Parameters 
+  __________
+  aug_configs dict: 
+    a list of dictionaries containing the augmentation configurations.
+
+  Yields:
+  ________
+  a function that applies augmentation according to configurations.
   """
 
   empty = lambda cam_rgb_points, labels: (cam_rgb_points, labels)
-  if len(aug_configs)==0: return empty
+  if len(aug_configs)==0: 
+    yield empty
 
   def multiple_aug(cam_rgb_points, labels):
     for aug_config in aug_configs:
       aug_method = AUG_METHOD_MAP[aug_config['method_name']]
       cam_rgb_points, labels = aug_method(
         cam_rgb_points, labels, **aug_config['method_kwargs'])
-    return cam_rgb_points, labels
+    yield cam_rgb_points, labels
   
   return multiple_aug
