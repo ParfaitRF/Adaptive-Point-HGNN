@@ -93,7 +93,6 @@ def boxes_3d_to_corners(boxes_3d:list):
   return np.array(all_corners) 
 
 
-
 def cam_points_to_image(points, calib):
   """Convert velodyne points to image plane points.
 
@@ -109,7 +108,6 @@ def cam_points_to_image(points, calib):
   img_points      = Points(img_points_xy1, points.attr)                         # convert into Points object
 
   return img_points
-
 
 
 def velo_to_cam(points, calib):

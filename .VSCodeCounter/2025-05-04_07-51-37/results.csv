@@ -1,0 +1,21 @@
+"filename", "language", "Python", "pip requirements", "JSON", "Markdown", "comment", "blank", "total"
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\.ipynb_checkpoints\crop_aug-checkpoint.py", "Python", 248, 0, 0, 0, 47, 53, 348
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\.ipynb_checkpoints\test-checkpoint.py", "Python", 6, 0, 0, 0, 0, 3, 9
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\README.md", "Markdown", 0, 0, 0, 46, 0, 11, 57
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\__init__.py", "Python", 2, 0, 0, 0, 0, 0, 2
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\crop_aug.py", "Python", 250, 0, 0, 0, 47, 53, 350
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\data\kitti_dataset.py", "Python", 1051, 0, 0, 0, 32, 252, 1335
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\data\preprocess.py", "Python", 448, 0, 0, 0, 2, 114, 564
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\data\transformations.py", "Python", 104, 0, 0, 0, 0, 38, 142
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\data\utils.py", "Python", 115, 0, 0, 0, 6, 44, 165
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\globals.py", "Python", 62, 0, 0, 0, 4, 16, 82
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\models\__init__.py", "Python", 0, 0, 0, 0, 0, 1, 1
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\models\box_encoders_decoders.py", "Python", 268, 0, 0, 0, 19, 56, 343
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\notebooks\__init__.py", "Python", 0, 0, 0, 0, 0, 1, 1
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\notebooks\notebook.ipynb", "JSON", 0, 0, 121, 0, 0, 1, 122
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\notebooks\sanity_checks.ipynb", "JSON", 0, 0, 60, 0, 0, 1, 61
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\requirements.txt", "pip requirements", 0, 21, 0, 0, 9, 9, 39
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\test.py", "Python", 15, 0, 0, 0, 1, 7, 23
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\training\train.py", "Python", 16, 0, 0, 0, 0, 8, 24
+"c:\Users\prfej\OneDrive\Education\BHT - Apllied Mathematics\THESIS\Adaptive-Point-HGNN\utils\nms.py", "Python", 358, 0, 0, 0, 4, 82, 444
+"Total", "-", 2943, 21, 181, 46, 171, 750, 4112

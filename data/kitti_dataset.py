@@ -16,7 +16,7 @@ from globals import (
   M_ROT,BOX_OFFSET,Points,
   IMG_WIDTH, IMG_HEIGHT,                                                        # image dimensions
   OBJECT_HEIGHT_THRESHOLDS,TRUNCATION_THRESHOLDS,OCCULUSION_THRESHOLDS,         # thresholds
-  OCCLUSION_COLORS,COLOR_MAP                                                # colors
+  OCCLUSION_COLORS,COLOR_MAP                                                    # colors
 )
 from .transformations import (
   boxes_3d_to_corners,box3d_to_cam_points,cam_points_to_image,velo_to_cam,
@@ -1286,10 +1286,10 @@ class KittiDataset(object):
         deepcopy([self._cropped_cam_points[key][idx] for idx in sample_indices]))
       
     return self.parser_without_collision(
-      cam_rgb_points=cam_rgb_points,
-      labels=labels,
-      sample_cam_points=sample_cam_points,
-      sample_labels=sample_labels,
+      cam_rgb_points    = cam_rgb_points,
+      labels  = labels,
+      sample_cam_points = sample_cam_points,
+      sample_labels     = sample_labels,
       **parser_kwargs)
 
 

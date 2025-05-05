@@ -3,15 +3,11 @@
 # =============================================================================#
 
 from collections import defaultdict
-from collections import namedtuple
-from collections import namedtuple
 import random
 import numpy as np
 from globals import Points
 
 from data.transformations import box3d_to_normals
-
-
 
 
 # =============================================================================#
