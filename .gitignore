@@ -10,6 +10,7 @@
 *.log
 **/__pycache__/
 **/*.bcf-SAVE-ERROR
+**/*.bbl-SAVE-ERROR
 **/out/
 **/tmp/
 **/_build/
