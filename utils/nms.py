@@ -110,7 +110,7 @@ def overlapped_boxes_3d_fast_poly(single_box:np.array, box_list:list):
 
 
 def bboxes_sort(
-    classes:list, scores:list, bboxes:list, top_k:int=400, attributes:list=None):
+  classes:list, scores:list, bboxes:list, top_k:int=400, attributes:list=None):
   """ Sorts bounding boxes by decreasing order of scores and keep only the top k
 
   @param classes:    list of classes
@@ -180,9 +180,9 @@ def bboxes_nms(
 
 
 def bboxes_nms_uncertainty(
-    classes:list, scores:list, bboxes:np.array,scores_threshold:float=0.25,
-    nms_threshold:float=0.45,overlapped_fn:Callable=overlapped_boxes_3d,
-    appr_factor:float=10.0,attributes:list=None):
+  classes:list, scores:list, bboxes:np.array,scores_threshold:float=0.25,
+  nms_threshold:float=0.45,overlapped_fn:Callable=overlapped_boxes_3d,
+  appr_factor:float=10.0,attributes:list=None):
   """ Applies non-maximum supression to bounding boxes with uncertainty 
   
   @param classes:          list of classes
@@ -255,7 +255,7 @@ def bboxes_nms_merge_only(
     if keep_bboxes[i]:
       valid   = keep_bboxes[(i+1):]                                             # boxes valid for iteration       
       overlap = overlapped_fn(boxes_corners[i],boxes_corners[(i+1):][valid])    # compute overlap with valid boxes
-      remove_overlap    = np.logical_and(overlap > nms_threshold,               # mask for boxes to be supressed                
+      remove_overlap    = np.logical_and(overlap >= nms_threshold,              # mask for boxes to be supressed                
         classes[(i+1):][valid] == classes[i])
       overlaped_bboxes  = np.concatenate(                                       # boxes to be supressed                   
         [bboxes[(i+1):][valid][remove_overlap], bboxes[[i]]], axis=0)
@@ -376,10 +376,11 @@ def nms_boxes_3d_uncertainty(
     attributes=attributes)
   # non maximum supression
   class_labels, detection_scores, detection_boxes_3d, attributes = \
-    bboxes_nms_uncertainty(class_labels, detection_scores, detection_boxes_3d,  # apply NMS
-                           nms_threshold=overlapped_thres, 
-                           overlapped_fn=overlapped_fn,appr_factor=appr_factor, 
-                           attributes=attributes)
+    bboxes_nms_uncertainty(                                                     # apply non maximum suppresion
+      class_labels, detection_scores, detection_boxes_3d,  
+      nms_threshold=overlapped_thres, overlapped_fn=overlapped_fn,
+      appr_factor=appr_factor, attributes=attributes
+    )
   
   return class_labels, detection_boxes_3d, detection_scores, attributes
 
@@ -417,7 +418,8 @@ def nms_boxes_3d_merge_only(
 def nms_boxes_3d_score_only(
   class_labels:list, detection_boxes_3d:np.array,detection_scores:list,
   overlapped_thres:float=0.5,overlapped_fn:Callable=overlapped_boxes_3d, 
-  appr_factor:float=10.0,top_k:int=-1, attributes:list=None):
+  appr_factor:float=10.0,top_k:int=-1, attributes:list=None
+):
   """ Applies non-maximum selection to bounding boxes by selecting highest score 
   
   @param class_labels:        list of classes
