@@ -1,22 +1,22 @@
 import os
 from os.path import isfile, join
 from copy import deepcopy
-import warnings
+import json
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
 import open3d as o3d
 from collections import defaultdict
 from tqdm import tqdm
 import json
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor,as_completed
+
 
 from globals import (
   M_ROT,BOX_OFFSET,Points,
   IMG_WIDTH, IMG_HEIGHT,                                                        # image dimensions
   OBJECT_HEIGHT_THRESHOLDS,TRUNCATION_THRESHOLDS,OCCULUSION_THRESHOLDS,         # thresholds
-  OCCLUSION_COLORS,COLOR_MAP                                                    # colors
+  OCCLUSION_COLORS,COLOR_MAP,LABEL_MAP                                       # colors
 )
 from .transformations import (
   boxes_3d_to_corners,box3d_to_cam_points,cam_points_to_image,velo_to_cam,
@@ -25,8 +25,13 @@ from .utils import (
   sel_points_in_box3d,sel_points_in_box2d,downsample_by_voxel
 )
 from .preprocess import get_data_aug
-from utils.nms import overlapped_boxes_3d_fast_poly
+from util.nms import overlapped_boxes_3d_fast_poly
 
+from models.graph_gen import (
+  multi_layer_downsampling,
+  gen_disjointed_rnn_local_graph_v3,
+  gen_multi_level_local_graph_v3
+)
 
 class KittiDataset(object):
   """ A class for interactions with the KITTI dataset """
@@ -86,6 +91,7 @@ class KittiDataset(object):
     statics = self.get_statics()
 
     return summary_string + statics
+  
   
   def process_frame_stats(self,frame_idx):
     stats = {
@@ -259,7 +265,7 @@ class KittiDataset(object):
   def num_files(self):  return len(self._file_list)                             # get number of files in dataset
 
 
-  def get_filename(self, frame_idx) -> str:
+  def get_filename(self, frame_idx:int) -> str:
     """ Get the filename based on frame_idx.
 
     Parameters
@@ -399,7 +405,7 @@ class KittiDataset(object):
           velo_points[:, 2] > z_range[0])*(velo_points[:, 2] < z_range[1])
       #return Points(xyz = velo_points[mask], attr = reflections[mask])
     
-    return Points(xyz = velo_points[mask], attr = reflections[mask])
+    return Points(xyz = velo_points[mask].astype(np.float64), attr = reflections[mask].astype(np.float64))
   
 
   def get_image(self, frame_idx:int) -> np.array:
@@ -439,8 +445,8 @@ class KittiDataset(object):
 
     with open(label_file, 'r') as f:
       for line in f:                                                            # iterate label lines
-        label={}                                                                # label dictionary
-        line = line.strip()
+        label = {}                                                              # label dictionary
+        line  = line.strip()
 
         if line == '':  continue                                                # empty line
         
@@ -550,13 +556,14 @@ class KittiDataset(object):
     """
     if calib is None: calib = self.get_calib(frame_idx)                         # load calibration matrices
 
-    cam_points = self.get_cam_points(frame_idx, downsample_voxel_size,
-                                     calib=calib, xyz_range=xyz_range)          # get (downsampled) camera points 
-    image   = self.get_image(frame_idx)                                         # get frame image
-    height  = image.shape[0]                                                    # get image dimensions
-    width   = image.shape[1]
+    cam_points  = self.get_cam_points(                                          # get (downsampled) camera points 
+      frame_idx, downsample_voxel_size,calib=calib, xyz_range=xyz_range
+    )          
+    image       = self.get_image(frame_idx)                                     # get frame image
+    height      = image.shape[0]                                                # get image dimensions
+    width       = image.shape[1]
     front_cam_points_idx  = cam_points.xyz[:,2] > 0.1                           
-    filtered_points       = cam_points.xyz[front_cam_points_idx, :]             # get only points, that are in front of the camera
+    filtered_points       = cam_points.xyz[front_cam_points_idx, :]             # get only points in front of camera
     filtered_attr         = None
 
     if cam_points.attr is not None:
@@ -566,7 +573,8 @@ class KittiDataset(object):
     img_points        = cam_points_to_image(front_cam_points, calib)            # transform to image points
     img_points_in_image_idx = np.logical_and.reduce(                            # filter points that are within image
       [img_points.xyz[:,0]>0, img_points.xyz[:,0]<width,
-        img_points.xyz[:,1]>0, img_points.xyz[:,1]<height])
+        img_points.xyz[:,1]>0, img_points.xyz[:,1]<height]
+    )
     
     filtered_points   = front_cam_points.xyz[img_points_in_image_idx, :]
     filtered_attr     = None
@@ -574,7 +582,7 @@ class KittiDataset(object):
     if front_cam_points.attr is not None:
       filtered_attr = front_cam_points.attr[img_points_in_image_idx, :]
 
-    cam_points_in_img = Points(xyz=filtered_points, attr=filtered_attr)         # create new Points object consisting of filtered objects 
+    cam_points_in_img = Points(xyz=filtered_points, attr=filtered_attr)         # create new Points object of filtered objects 
 
     return cam_points_in_img
   
@@ -686,8 +694,7 @@ class KittiDataset(object):
       [0, 1, 0],
       [1, 0, 0]])
 
-    
-    box_offset = BOX_OFFSET(l,w,h,delta_h)                                      # get box vertices  
+     
     box_offset = BOX_OFFSET(l,w,h,delta_h)                                      # get box vertices  
     R = M_ROT(yaw)                                                              # define rotation matrix
 
@@ -784,10 +791,10 @@ class KittiDataset(object):
     """
     cam_points_in_img_with_rgb = self.get_cam_points_in_image_with_rgb(
       frame_idx, downsample_voxel_size=downsample_voxel_size, calib=calib)
-    print("#(points)="+str(cam_points_in_img_with_rgb.xyz.shape))
+    print("pc shape = "+str(cam_points_in_img_with_rgb.xyz.shape))
     label_list = self.get_label(frame_idx)
-    self.vis_points(cam_points_in_img_with_rgb,label_list, 
-                    expend_factor=expend_factor)
+    self.vis_points(
+      cam_points_in_img_with_rgb,label_list,expend_factor=expend_factor)
     
 
   def vis_points(
@@ -813,7 +820,7 @@ class KittiDataset(object):
         point_mask = self.sel_points_in_box3d(
           label,cam_points_in_img_with_rgb.xyz,expend_factor=expend_factor)     # select points in bounding box 
         color = np.array(                                                       # get object color
-          COLOR_MAP.get(label['name'], ["Olive",(0,128,0)])[1])/255.0
+          COLOR_MAP.get(label['name'], COLOR_MAP['KA'])[1])/255.0
         cam_points_in_img_with_rgb.attr[point_mask, 1:] = color                 # add colors to point attributes  
         mesh_list += self.get_open3D_box(label, expend_factor=expend_factor)    # add 3D bounding box to mesh list
 
@@ -826,7 +833,7 @@ class KittiDataset(object):
       vis = o3d.visualization.Visualizer()
       vis.create_window()
       for geometry in geometry_list:
-          vis.add_geometry(geometry)
+        vis.add_geometry(geometry)
       ctr = vis.get_view_control()
       ctr.rotate(0.0, 3141.0, 0)
       vis.run()
@@ -1333,3 +1340,133 @@ class KittiDataset(object):
       cam_rgb_points, labels = aug_fn(cam_rgb_points, labels)
       labels = list(filter(lambda l: l['name'] != 'DontCare', labels))
       self.vis_points(cam_rgb_points, labels, expend_factor=(1.1, 1.1,1.1))
+
+
+  def visualize_graph(self,frame_idx,show_bboxes=True):
+    """
+    Visualizes the graph using Open3D.
+
+    Parameters
+    ----------
+    base_points : np.ndarray
+      The base points of the graph.
+    ds_points : np.ndarray
+      The downsampled points of the graph.
+    edge_list : list
+      The list of edges in the graph.
+
+    Returns
+    -------
+    None
+    """
+
+    with open('configs/car_auto_T0_config','r') as f:  
+      config = json.load(f)
+      
+    graph_gen_configs = config['graph_gen_kwargs']
+    level_configs     = graph_gen_configs['level_configs']
+
+    base_voxel_size   = graph_gen_configs['base_voxel_size']
+    downsample_method = graph_gen_configs['downsample_method']
+
+    points = self.get_cam_points_in_image_with_rgb(frame_idx,0.01)
+    #points = points[np.where(points[:,2] > 0)]
+
+    _,edge_list = gen_multi_level_local_graph_v3(                               # compute graph vertices and edges
+      points_xyz        = points.xyz,
+      base_voxel_size   = base_voxel_size,
+      level_configs     = level_configs,
+      downsample_method = downsample_method
+    )
+
+    mesh_list = []
+    if show_bboxes:                                                             # conditionally add 3D bounding boxes.
+      labels    = self.get_label(frame_idx)
+      for i,label in enumerate(labels):
+        mesh_list = mesh_list + self.get_open3D_box(label)
+
+    xyz     = points.xyz
+    colors  = points.attr[:,1:4]
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(xyz)
+    pcd.colors = o3d.utility.Vector3dVector(colors)
+
+    edges   = edge_list[0]
+    colors  = (colors[edges[:,0]]+ colors[edges[:,1]])/2
+
+    line_set    = o3d.geometry.LineSet()
+    line_set.points  = o3d.utility.Vector3dVector(points.xyz)
+    line_set.lines   = o3d.utility.Vector2iVector(edge_list[0])
+    line_set.colors  = o3d.utility.Vector3dVector(colors)
+
+    vis = o3d.visualization.Visualizer()
+    vis.create_window()
+    for geometry in (mesh_list+[pcd]+[line_set]):
+      vis.add_geometry(geometry)
+    ctr = vis.get_view_control()
+    ctr.rotate(0.0,3141.0,0)
+    vis.run()
+    vis.destroy_window()
+
+  # ===========================================================================#
+  # ========================== POINT CLASS ASSIGNMENT =========================#
+  # ===========================================================================#
+
+  def assign_classaware_label_to_points(self, labels, xyz, expend_factor,label_method=['Car']):
+    """ Assign class-aware labels to points in the point cloud.
+    
+    Parameters
+    ----------
+    labels: list[dict]
+      list of dictionaries containing object labels.
+    xyz: np.array
+      point cloud coordinates.
+    expend_factor: tuple[float]
+      tuple of (h, w, l) to expand the box.
+    
+    Returns
+    -------
+    cls_labels: np.array
+      class labels for each point.
+    boxes_3d: np.array
+      3D bounding boxes in scene.
+    valid_boxes: np.array
+      mask for boxes we care about.
+    """
+    num_points = xyz.shape[0]
+    assert num_points > 0, "No point No prediction"
+    assert xyz.shape[1] == 3, 'Invalid point shapes'
+
+    cls_labels  = LABEL_MAP['Background']*np.ones(                              # default label is Background
+      num_points, dtype=np.int16)                      
+    
+    boxes_3d    = np.zeros((num_points, 7))                                     # 3d boxes for each point 
+    valid_boxes = np.zeros(num_points, dtype=np.int16)                          # mask for boxes we care about  
+    
+    for label in labels:                                                        # add label to each object
+      obj_cls_string = label['name']
+      obj_cls = LABEL_MAP.get(obj_cls_string, LABEL_MAP['DontCare'])
+      mask    = self.sel_points_in_box3d(label, xyz, expend_factor)
+
+      if obj_cls in [LABEL_MAP[obj] for obj in label_method]:                  # check if object is a car
+        yaw = label['yaw']
+
+        while yaw < -0.25*np.pi:    yaw += np.pi                                # restrict yaw
+        while yaw > 0.75*np.pi:     yaw -= np.pi
+
+        if yaw < 0.25*np.pi: cls_labels[mask] = obj_cls                         # horizontal
+        else: cls_labels[mask] = obj_cls+1                                      # vertical
+
+        boxes_3d[mask,:] = (                                                    # append label
+          label['x3d'], label['y3d'],label['z3d'],label['length'], 
+          label['height'],label['width'], yaw
+        )
+        valid_boxes[mask] = 1                                                   # update mask
+      else:
+        if obj_cls_string != 'DontCare':
+          cls_labels[mask] = obj_cls
+          valid_boxes[mask] = 0
+                
+    return cls_labels, boxes_3d, valid_boxes
+  

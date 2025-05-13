@@ -7,7 +7,7 @@ from copy import deepcopy
 from globals import M_ROT,Points
 from data.utils import (sel_points_in_box3d,downsample_by_voxel)
 from data.transformations import boxes_3d_to_corners
-from utils.nms import overlapped_boxes_3d_fast_poly
+from util.nms import overlapped_boxes_3d_fast_poly
 
 
 def random_jitter(
@@ -97,7 +97,8 @@ def random_voxel_downsample(
 
 def random_rotation_all(
   cam_rgb_points:Points, labels:dict, method_name:str='normal',
-  yaw_std:float=0.3):
+  yaw_std:float=0.3,expend_factor=(1.0, 1.1, 1.1)
+):
   """ Rotates the points and labels randomly
   
   @param cam_rgb_points: a Points object containing "xyz" and "attr".
@@ -556,13 +557,13 @@ def get_data_aug(aug_configs=[]):
 
   empty = lambda cam_rgb_points, labels: (cam_rgb_points, labels)
   if len(aug_configs)==0: 
-    yield empty
+    return empty
 
   def multiple_aug(cam_rgb_points, labels):
     for aug_config in aug_configs:
       aug_method = AUG_METHOD_MAP[aug_config['method_name']]
       cam_rgb_points, labels = aug_method(
         cam_rgb_points, labels, **aug_config['method_kwargs'])
-    yield cam_rgb_points, labels
+    return cam_rgb_points, labels
   
   return multiple_aug

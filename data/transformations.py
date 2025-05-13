@@ -103,7 +103,7 @@ def cam_points_to_image(points, calib):
 
   cam_points_xyz1 = np.hstack([points.xyz, np.ones([points.xyz.shape[0],1])])   # homogeneous coordinates
   img_points_xyz  = np.matmul(                                                  # transform to camera coordinates
-    cam_points_xyz1, np.transpose(calib['cam_to_image']))
+    cam_points_xyz1, np.transpose(calib['cam_to_image']).astype(np.float64))
   img_points_xy1  = img_points_xyz/img_points_xyz[:,[2]]                        # project onto camera plane ??
   img_points      = Points(img_points_xy1, points.attr)                         # convert into Points object
 
@@ -121,7 +121,7 @@ def velo_to_cam(points, calib):
 
   velo_xyz1 = np.hstack([points.xyz, np.ones([points.xyz.shape[0],1])])         # convert to homogeneous coordinates  
   cam_xyz = np.transpose(
-    np.matmul(calib['velo_to_cam'], np.transpose(velo_xyz1))[:3, :])            # transform to camera coordinates
+    np.matmul(calib['velo_to_cam'].astype(np.float64), np.transpose(velo_xyz1))[:3, :])            # transform to camera coordinates
   
   return Points(xyz=cam_xyz,attr=points.attr)
 
@@ -135,6 +135,6 @@ def cam_to_velo(points_xyz, calib):
   @return: a Points object containing points in velodyne coordinates.
   """
   cam_xyz1 = np.hstack([points_xyz, np.ones([points_xyz.shape[0],1])])          # convert to homogeneous coordinates
-  velo_xyz = np.matmul(cam_xyz1, np.transpose(calib['cam_to_velo']))[:,:3]      # transform to velodyne coordinates
+  velo_xyz = np.matmul(cam_xyz1, np.transpose(calib['cam_to_velo'].astype(np.float64)))[:,:3]      # transform to velodyne coordinates
 
   return velo_xyz
